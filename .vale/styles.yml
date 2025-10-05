@@ -1,0 +1,16 @@
+# Vale Styles Configuration
+
+# This file defines which style packages to use
+# You can install additional styles using:
+# vale sync
+
+# Default styles that come with Vale
+packages:
+  # Microsoft Writing Guide - excellent for technical documentation
+  - Microsoft: https://github.com/errata-ai/Microsoft/releases/latest/download/Microsoft.zip
+
+  # Google Developer Documentation Style Guide
+  - Google: https://github.com/errata-ai/Google/releases/latest/download/Google.zip
+
+  # Write Good - general writing improvements
+  - write-good: https://github.com/errata-ai/write-good/releases/latest/download/write-good.zip

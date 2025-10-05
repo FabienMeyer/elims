@@ -1,0 +1,175 @@
+site_name: ELIMS
+site_description: A laboratory information management system
+site_author: Fabien Meyer
+site_url: https://fabienmeyer.github.io/elims/
+
+repo_name: FabienMeyer/elims
+repo_url: https://github.com/FabienMeyer/elims
+
+theme:
+  name: material
+  logo: assets/logo.png
+  favicon: assets/favicon.png
+  features:
+    # Navigation
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.footer
+    - navigation.indexes
+    # Search
+    - search.highlight
+    - search.share
+    - search.suggest
+    # Content
+    - content.code.copy
+    - content.code.select
+    - content.code.annotate
+    - content.tabs.link
+    - content.tooltips
+    # Table of contents
+    - toc.follow
+    - toc.integrate
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom # Will be defined as Electric Blue in CSS
+      accent: custom  # Will be defined as Electric Blue in CSS
+      toggle:
+        icon: material/brightness-4
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom # Will be defined as Electric Blue in CSS
+      accent: custom  # Will be defined as Electric Blue in CSS
+      toggle:
+        icon: material/brightness-7
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+plugins:
+  - search:
+      lang: en
+  - minify:
+      minify_html: true
+  - glightbox:
+      touchNavigation: true
+      loop: false
+      effect: zoom
+      slide_effect: slide
+      width: 100%
+      height: auto
+      zoomable: true
+      draggable: true
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            merge_init_into_class: true
+            show_source: true
+            show_root_heading: true
+            show_root_toc_entry: false
+
+markdown_extensions:
+  # Python Markdown
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+      permalink_title: Anchor link to this section
+  # Python Markdown Extensions
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets:
+      base_path: '.'
+      check_paths: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+  - pymdownx.critic:
+      mode: view
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: FabienMeyer
+      repo: elims
+
+extra_javascript:
+  - js/mermaid.min.js
+  - js/mermaid-init.js
+  - js/plotly-latest.min.js
+  - js/plotly-init.js
+
+extra_css:
+  - stylesheets/extra.css
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/FabienMeyer/elims
+      name: GitHub Repository
+  generator: false
+  consent:
+    title: Cookie consent
+    description: >-
+      This website does not use cookies, does not track users, and does not collect any personal data.
+      We respect your privacy completely.
+    actions:
+      - accept
+      - manage
+    cookies:
+      analytics: false
+      github: false
+
+copyright: >
+  Copyright &copy; 2025 Fabien Meyer ·
+  <a href="license/">MIT License</a> ·
+  This site respects your privacy - no cookies, no tracking, no analytics
+nav:
+  - Elims:
+      - Home: index.md
+      - Contributing: contributing.md
+      - Code of Conduct: code_of_conduct.md
+      - License: license.md
+      - Privacy: privacy.md
