@@ -93,6 +93,11 @@ jobs:
       - name: Run type checker
         run: uv run mypy elims/ tests/
 
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   package-build:
     name: Build Package
     runs-on: ubuntu-latest
