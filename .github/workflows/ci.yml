@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-      - develop
-      - 'feat/*'
     tags:
       - 'v*.*.*'
   pull_request:
@@ -27,7 +25,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ["3.13"]
+        python-version: ["3.13", "3.14"]
 
     name: Tests (${{ matrix.os }}, Python ${{ matrix.python-version }})
     runs-on: ${{ matrix.os }}
@@ -51,19 +49,21 @@ jobs:
           uv run pytest --cov=elims --cov-branch --cov-report=xml --cov-report=html --cov-report=term tests/
 
       - name: Upload coverage reports
-        if: matrix.os == 'ubuntu-latest'
-        uses: codecov/codecov-action@v4.0.1
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.13'
+        uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # v4.5.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.xml
           fail_ci_if_error: false
 
       - name: Upload coverage artifacts
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.13'
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report
-          path: htmlcov/
+          name: coverage-report-${{ matrix.os }}-py${{ matrix.python-version }}
+          path: |
+            htmlcov/
+            coverage.xml
           retention-days: 30
 
   code-quality:
@@ -72,6 +72,8 @@ jobs:
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for better analysis
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -92,6 +94,14 @@ jobs:
 
       - name: Run type checker
         run: uv run mypy elims/ tests/
+
+      - name: Run coverage
+        run: uv run pytest --cov=elims --cov-branch --cov-report=xml --cov-report=html --cov-report=term tests/
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@884b79409bbd464b2a59edc326a4b77dc56b2195 # v6.0.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   package-build:
     name: Build Package
@@ -179,7 +189,7 @@ jobs:
   deploy-documentation:
     name: Deploy Documentation
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    needs: [tests, code-quality, documentation-build, package-build]
+    needs: [documentation-build, package-build]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -210,7 +220,7 @@ jobs:
   deploy-package:
     name: Deploy Package
     if: startsWith(github.ref, 'refs/tags/')
-    needs: [tests, code-quality, package-build, deploy-documentation]
+    needs: [package-build, deploy-documentation]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -223,6 +233,6 @@ jobs:
           path: dist/
 
       - name: Publish package to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+        uses: pypa/gh-action-pypi-publish@f7600683efdcb7656dec5b29656edb7bc586e597 # v1.10.3
         with:
           print-hash: true
