@@ -39,6 +39,7 @@ dev-dependencies = [
     "mkdocs-mermaid2-plugin>=1.2.2",
     "mkdocs-minify-plugin>=0.8.0",
     "mkdocs-plotly-plugin>=0.1.3",
+    "mike>=2.1.3",
     "mypy>=1.18.2",
     "ruff>=0.13.3",
     "pre-commit>=4.3.0",
