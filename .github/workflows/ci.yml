@@ -220,7 +220,7 @@ jobs:
   deploy-package:
     name: Deploy Package
     if: startsWith(github.ref, 'refs/tags/')
-    needs: [package-build, deploy-documentation]
+    needs: [package-build]
     runs-on: ubuntu-latest
     permissions:
       contents: read
