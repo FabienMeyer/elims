@@ -52,14 +52,10 @@ dev-dependencies = [
     "vale>=3.12.0.2",
 ]
 
-[tool.setuptools]
-packages = ["elims"]
-
-[tool.setuptools.package-dir]
-elims = "elims"
-
-[tool.setuptools.exclude-package-data]
-"*" = ["tests*"]
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["elims*"]
+exclude = ["tests*"]
 
 [tool.mypy]
 strict = true
