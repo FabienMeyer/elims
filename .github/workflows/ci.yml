@@ -207,6 +207,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write
     steps:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -217,5 +218,4 @@ jobs:
       - name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@f7600683efdcb7656dec5b29656edb7bc586e597 # v1.10.3
         with:
-          password: ${{ secrets.PYPI_TOKEN }}
           print-hash: true
