@@ -65,6 +65,7 @@ theme:
 plugins:
   - search:
       lang: en
+  - mike:
   - minify:
       minify_html: true
   - glightbox:
