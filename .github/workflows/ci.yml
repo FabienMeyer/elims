@@ -205,7 +205,9 @@ jobs:
           fi
 
       - name: List deployed versions
-        run: uv run mike list -a --remote origin --branch gh-pages
+        run: |
+          uv run mike --version
+          uv run mike list --remote origin --branch gh-pages || true
 
   deploy-package:
     name: Deploy Package
