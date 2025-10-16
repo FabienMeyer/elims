@@ -184,6 +184,18 @@ jobs:
       - name: Install dependencies
         run: uv sync
 
+      - name: Copy README.md to docs/
+        run: cp -f README.md docs/index.md
+
+      - name: Copy CONTRIBUTING.md to docs/
+        run: cp -f CONTRIBUTING.md docs/contributing.md
+
+      - name: Copy CODE_OF_CONDUCT.md to docs/
+        run: cp -f CODE_OF_CONDUCT.md docs/code_of_conduct.md
+
+      - name: Copy license.md to docs/
+        run: cp -f LICENSE docs/license.md
+
       - name: Configure Git
         run: |
           git config user.name "github-actions[bot]"
