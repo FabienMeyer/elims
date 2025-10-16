@@ -166,12 +166,7 @@ jobs:
     needs: [documentation-quality, package-build]
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      contents: write  # allow pushing to gh-pages
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
@@ -189,29 +184,28 @@ jobs:
       - name: Install dependencies
         run: uv sync
 
-      - name: Build documentation
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Optional: fetch gh-pages if it exists
+          git fetch origin gh-pages || true
+
+      - name: Build and deploy versions with mike
+        shell: bash
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            uv run mike deploy --update-aliases dev latest
-            uv run mike set-default latest
+            uv run mike deploy --push --update-aliases --remote origin --branch gh-pages dev latest
+            uv run mike set-default --push --remote origin --branch gh-pages latest
           else
             VERSION=${GITHUB_REF#refs/tags/}
             echo "Building version: $VERSION"
-            uv run mike deploy --update-aliases $VERSION stable
-            uv run mike set-default stable
+            uv run mike deploy --push --update-aliases --remote origin --branch gh-pages "$VERSION" stable
+            uv run mike set-default --push --remote origin --branch gh-pages stable
           fi
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: './site'
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: List deployed versions
+        run: uv run mike list -a --remote origin --branch gh-pages
 
   deploy-package:
     name: Deploy Package
