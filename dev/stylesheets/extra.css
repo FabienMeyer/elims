@@ -1,0 +1,75 @@
+/* -----------------------------------------------------------------------------
+ * EXTRA.CSS - Custom Color Definitions for ELIMS Documentation
+ * -----------------------------------------------------------------------------
+ * Core Colors:
+ * - Electric Blue (Primary Accent): #0096C7
+ * - Cool Grey (Secondary/Text): #75818C
+ */
+
+/* ====================================
+   A. LIGHT MODE (Default Scheme)
+   ==================================== */
+[data-md-color-scheme="default"] {
+    /* 1. Primary Colors (Header, Sidebar Highlights, Links) */
+    /* Primary color is the main brand color (Electric Blue) */
+    --md-primary-fg-color: #0096C7;
+    /* Accent color for links and hover states (Electric Blue) */
+    --md-accent-fg-color: #0096C7;
+
+    /* 2. Text Colors */
+    /* Text on the main background (Dark Charcoal for readability) */
+    --md-default-fg-color: #343A40;
+    /* Secondary text (Cool Grey) */
+    --md-default-fg-color--light: #75818C;
+
+    /* 3. Background Colors */
+    /* Main body background */
+    --md-default-bg-color: #FFFFFF;
+    /* Sidebar/Code block background (Off-white) */
+    --md-default-bg-color--light: #F8F8F8;
+
+    /* 4. Border/Line Colors */
+    --md-default-fg-color--lighter: #D4D8DC; /* Subtle border lines */
+
+    /* 5. Code Block Colors */
+    --md-code-bg-color: #EBEBEB; /* Lighter background for code blocks */
+    --md-code-fg-color: #343A40; /* Dark text for code */
+}
+
+
+/* ====================================
+   B. DARK MODE (Slate Scheme)
+   ==================================== */
+
+
+[data-md-color-scheme="slate"] {
+    /* 1. Primary Colors (Header, Sidebar Highlights, Links) */
+    /* Primary color is the main brand color (Electric Blue) */
+    --md-primary-fg-color: #0096C7;
+    /* Accent color for links and hover states (Electric Blue) */
+    --md-accent-fg-color: #0096C7;
+
+    /* 2. Text Colors */
+    /* Text on the main background (Off-white) */
+    --md-default-fg-color: #F8F8F8;
+    /* Secondary text (Cool Grey for lower contrast) */
+    --md-default-fg-color--light: #75818C;
+
+    /* 3. Background Colors */
+    /* Main body background (Very dark grey) */
+    --md-default-bg-color: #1C1C1E;
+    /* Sidebar/Code block background (Slightly lighter dark grey) */
+    --md-default-bg-color--light: #2C2C2E;
+
+    /* 4. Border/Line Colors */
+    --md-default-fg-color--lighter: #3A3A3D; /* Subtle border lines */
+
+    /* 5. Code Block Colors */
+    --md-code-bg-color: #232325; /* Darker background for code blocks */
+    --md-code-fg-color: #E0E0E0; /* Light text for code */
+
+    /* Ensure the header text is white/light on the dark primary background */
+    --md-primary-bg-color: #1C1C1E; /* Primary background for the header bar */
+    --md-primary-bg-color--light: #2C2C2E;
+    --md-primary-fg-color--light: #F8F8F8; /* Text color in the header bar */
+}
