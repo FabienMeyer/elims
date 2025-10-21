@@ -81,3 +81,17 @@ class TestAppEnvironment:
         monkeypatch.setenv("SQLITE_CHECK_SAME_THREAD", env_value)
         settings = Settings()
         assert settings.sqlite_check_same_thread is expected_value
+
+    @pytest.mark.parametrize(
+        ("sqlite_path", "expected_url"),
+        [
+            (Path("app.db"), "sqlite:///app.db"),
+            (Path("data/custom.db"), "sqlite:///data/custom.db"),
+            (Path(":memory:"), "sqlite:///:memory:"),
+        ],
+    )
+    def test_db_url(self, monkeypatch: pytest.MonkeyPatch, sqlite_path: Path, expected_url: str) -> None:
+        """Test that db_url returns correct SQLite URL."""
+        monkeypatch.setenv("SQLITE_PATH", str(sqlite_path))
+        settings = Settings()
+        assert settings.db_url == expected_url
