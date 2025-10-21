@@ -34,8 +34,8 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
+    @computed_field  # type: ignore[prop-decorator]
     @property
-    @computed_field
     def db_url(self) -> str:
         """Construct the database URL from the settings."""
         match self.db_architecture:
