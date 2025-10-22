@@ -42,9 +42,6 @@ class Settings(BaseSettings):
             case DbArchitecture.SQLITE:
                 path = ":memory:" if str(self.sqlite_path) == ":memory:" else self.sqlite_path.as_posix()
                 return f"sqlite:///{path}"
-            case _:
-                msg = "Unsupported database architecture"
-                raise ValueError(msg)
 
 
 # Create a single instance of your settings
