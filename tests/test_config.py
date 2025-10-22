@@ -3,6 +3,7 @@
 from pathlib import Path
 
 import pytest
+from pydantic import ValidationError
 
 from elims.config import AppEnvironment, Settings
 
@@ -95,3 +96,9 @@ class TestAppEnvironment:
         monkeypatch.setenv("SQLITE_PATH", str(sqlite_path))
         settings = Settings()
         assert settings.db_url == expected_url
+
+    def test_db_url_invalid_architecture(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Unsupported DB_ARCHITECTURE is rejected during settings validation."""
+        monkeypatch.setenv("DB_ARCHITECTURE", "unsupported_arch")
+        with pytest.raises(ValidationError, match="Input should be 'sqlite'"):
+            _ = Settings()
