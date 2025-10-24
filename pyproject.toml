@@ -19,6 +19,7 @@ classifiers = [
     "Topic :: Scientific/Engineering",
 ]
 dependencies = [
+    "fastapi[standard]>=0.119.1",
     "pydantic-settings>=2.11.0",
     "sqlmodel>=0.0.27",
 ]
