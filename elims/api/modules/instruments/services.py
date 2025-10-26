@@ -6,11 +6,15 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from elims.api.modules.instruments.exceptions import (
-    InstrumentAlreadyExistsError,
+    InstrumentAlreadyExistError,
     InstrumentNotFoundError,
 )
 from elims.api.modules.instruments.models import Instrument
-from elims.api.modules.instruments.schemas import InstrumentCreate, InstrumentUpdate
+from elims.api.modules.instruments.schemas import (
+    InstrumentCreate,
+    InstrumentPublic,
+    InstrumentUpdate,
+)
 
 
 class InstrumentService:
@@ -26,83 +30,79 @@ class InstrumentService:
         self.session = session
         logger.debug(f"InstrumentService initialized with async session: {session}")
 
-    async def create(self, instrument_create: InstrumentCreate) -> Instrument:
+    async def create(self, instrument_data: InstrumentCreate) -> InstrumentPublic:
         """Create a new instrument in the database.
 
         Args:
-            instrument_create: The data for the new instrument.
+            instrument_data: The data for the new instrument.
 
         Returns:
-            The newly created instrument.
+            The newly created instrument with its database ID.
 
         Raises:
-            InstrumentAlreadyExistsException: If an instrument with the same
+            InstrumentAlreadyExistError: If an instrument with the same
                 serial number already exists.
 
         """
-        db_instrument = Instrument.model_validate(instrument_create)
         try:
-            self.session.add(db_instrument)
+            instrument = Instrument.model_validate(instrument_data)
+            self.session.add(instrument)
             await self.session.commit()
-            await self.session.refresh(db_instrument)
+            await self.session.refresh(instrument)
+            logger.info(f"Created instrument with serial number: {instrument.serial_number}")
+            return InstrumentPublic.model_validate(instrument)
         except IntegrityError as e:
             await self.session.rollback()
-            logger.error(f"IntegrityError creating instrument: {e}")
-            raise InstrumentAlreadyExistsError(db_instrument.serial_number) from e
-        else:
-            logger.info(f"Created instrument ID: {db_instrument.id}")
-            return db_instrument
+            logger.error(f"Failed to create instrument: {e}")
+            raise InstrumentAlreadyExistError(instrument_data.serial_number) from e
 
-    async def get_by_id(self, instrument_id: int) -> Instrument | None:
-        """Read a single instrument by ID.
+    async def get(self, instrument_id: int) -> InstrumentPublic:
+        """Retrieve an instrument by its ID.
 
         Args:
             instrument_id: The ID of the instrument to retrieve.
 
         Returns:
-            The instrument if found, otherwise None.
+            The instrument if found.
+
+        Raises:
+            InstrumentNotFoundError: If the instrument is not found.
 
         """
-        statement = select(Instrument).where(Instrument.id == instrument_id)
-        result = await self.session.exec(statement)
-        instrument = result.first()
+        query = select(Instrument).where(Instrument.id == instrument_id)
+        result = await self.session.exec(query)
+        instrument = result.one_or_none()
         if not instrument:
-            logger.warning(f"Attempted to read non-existent instrument ID: {instrument_id}")
-            return None
-        return instrument
+            logger.warning(f"Instrument with ID {instrument_id} not found")
+            raise InstrumentNotFoundError(instrument_id)
+        logger.debug(f"Retrieved instrument with ID {instrument_id}")
+        return InstrumentPublic.model_validate(instrument)
 
-    async def get_all(self) -> list[Instrument]:
-        """Retrieve all instruments.
-
-        Returns:
-            A list of all instruments.
-
-        """
-        logger.debug("Retrieving all instruments asynchronously.")
-        result = await self.session.exec(select(Instrument))
-        return list(result.all())
-
-    async def update(self, instrument_id: int, instrument_update: InstrumentUpdate) -> Instrument:
+    async def update(self, instrument_id: int, instrument_data: InstrumentUpdate) -> InstrumentPublic:
         """Update an existing instrument.
 
         Args:
             instrument_id: The ID of the instrument to update.
-            instrument_update: The data to update the instrument with.
+            instrument_data: The new data for the instrument (partial updates allowed).
 
         Returns:
             The updated instrument.
 
         Raises:
-            InstrumentNotFoundException: If the instrument is not found.
-            InstrumentAlreadyExistsException: If the update would cause a
-                duplicate serial number.
+            InstrumentNotFoundError: If the instrument is not found.
+            InstrumentAlreadyExistError: If the serial number is changed to one
+                that already exists.
 
         """
-        db_instrument = await self.get_by_id(instrument_id)
+        query = select(Instrument).where(Instrument.id == instrument_id)
+        result = await self.session.exec(query)
+        db_instrument = result.one_or_none()
         if not db_instrument:
+            logger.warning(f"Instrument with ID {instrument_id} not found for update")
             raise InstrumentNotFoundError(instrument_id)
 
-        update_data = instrument_update.model_dump(exclude_unset=True)
+        # Update only the fields that were provided
+        update_data = instrument_data.model_dump(exclude_unset=True)
         for key, value in update_data.items():
             setattr(db_instrument, key, value)
 
@@ -110,29 +110,43 @@ class InstrumentService:
             self.session.add(db_instrument)
             await self.session.commit()
             await self.session.refresh(db_instrument)
+            logger.info(f"Updated instrument with ID {instrument_id}")
+            return InstrumentPublic.model_validate(db_instrument)
         except IntegrityError as e:
             await self.session.rollback()
-            logger.error(f"IntegrityError updating instrument ID {instrument_id}: {e}")
-            serial_number = update_data.get("serial_number") or db_instrument.serial_number
-            raise InstrumentAlreadyExistsError(serial_number) from e
-        else:
-            logger.info(f"Updated instrument ID: {db_instrument.id}")
-            return db_instrument
+            logger.error(f"Failed to update instrument with ID {instrument_id}: {e}")
+            raise InstrumentAlreadyExistError(db_instrument.serial_number) from e
 
     async def delete(self, instrument_id: int) -> None:
-        """Delete an instrument by ID.
+        """Delete an instrument by its ID.
 
         Args:
             instrument_id: The ID of the instrument to delete.
 
         Raises:
-            InstrumentNotFoundException: If the instrument is not found.
+            InstrumentNotFoundError: If the instrument is not found.
 
         """
-        instrument = await self.get_by_id(instrument_id)
+        query = select(Instrument).where(Instrument.id == instrument_id)
+        result = await self.session.exec(query)
+        instrument = result.one_or_none()
         if not instrument:
+            logger.warning(f"Instrument with ID {instrument_id} not found for deletion")
             raise InstrumentNotFoundError(instrument_id)
 
         await self.session.delete(instrument)
         await self.session.commit()
-        logger.warning(f"Deleted instrument ID: {instrument_id}")
+        logger.info(f"Deleted instrument with ID {instrument_id}")
+
+    async def list_all(self) -> list[InstrumentPublic]:
+        """Retrieve all instruments from the database.
+
+        Returns:
+            A list of all instruments.
+
+        """
+        query = select(Instrument)
+        result = await self.session.exec(query)
+        instruments = result.all()
+        logger.debug(f"Retrieved {len(instruments)} instruments")
+        return [InstrumentPublic.model_validate(instrument) for instrument in instruments]

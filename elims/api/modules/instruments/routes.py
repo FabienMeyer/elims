@@ -8,7 +8,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from elims.api.db import get_session
 from elims.api.modules.instruments.exceptions import (
-    InstrumentAlreadyExistsError,
+    InstrumentAlreadyExistError,
     InstrumentNotFoundError,
 )
 from elims.api.modules.instruments.schemas import (
@@ -18,7 +18,10 @@ from elims.api.modules.instruments.schemas import (
 )
 from elims.api.modules.instruments.services import InstrumentService
 
-router = APIRouter(prefix="/instruments", tags=["instruments"])
+# Router for collection operations (plural)
+router_collection: APIRouter = APIRouter(prefix="/instruments", tags=["instruments"])
+# Router for single resource operations (singular)
+router_resource: APIRouter = APIRouter(prefix="/instrument", tags=["instrument"])
 
 
 async def get_instrument_service(
@@ -36,51 +39,38 @@ async def get_instrument_service(
     return InstrumentService(session=session)
 
 
+@router_resource.post("/", status_code=status.HTTP_201_CREATED)  # type: ignore[misc]
 async def create_instrument(
-    instrument: InstrumentCreate,
+    instrument_data: InstrumentCreate,
     service: Annotated[InstrumentService, Depends(get_instrument_service)],
 ) -> InstrumentPublic:
     """Create a new instrument.
 
     Args:
-        instrument: The instrument data for creation.
+        instrument_data: The instrument data for creation.
         service: The instrument service dependency.
 
     Returns:
-        The created instrument.
+        The created instrument with its database ID.
 
     Raises:
         HTTPException: If an instrument with the same serial number already exists.
 
     """
     try:
-        db_instrument = await service.create(instrument)
-    except InstrumentAlreadyExistsError as e:
+        return await service.create(instrument_data)
+    except InstrumentAlreadyExistError as e:
         detail = str(e)
-        logger.warning(f"Creation failed due to conflict: {detail}")
+        logger.warning(f"Create instrument failed due to conflict: {detail}")
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=detail) from e
-    else:
-        return InstrumentPublic.model_validate(db_instrument)
 
 
-async def read_all_instruments(
+@router_resource.get("/{instrument_id}")  # type: ignore[misc]
+async def get_instrument(
+    instrument_id: int,
     service: Annotated[InstrumentService, Depends(get_instrument_service)],
-) -> list[InstrumentPublic]:
-    """Retrieve a list of all instruments.
-
-    Args:
-        service: The instrument service dependency.
-
-    Returns:
-        A list of all instruments.
-
-    """
-    instruments = await service.get_all()
-    return [InstrumentPublic.model_validate(i) for i in instruments]
-
-
-async def read_instrument(instrument_id: int, service: Annotated[InstrumentService, Depends(get_instrument_service)]) -> InstrumentPublic:
-    """Retrieve a single instrument by its unique ID.
+) -> InstrumentPublic:
+    """Get an instrument by its ID.
 
     Args:
         instrument_id: The ID of the instrument to retrieve.
@@ -93,28 +83,25 @@ async def read_instrument(instrument_id: int, service: Annotated[InstrumentServi
         HTTPException: If the instrument is not found.
 
     """
-    instrument = await service.get_by_id(instrument_id)
-    if instrument is None:
-        logger.warning(f"Read failed: Instrument ID {instrument_id} not found.")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Instrument with ID {instrument_id} not found",
-        )
-    return InstrumentPublic.model_validate(instrument)
+    try:
+        return await service.get(instrument_id)
+    except InstrumentNotFoundError as e:
+        detail = str(e)
+        logger.warning(f"Get instrument failed: {detail}")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=detail) from e
 
 
+@router_resource.patch("/{instrument_id}")  # type: ignore[misc]
 async def update_instrument(
     instrument_id: int,
-    instrument: InstrumentUpdate,
+    instrument_data: InstrumentUpdate,
     service: Annotated[InstrumentService, Depends(get_instrument_service)],
 ) -> InstrumentPublic:
-    """Update an existing instrument.
-
-    Partial updates are allowed.
+    """Update an instrument (partial update).
 
     Args:
         instrument_id: The ID of the instrument to update.
-        instrument: The instrument data for the update.
+        instrument_data: The instrument data to update (only provided fields are updated).
         service: The instrument service dependency.
 
     Returns:
@@ -125,21 +112,23 @@ async def update_instrument(
 
     """
     try:
-        updated_instrument = await service.update(instrument_id, instrument)
+        return await service.update(instrument_id, instrument_data)
     except InstrumentNotFoundError as e:
         detail = str(e)
-        logger.warning(f"Update failed: {detail}")
+        logger.warning(f"Update instrument failed, not found: {detail}")
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=detail) from e
-    except InstrumentAlreadyExistsError as e:
+    except InstrumentAlreadyExistError as e:
         detail = str(e)
-        logger.warning(f"Update failed due to conflict: {detail}")
+        logger.warning(f"Update instrument failed, conflict: {detail}")
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=detail) from e
-    else:
-        return InstrumentPublic.model_validate(updated_instrument)
 
 
-async def delete_instrument(instrument_id: int, service: Annotated[InstrumentService, Depends(get_instrument_service)]) -> None:
-    """Delete an instrument by ID.
+@router_resource.delete("/{instrument_id}", status_code=status.HTTP_204_NO_CONTENT)  # type: ignore[misc]
+async def delete_instrument(
+    instrument_id: int,
+    service: Annotated[InstrumentService, Depends(get_instrument_service)],
+) -> None:
+    """Delete an instrument by its ID.
 
     Args:
         instrument_id: The ID of the instrument to delete.
@@ -153,12 +142,21 @@ async def delete_instrument(instrument_id: int, service: Annotated[InstrumentSer
         await service.delete(instrument_id)
     except InstrumentNotFoundError as e:
         detail = str(e)
-        logger.warning(f"Deletion failed: {detail}")
+        logger.warning(f"Delete instrument failed: {detail}")
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=detail) from e
 
 
-router.add_api_route("/", create_instrument, methods=["POST"], status_code=status.HTTP_201_CREATED)
-router.add_api_route("/", read_all_instruments, methods=["GET"])
-router.add_api_route("/{instrument_id}", read_instrument, methods=["GET"])
-router.add_api_route("/{instrument_id}", update_instrument, methods=["PATCH"])
-router.add_api_route("/{instrument_id}", delete_instrument, methods=["DELETE"], status_code=status.HTTP_204_NO_CONTENT)
+@router_collection.get("/")  # type: ignore[misc]
+async def list_instruments(
+    service: Annotated[InstrumentService, Depends(get_instrument_service)],
+) -> list[InstrumentPublic]:
+    """List all instruments.
+
+    Args:
+        service: The instrument service dependency.
+
+    Returns:
+        A list of all instruments.
+
+    """
+    return await service.list_all()
