@@ -20,8 +20,10 @@ classifiers = [
 ]
 dependencies = [
     "fastapi[standard]>=0.119.1",
+    "loguru>=0.7.3",
     "pydantic-settings>=2.11.0",
-    "sqlmodel>=0.0.27",
+    "sqlmodel[async]>=0.0.14",
+    "aiosqlite>=0.20.0",
 ]
 
 [tool.uv]
