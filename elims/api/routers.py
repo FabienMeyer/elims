@@ -2,8 +2,9 @@
 
 from fastapi import APIRouter
 
-from elims.api.modules.instruments.routes import router as instruments_router
+from elims.api.modules.instruments.routes import router_collection, router_resource
 
 router = APIRouter()
 
-router.include_router(instruments_router)
+router.include_router(router_collection)
+router.include_router(router_resource)

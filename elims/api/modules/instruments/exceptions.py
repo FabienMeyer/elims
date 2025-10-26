@@ -44,7 +44,7 @@ class InstrumentNotFoundError(Exception):
         super().__init__(f"Instrument with ID {instrument_id} not found.")
 
 
-class InstrumentAlreadyExistsError(Exception):
+class InstrumentAlreadyExistError(Exception):
     """Exception raised when an instrument with a given serial number already exists."""
 
     def __init__(self, serial_number: str) -> None:
