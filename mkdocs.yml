@@ -44,8 +44,8 @@ theme:
     # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: custom # Will be defined as Electric Blue in CSS
-      accent: custom  # Will be defined as Electric Blue in CSS
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-4
         name: Switch to dark mode
@@ -53,8 +53,8 @@ theme:
     # Palette toggle for dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: custom # Will be defined as Electric Blue in CSS
-      accent: custom  # Will be defined as Electric Blue in CSS
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-7
         name: Switch to light mode
@@ -176,7 +176,10 @@ nav:
   - Elims:
       - Home: index.md
       - API:
+          - API: api/api.md
           - Database: api/db/db.md
+          - Logger: api/logger.md
+          - Routers: api/routers.md
           - Modules:
               - Instruments: api/modules/instruments/instruments.md
       - Contributing: contributing.md

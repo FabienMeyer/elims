@@ -8,4 +8,6 @@
 
 ::: elims.api.modules.instruments.routes
 
+::: elims.api.modules.instruments.schemas
+
 ::: elims.api.modules.instruments.services
