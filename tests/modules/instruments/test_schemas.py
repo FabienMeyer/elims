@@ -25,9 +25,9 @@ class TestInstrumentBaseSchemas:
             {"brand": "KS", "type": "OSC", "model": "UXR", "serial_number": "SN123456"},
         ],
     )
-    @pytest.mark.parametrize("brand", list(InstrumentBrand))
-    @pytest.mark.parametrize("type", list(InstrumentType))
-    def test_instrument_base_creation(self, instrument: dict[str, str | int | None], instrument_brand: InstrumentBrand, instrument_type: InstrumentType) -> None:
+    @pytest.mark.parametrize("instrument_brand", list(InstrumentBrand))
+    @pytest.mark.parametrize("instrument_type", list(InstrumentType))
+    def test_instrument_base_create(self, instrument: dict[str, str | int | None], instrument_brand: InstrumentBrand, instrument_type: InstrumentType) -> None:
         """Test that InstrumentBase schema can be instantiated."""
         instrument["brand"] = instrument_brand.value
         instrument["type"] = instrument_type.value
@@ -143,8 +143,8 @@ class TestInstrumentUpdateSchemas:
             {"brand": "KS", "type": "OSC", "model": "UXR", "serial_number": "None"},
         ],
     )
-    @pytest.mark.parametrize("brand", list(InstrumentBrand))
-    @pytest.mark.parametrize("type", list(InstrumentType))
+    @pytest.mark.parametrize("instrument_brand", list(InstrumentBrand))
+    @pytest.mark.parametrize("instrument_type", list(InstrumentType))
     def test_instrument_base_creation(self, instrument: dict[str, str | int | None], instrument_brand: InstrumentBrand, instrument_type: InstrumentType) -> None:
         """Test that InstrumentBase schema can be instantiated."""
         instrument["brand"] = instrument_brand.value
