@@ -28,6 +28,7 @@ dependencies = [
 
 [tool.uv]
 dev-dependencies = [
+    "greenlet>=3.1.0",
     "mdformat>=0.7.22",
     "mdformat-frontmatter>=2.0.8",
     "mdformat-gfm>=0.4.1",
