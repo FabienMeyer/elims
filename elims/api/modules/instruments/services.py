@@ -138,7 +138,7 @@ class InstrumentService:
         await self.session.commit()
         logger.info(f"Deleted instrument with ID {instrument_id}")
 
-    async def list_all(self) -> list[InstrumentRead]:
+    async def gets(self) -> list[InstrumentRead]:
         """Retrieve all instruments from the database.
 
         Returns:

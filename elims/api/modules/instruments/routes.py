@@ -145,7 +145,7 @@ async def delete_instrument(
 
 
 @router_collection.get("/")
-async def list_instruments(
+async def gets_instruments(
     service: Annotated[InstrumentService, Depends(get_instrument_service)],
 ) -> list[InstrumentRead]:
     """List all instruments.
@@ -157,4 +157,4 @@ async def list_instruments(
         A list of all instruments.
 
     """
-    return await service.list_all()
+    return await service.gets()
