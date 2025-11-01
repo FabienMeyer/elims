@@ -37,7 +37,7 @@ async def get_instrument_service(
     return InstrumentService(session=session)
 
 
-@router_resource.post("/", status_code=status.HTTP_201_CREATED)  # type: ignore[misc]
+@router_resource.post("/", status_code=status.HTTP_201_CREATED)
 async def create_instrument(
     instrument_data: InstrumentCreate,
     service: Annotated[InstrumentService, Depends(get_instrument_service)],
@@ -63,7 +63,7 @@ async def create_instrument(
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=detail) from e
 
 
-@router_resource.get("/{instrument_id}")  # type: ignore[misc]
+@router_resource.get("/{instrument_id}")
 async def get_instrument(
     instrument_id: int,
     service: Annotated[InstrumentService, Depends(get_instrument_service)],
@@ -89,7 +89,7 @@ async def get_instrument(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=detail) from e
 
 
-@router_resource.patch("/{instrument_id}")  # type: ignore[misc]
+@router_resource.patch("/{instrument_id}")
 async def update_instrument(
     instrument_id: int,
     instrument_data: InstrumentUpdate,
@@ -121,7 +121,7 @@ async def update_instrument(
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=detail) from e
 
 
-@router_resource.delete("/{instrument_id}", status_code=status.HTTP_204_NO_CONTENT)  # type: ignore[misc]
+@router_resource.delete("/{instrument_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_instrument(
     instrument_id: int,
     service: Annotated[InstrumentService, Depends(get_instrument_service)],
@@ -144,7 +144,7 @@ async def delete_instrument(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=detail) from e
 
 
-@router_collection.get("/")  # type: ignore[misc]
+@router_collection.get("/")
 async def list_instruments(
     service: Annotated[InstrumentService, Depends(get_instrument_service)],
 ) -> list[InstrumentRead]:

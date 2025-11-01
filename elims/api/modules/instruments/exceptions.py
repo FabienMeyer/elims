@@ -13,7 +13,7 @@ class InstrumentBrandError(ValueError):
             value: The invalid brand value that was provided.
 
         """
-        message = f"Invalid instrument brand: '{value}'. " f"Allowed: {', '.join(InstrumentBrand.choices())}."
+        message = f"Invalid instrument brand: '{value}'. Allowed: {', '.join(InstrumentBrand.choices())}."
         super().__init__(message)
 
 
@@ -27,7 +27,7 @@ class InstrumentTypeError(ValueError):
             value: The invalid type value that was provided.
 
         """
-        message = f"Invalid instrument type: '{value}'. " f"Allowed: {', '.join(InstrumentType.choices())}."
+        message = f"Invalid instrument type: '{value}'. Allowed: {', '.join(InstrumentType.choices())}."
         super().__init__(message)
 
 

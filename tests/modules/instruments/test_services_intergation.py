@@ -18,7 +18,7 @@ from elims.api.modules.instruments.schemas import InstrumentCreate
 from elims.api.modules.instruments.services import InstrumentService
 
 
-@pytest_asyncio.fixture  # type: ignore[misc]
+@pytest_asyncio.fixture
 async def async_session_test() -> AsyncGenerator[AsyncSession]:
     """Create an in-memory SQLite database for testing."""
     engine = create_async_engine(

@@ -22,8 +22,8 @@ class TestInstrumentModel:
             {"brand": "KS", "type": "OSC", "model": "UXR", "serial_number": "SN123456"},  # No ID
         ],
     )
-    @pytest.mark.parametrize("brand", list(InstrumentBrand))
-    @pytest.mark.parametrize("type", list(InstrumentType))
+    @pytest.mark.parametrize("instrument_brand", list(InstrumentBrand))
+    @pytest.mark.parametrize("instrument_type", list(InstrumentType))
     def test_instrument_creation(self, instrument: dict[str, str | int | None], instrument_brand: InstrumentBrand, instrument_type: InstrumentType) -> None:
         """Test creating an instrument with and without ID."""
         instrument["brand"] = instrument_brand.value
