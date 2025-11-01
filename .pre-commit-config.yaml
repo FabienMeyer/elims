@@ -22,19 +22,25 @@ repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.8.4
     hooks:
-      # Run the linter
+      # Run formatter check (same as CI: ruff format --check)
+      - id: ruff-format
+      # Run the linter (same as CI: ruff check)
       - id: ruff
         args: [--fix]
-      # Run the formatter
-      - id: ruff-format
 
   # Python type checking (uses [tool.mypy] from pyproject.toml)
+  # Aligned with CI: uv run mypy elims/ tests/
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.13.0
     hooks:
       - id: mypy
-        additional_dependencies: [pydantic, sqlmodel, pytest]
-        # No args needed - uses pyproject.toml config
+        additional_dependencies:
+          - pydantic
+          - sqlmodel
+          - pytest
+          - pytest-asyncio
+          - fastapi
+          - sqlalchemy
 
   # Markdown formatting (uses [tool.mdformat] from pyproject.toml)
   - repo: https://github.com/executablebooks/mdformat
