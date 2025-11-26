@@ -1,3 +1,3 @@
 # Database
 
-::: elims.api.db.db
+::: elims.api.db

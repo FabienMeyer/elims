@@ -281,7 +281,7 @@ class TestInstrumentServiceCreate:
         assert "999" in str(exc_info.value)
 
     @pytest.mark.asyncio
-    async def test_list_all_instruments_empty(self, mock_session: AsyncMock) -> None:
+    async def test_gets_instruments_empty(self, mock_session: AsyncMock) -> None:
         """Test listing all instruments when database is empty."""
         service = services.InstrumentService(session=mock_session)
 
@@ -289,13 +289,13 @@ class TestInstrumentServiceCreate:
         mock_result.all = MagicMock(return_value=[])
         mock_session.exec = AsyncMock(return_value=mock_result)
 
-        result = await service.list_all()
+        result = await service.gets()
 
         assert result == []
         mock_session.exec.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_list_all_instruments_multiple(self, mock_session: AsyncMock) -> None:
+    async def test_gets_instruments_multiple(self, mock_session: AsyncMock) -> None:
         """Test listing all instruments with multiple records."""
         service = services.InstrumentService(session=mock_session)
 
@@ -316,7 +316,7 @@ class TestInstrumentServiceCreate:
         ]
 
         with patch.object(InstrumentRead, "model_validate", side_effect=expected_reads):
-            result = await service.list_all()
+            result = await service.gets()
 
             assert len(result) == EXPECTED_INSTRUMENTS_COUNT
             assert all(isinstance(item, InstrumentRead) for item in result)

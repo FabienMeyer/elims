@@ -177,7 +177,7 @@ nav:
       - Home: index.md
       - API:
           - API: api/api.md
-          - Database: api/db/db.md
+          - Database: api/db.md
           - Logger: api/logger.md
           - Routers: api/routers.md
           - Modules:
