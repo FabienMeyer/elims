@@ -98,6 +98,48 @@ jobs:
       - name: Run coverage
         run: uv run pytest --cov=elims --cov-branch --cov-report=xml --cov-report=html --cov-report=term tests/
 
+      - name: Fix coverage report for SonarCloud
+        shell: bash
+        run: |
+          python3 << 'EOF'
+          import xml.etree.ElementTree as ET
+          import os
+
+          # Parse the coverage.xml file
+          tree = ET.parse('coverage.xml')
+          root = tree.getroot()
+
+          # Get the source path from the coverage report
+          sources = root.find('sources')
+          source_path = None
+          if sources is not None:
+              source = sources.find('source')
+              if source is not None and source.text:
+                  source_path = source.text
+                  # Update to relative path
+                  source.text = 'elims'
+
+          # Update all filename attributes to include the source directory prefix
+          for cls in root.findall('.//class'):
+              filename = cls.get('filename')
+              if filename and source_path:
+                  # Remove the absolute path prefix if it exists
+                  if source_path in filename:
+                      filename = filename.replace(source_path + '/', '')
+                      filename = filename.replace(source_path + '\\', '')
+                  # Ensure it starts with the source directory
+                  if not filename.startswith('elims'):
+                      if filename.startswith('/') or filename.startswith('\\'):
+                          filename = 'elims' + filename
+                      else:
+                          filename = 'elims/' + filename
+                  cls.set('filename', filename)
+
+          # Write back the corrected XML
+          tree.write('coverage.xml', encoding='utf-8', xml_declaration=True)
+          print('Coverage report fixed for SonarCloud')
+          EOF
+
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@884b79409bbd464b2a59edc326a4b77dc56b2195 # v6.0.0
         env:
