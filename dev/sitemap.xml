@@ -2,42 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://fabienmeyer.github.io/elims/dev/</loc>
-         <lastmod>2025-11-26</lastmod>
+         <lastmod>2025-11-28</lastmod>
     </url>
     <url>
          <loc>https://fabienmeyer.github.io/elims/dev/code_of_conduct/</loc>
-         <lastmod>2025-11-26</lastmod>
+         <lastmod>2025-11-28</lastmod>
     </url>
     <url>
          <loc>https://fabienmeyer.github.io/elims/dev/contributing/</loc>
-         <lastmod>2025-11-26</lastmod>
+         <lastmod>2025-11-28</lastmod>
     </url>
     <url>
          <loc>https://fabienmeyer.github.io/elims/dev/license/</loc>
-         <lastmod>2025-11-26</lastmod>
+         <lastmod>2025-11-28</lastmod>
     </url>
     <url>
          <loc>https://fabienmeyer.github.io/elims/dev/privacy/</loc>
-         <lastmod>2025-11-26</lastmod>
+         <lastmod>2025-11-28</lastmod>
     </url>
     <url>
          <loc>https://fabienmeyer.github.io/elims/dev/api/api/</loc>
-         <lastmod>2025-11-26</lastmod>
+         <lastmod>2025-11-28</lastmod>
     </url>
     <url>
          <loc>https://fabienmeyer.github.io/elims/dev/api/db/</loc>
-         <lastmod>2025-11-26</lastmod>
+         <lastmod>2025-11-28</lastmod>
     </url>
     <url>
          <loc>https://fabienmeyer.github.io/elims/dev/api/logger/</loc>
-         <lastmod>2025-11-26</lastmod>
+         <lastmod>2025-11-28</lastmod>
     </url>
     <url>
          <loc>https://fabienmeyer.github.io/elims/dev/api/routers/</loc>
-         <lastmod>2025-11-26</lastmod>
+         <lastmod>2025-11-28</lastmod>
     </url>
     <url>
          <loc>https://fabienmeyer.github.io/elims/dev/api/modules/instruments/instruments/</loc>
-         <lastmod>2025-11-26</lastmod>
+         <lastmod>2025-11-28</lastmod>
     </url>
 </urlset>
