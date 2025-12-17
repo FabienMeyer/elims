@@ -1,0 +1,1 @@
+"""Tests API Locations module."""
