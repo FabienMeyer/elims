@@ -183,6 +183,7 @@ nav:
           - Modules:
               - Instruments: api/modules/instruments/instruments.md
               - Locations: api/modules/locations/locations.md
+              - Users: api/modules/users/users.md
       - Contributing: contributing.md
       - Code of Conduct: code_of_conduct.md
       - License: license.md

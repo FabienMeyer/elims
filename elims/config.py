@@ -32,6 +32,11 @@ class Settings(BaseSettings):
     sqlite_path: Path = Field(default=Path("app.db"), description="SQLite file path or ':memory:'")
     sqlite_check_same_thread: bool = Field(default=False, description="SQLite check same thread flag")
 
+    token_secret_key: str = Field(description="Secret key for token encoding/decoding")
+    token_algorithm: str = Field(description="Algorithm used for token encoding/decoding")
+    token_access_expire_minutes: int = Field(default=30, description="Access token expiration time in minutes")
+    token_refresh_expire_days: int = Field(default=7, description="Refresh token expiration time in days")
+
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     @computed_field  # type: ignore[prop-decorator]
