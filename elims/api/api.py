@@ -6,9 +6,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from loguru import logger
 
-from .db import create_db_and_tables
-from .logger import configure_logging
-from .routers import router
+from elims.api.db import create_db_and_tables
+from elims.api.logger import configure_logging
+from elims.api.routers import router
 
 
 @asynccontextmanager
