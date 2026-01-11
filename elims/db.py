@@ -10,7 +10,12 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from elims.config import settings
 
 base_url = settings.db_url
-async_url = base_url.replace("sqlite:///", "sqlite+aiosqlite:///") if base_url.startswith("sqlite:///") else base_url
+if base_url.startswith("sqlite:///"):
+    async_url = base_url.replace("sqlite:///", "sqlite+aiosqlite:///")
+elif base_url.startswith("mysql://"):
+    async_url = base_url.replace("mysql://", "mysql+aiomysql://")
+else:
+    async_url = base_url
 
 engine = create_async_engine(async_url, echo=settings.sql_echo, future=True)
 SessionLocal = async_sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)

@@ -2,8 +2,8 @@
 
 import pytest
 
-from elims.api.modules.instruments.constants import InstrumentBrand, InstrumentType
-from elims.api.modules.instruments.exceptions import (
+from elims.modules.instruments.constants import InstrumentBrand, InstrumentType
+from elims.modules.instruments.exceptions import (
     InstrumentAlreadyExistError,
     InstrumentBrandError,
     InstrumentNotFoundError,

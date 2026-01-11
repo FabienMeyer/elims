@@ -3,8 +3,8 @@
 import pytest
 from pydantic import ValidationError
 
-from elims.api.modules.instruments import models
-from elims.api.modules.instruments.constants import InstrumentBrand, InstrumentType
+from elims.modules.instruments import models
+from elims.modules.instruments.constants import InstrumentBrand, InstrumentType
 
 
 class TestInstrumentModel:

@@ -6,17 +6,17 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from loguru import logger
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from elims.api.db import get_session
-from elims.api.modules.instruments.exceptions import (
+from elims.db import get_session
+from elims.modules.instruments.exceptions import (
     InstrumentAlreadyExistError,
     InstrumentNotFoundError,
 )
-from elims.api.modules.instruments.schemas import (
+from elims.modules.instruments.schemas import (
     InstrumentCreate,
     InstrumentRead,
     InstrumentUpdate,
 )
-from elims.api.modules.instruments.services import InstrumentService
+from elims.modules.instruments.services import InstrumentService
 
 router_collection: APIRouter = APIRouter(prefix="/instruments", tags=["instruments"])
 router_resource: APIRouter = APIRouter(prefix="/instrument", tags=["instrument"])

@@ -2,7 +2,7 @@
 
 import pytest
 
-from elims.api.modules.locations.exceptions import LocationAlreadyExistError, LocationNotFoundError
+from elims.modules.locations.exceptions import LocationAlreadyExistError, LocationNotFoundError
 
 
 class TestLocationExceptions:

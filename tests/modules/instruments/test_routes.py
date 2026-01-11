@@ -9,18 +9,18 @@ import pytest
 from fastapi import HTTPException, status
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from elims.api.modules.instruments import routes
-from elims.api.modules.instruments.constants import InstrumentBrand, InstrumentType
-from elims.api.modules.instruments.exceptions import (
+from elims.modules.instruments import routes
+from elims.modules.instruments.constants import InstrumentBrand, InstrumentType
+from elims.modules.instruments.exceptions import (
     InstrumentAlreadyExistError,
     InstrumentNotFoundError,
 )
-from elims.api.modules.instruments.schemas import (
+from elims.modules.instruments.schemas import (
     InstrumentCreate,
     InstrumentRead,
     InstrumentUpdate,
 )
-from elims.api.modules.instruments.services import InstrumentService
+from elims.modules.instruments.services import InstrumentService
 
 # Constants for testing
 EXPECTED_INSTRUMENTS_COUNT = 3

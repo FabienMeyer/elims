@@ -11,13 +11,13 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from elims.api.modules.locations import schemas, services
-from elims.api.modules.locations.exceptions import (
+from elims.modules.locations import schemas, services
+from elims.modules.locations.exceptions import (
     LocationAlreadyExistError,
     LocationNotFoundError,
 )
-from elims.api.modules.locations.models import Location
-from elims.api.modules.locations.schemas import (
+from elims.modules.locations.models import Location
+from elims.modules.locations.schemas import (
     LocationCreate,
     LocationRead,
     LocationUpdate,

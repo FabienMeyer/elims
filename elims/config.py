@@ -19,6 +19,7 @@ class DbArchitecture(Enum):
     """Database architecture options."""
 
     SQLITE = "sqlite"
+    MARIADB = "mariadb"
 
 
 class Settings(BaseSettings):
@@ -32,6 +33,12 @@ class Settings(BaseSettings):
     sqlite_path: Path = Field(default=Path("app.db"), description="SQLite file path or ':memory:'")
     sqlite_check_same_thread: bool = Field(default=False, description="SQLite check same thread flag")
 
+    mariadb_host: str = Field(default="localhost", description="MariaDB host")
+    mariadb_port: int = Field(default=3306, description="MariaDB port")
+    mariadb_user: str = Field(default="elims", description="MariaDB user")
+    mariadb_password: str = Field(default="elims_password", description="MariaDB password")
+    mariadb_database: str = Field(default="elims", description="MariaDB database name")
+
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     @computed_field  # type: ignore[prop-decorator]
@@ -42,6 +49,8 @@ class Settings(BaseSettings):
             case DbArchitecture.SQLITE:
                 path = ":memory:" if str(self.sqlite_path) == ":memory:" else self.sqlite_path.as_posix()
                 return f"sqlite:///{path}"
+            case DbArchitecture.MARIADB:
+                return f"mysql://{self.mariadb_user}:{self.mariadb_password}@{self.mariadb_host}:{self.mariadb_port}/{self.mariadb_database}"
 
 
 # Create a single instance of your settings

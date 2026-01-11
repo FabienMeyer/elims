@@ -13,9 +13,9 @@ from sqlalchemy.pool import StaticPool
 from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from elims.api.modules.instruments.constants import InstrumentBrand, InstrumentType
-from elims.api.modules.instruments.schemas import InstrumentCreate
-from elims.api.modules.instruments.services import InstrumentService
+from elims.modules.instruments.constants import InstrumentBrand, InstrumentType
+from elims.modules.instruments.schemas import InstrumentCreate
+from elims.modules.instruments.services import InstrumentService
 
 
 @pytest_asyncio.fixture

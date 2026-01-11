@@ -3,7 +3,7 @@
 import pytest
 from pydantic import ValidationError
 
-from elims.api.modules.locations import models
+from elims.modules.locations import models
 
 
 class TestLocationModel:

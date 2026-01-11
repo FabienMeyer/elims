@@ -11,14 +11,14 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from elims.api.modules.instruments import schemas, services
-from elims.api.modules.instruments.constants import InstrumentBrand, InstrumentType
-from elims.api.modules.instruments.exceptions import (
+from elims.modules.instruments import schemas, services
+from elims.modules.instruments.constants import InstrumentBrand, InstrumentType
+from elims.modules.instruments.exceptions import (
     InstrumentAlreadyExistError,
     InstrumentNotFoundError,
 )
-from elims.api.modules.instruments.models import Instrument
-from elims.api.modules.instruments.schemas import (
+from elims.modules.instruments.models import Instrument
+from elims.modules.instruments.schemas import (
     InstrumentCreate,
     InstrumentRead,
     InstrumentUpdate,

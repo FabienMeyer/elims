@@ -9,17 +9,17 @@ import pytest
 from fastapi import HTTPException, status
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from elims.api.modules.locations import routes
-from elims.api.modules.locations.exceptions import (
+from elims.modules.locations import routes
+from elims.modules.locations.exceptions import (
     LocationAlreadyExistError,
     LocationNotFoundError,
 )
-from elims.api.modules.locations.schemas import (
+from elims.modules.locations.schemas import (
     LocationCreate,
     LocationRead,
     LocationUpdate,
 )
-from elims.api.modules.locations.services import LocationService
+from elims.modules.locations.services import LocationService
 
 # Constants for testing
 EXPECTED_LOCATIONS_COUNT = 3

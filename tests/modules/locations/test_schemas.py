@@ -6,7 +6,7 @@ This file contains tests for location API schemas.
 import pytest
 from pydantic import ValidationError
 
-from elims.api.modules.locations import schemas
+from elims.modules.locations import schemas
 
 
 class TestLocationBaseSchemas:

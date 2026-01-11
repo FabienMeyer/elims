@@ -13,8 +13,8 @@ from sqlalchemy.pool import StaticPool
 from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from elims.api.modules.locations.schemas import LocationCreate, LocationUpdate
-from elims.api.modules.locations.services import LocationService
+from elims.modules.locations.schemas import LocationCreate, LocationUpdate
+from elims.modules.locations.services import LocationService
 
 # Constants for testing
 EXPECTED_LOCATIONS_COUNT_IN_TEST = 2

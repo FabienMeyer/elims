@@ -7,8 +7,8 @@ More comprehensive schema validation tests can be added as needed.
 import pytest
 from pydantic import ValidationError
 
-from elims.api.modules.instruments import schemas
-from elims.api.modules.instruments.constants import InstrumentBrand, InstrumentType
+from elims.modules.instruments import schemas
+from elims.modules.instruments.constants import InstrumentBrand, InstrumentType
 
 
 class TestInstrumentBaseSchemas:

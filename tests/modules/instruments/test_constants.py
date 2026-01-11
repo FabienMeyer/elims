@@ -2,7 +2,7 @@
 
 import pytest
 
-from elims.api.modules.instruments.constants import InstrumentBrand, InstrumentType
+from elims.modules.instruments.constants import InstrumentBrand, InstrumentType
 
 
 class TestInstrumentBrand:

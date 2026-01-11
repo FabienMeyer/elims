@@ -176,10 +176,10 @@ nav:
   - Elims:
       - Home: index.md
       - API:
-          - API: api/api.md
-          - Database: api/db.md
-          - Logger: api/logger.md
-          - Routers: api/routers.md
+          - API: api.md
+          - Database: db.md
+          - Logger: logger.md
+          - Routers: routers.md
           - Modules:
               - Instruments: api/modules/instruments/instruments.md
               - Locations: api/modules/locations/locations.md

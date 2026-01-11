@@ -6,13 +6,13 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from loguru import logger
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from elims.api.db import get_session
-from elims.api.modules.locations.exceptions import (
+from elims.db import get_session
+from elims.modules.locations.exceptions import (
     LocationAlreadyExistError,
     LocationNotFoundError,
 )
-from elims.api.modules.locations.schemas import LocationCreate, LocationRead, LocationUpdate
-from elims.api.modules.locations.services import LocationService
+from elims.modules.locations.schemas import LocationCreate, LocationRead, LocationUpdate
+from elims.modules.locations.services import LocationService
 
 router_collection: APIRouter = APIRouter(prefix="/locations", tags=["locations"])
 router_resource: APIRouter = APIRouter(prefix="/location", tags=["location"])

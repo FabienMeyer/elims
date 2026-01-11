@@ -5,12 +5,12 @@ from sqlalchemy.exc import IntegrityError
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from elims.api.modules.locations.exceptions import (
+from elims.modules.locations.exceptions import (
     LocationAlreadyExistError,
     LocationNotFoundError,
 )
-from elims.api.modules.locations.models import Location
-from elims.api.modules.locations.schemas import LocationCreate, LocationRead, LocationUpdate
+from elims.modules.locations.models import Location
+from elims.modules.locations.schemas import LocationCreate, LocationRead, LocationUpdate
 
 
 class LocationService:
