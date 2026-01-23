@@ -24,7 +24,7 @@ jobs:
     if: github.repository_owner == github.event.repository.owner.login
     runs-on: ubuntu-latest
     steps:
-      - uses: tiangolo/issue-manager@0.5.1
+      - uses: tiangolo/issue-manager@0.6.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           config: >
