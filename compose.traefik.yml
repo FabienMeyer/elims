@@ -1,0 +1,54 @@
+services:
+  traefik:
+    image: traefik:3.6
+    container_name: elims-traefik-public
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8090:8080"  # Traefik dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik-certificates:/certificates
+    command:
+      # Enable Docker provider
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      # Entry points
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      # HTTP to HTTPS redirect
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      # Enable API and dashboard
+      - --api=true
+      - --api.dashboard=true
+      # Certificate resolver for Let's Encrypt
+      - --certificatesresolvers.letsencrypt.acme.email=${EMAIL?Variable not set}
+      - --certificatesresolvers.letsencrypt.acme.storage=/certificates/acme.json
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+      # Access logs
+      - --accesslog=true
+      - --log.level=INFO
+    labels:
+      # Enable Traefik for this service
+      - traefik.enable=true
+      # Traefik Dashboard
+      - traefik.http.routers.traefik-dashboard.rule=Host(`traefik.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.traefik-dashboard.entrypoints=websecure
+      - traefik.http.routers.traefik-dashboard.tls=true
+      - traefik.http.routers.traefik-dashboard.tls.certresolver=letsencrypt
+      - traefik.http.routers.traefik-dashboard.service=api@internal
+      # HTTP Basic Auth for dashboard
+      - traefik.http.routers.traefik-dashboard.middlewares=traefik-auth
+      - traefik.http.middlewares.traefik-auth.basicauth.users=${HASHED_PASSWORD?Variable not set}
+    networks:
+      - traefik-public
+
+networks:
+  traefik-public:
+    external: true
+
+volumes:
+  traefik-certificates:
+    driver: local

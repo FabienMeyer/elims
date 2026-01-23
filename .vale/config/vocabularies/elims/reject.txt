@@ -1,4 +1,0 @@
-# Add terms you want to reject/avoid here
-# Example:
-# oldterm
-# deprecated-word

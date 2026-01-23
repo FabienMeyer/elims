@@ -7,9 +7,10 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
-        exclude: ^mkdocs\.yml$
+        exclude: ^(mkdocs\.yml|\.github/(ISSUE_TEMPLATE|DISCUSSION_TEMPLATE)/.*)$
       - id: check-toml
       - id: check-json
+        exclude: ^frontend/tsconfig.*\.json$
       - id: check-added-large-files
         args: ['--maxkb=5000']  # Allow up to 5MB for docs assets
       - id: check-case-conflict
@@ -29,18 +30,25 @@ repos:
         args: [--fix]
 
   # Python type checking (uses [tool.mypy] from pyproject.toml)
-  # Aligned with CI: uv run mypy elims/ tests/
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.13.0
-    hooks:
-      - id: mypy
-        additional_dependencies:
-          - pydantic
-          - sqlmodel
-          - pytest
-          - pytest-asyncio
-          - fastapi
-          - sqlalchemy
+  # Note: Disabled in pre-commit due to workspace structure complexity
+  # Run manually with: uv run mypy backend/
+  # - repo: https://github.com/pre-commit/mirrors-mypy
+  #   rev: v1.13.0
+  #   hooks:
+  #     - id: mypy
+  #       files: ^backend/
+  #       args: [--explicit-package-bases]
+  #       additional_dependencies:
+  #         - pydantic>=2.0
+  #         - pydantic-settings>=2.0
+  #         - sqlmodel
+  #         - pytest
+  #         - pytest-asyncio
+  #         - fastapi
+  #         - sqlalchemy
+  #         - loguru
+  #         - alembic
+  #         - httpx
 
   # Markdown formatting (uses [tool.mdformat] from pyproject.toml)
   - repo: https://github.com/executablebooks/mdformat

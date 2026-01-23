@@ -1,0 +1,73 @@
+name: Deploy to Production
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    # Use a specific runner with the 'production' label
+    # You need to configure this in your GitHub Actions settings
+    # runs-on: [self-hosted, production]
+
+    environment:
+      name: production
+      url: https://dashboard.${{ secrets.DOMAIN_PRODUCTION }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Create .env file
+        run: |
+          cat << EOF > .env
+          # Database
+          MARIADB_ROOT_PASSWORD=${{ secrets.MARIADB_ROOT_PASSWORD }}
+          MARIADB_DATABASE=${{ secrets.MARIADB_DATABASE }}
+          MARIADB_USER=${{ secrets.MARIADB_USER }}
+          MARIADB_PASSWORD=${{ secrets.MARIADB_PASSWORD }}
+          MARIADB_HOST=mariadb
+          MARIADB_PORT=3306
+
+          # Redis
+          REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
+          REDIS_HOST=redis
+          REDIS_PORT=6379
+
+          # MQTT
+          MQTT_HOST=mosquitto
+          MQTT_PORT=1883
+          MQTT_USERNAME=${{ secrets.MQTT_USERNAME }}
+          MQTT_PASSWORD=${{ secrets.MQTT_PASSWORD }}
+
+          # Backend
+          BACKEND_SECRET_KEY=${{ secrets.BACKEND_SECRET_KEY }}
+          BACKEND_ALGORITHM=HS256
+          BACKEND_ACCESS_TOKEN_EXPIRE_MINUTES=60
+          BACKEND_CORS_ORIGINS=https://dashboard.${{ secrets.DOMAIN_PRODUCTION }},https://api.${{ secrets.DOMAIN_PRODUCTION }}
+          ENVIRONMENT=production
+
+          # Grafana
+          GRAFANA_ADMIN_USER=${{ secrets.GRAFANA_ADMIN_USER }}
+          GRAFANA_ADMIN_PASSWORD=${{ secrets.GRAFANA_ADMIN_PASSWORD }}
+
+          # Docker
+          DOMAIN=${{ secrets.DOMAIN_PRODUCTION }}
+          STACK_NAME=${{ secrets.STACK_NAME_PRODUCTION }}
+          EOF
+
+      - name: Build and deploy with Docker Compose
+        run: |
+          docker compose -f compose.yml build
+          docker compose -f compose.yml up -d
+
+      - name: Wait for services to be ready
+        run: |
+          sleep 30
+          docker compose ps
+
+      - name: Check deployment health
+        run: |
+          curl -f https://api.${{ secrets.DOMAIN_PRODUCTION }}/health || exit 1

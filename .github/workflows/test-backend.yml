@@ -1,0 +1,75 @@
+name: Test Backend
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: Install Dependencies
+        working-directory: ./backend
+        run: uv sync
+
+      - name: Lint
+        working-directory: ./backend
+        run: |
+          uv run mypy app
+          uv run ruff check app
+          uv run ruff format app --check
+
+      - name: Run tests
+        working-directory: ./backend
+        run: |
+          uv run coverage run -m pytest tests/
+          uv run coverage report
+          uv run coverage html --title "Backend Coverage"
+
+      - name: Store coverage files
+        uses: actions/upload-artifact@v6
+        with:
+          name: coverage-html
+          path: backend/htmlcov
+          include-hidden-files: true
+
+  # Coverage reporting with Smokeshow (optional)
+  coverage:
+    needs: test
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/download-artifact@v7
+        id: download
+        with:
+          name: coverage-html
+          path: backend/htmlcov
+
+      - name: Smokeshow
+        if: ${{ hashFiles('backend/htmlcov') != '' }}
+        uses: samuelcolvin/smokeshow-action@v1
+        with:
+          coverage-dir: backend/htmlcov

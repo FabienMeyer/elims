@@ -1,0 +1,40 @@
+name: Issue Manager
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  issue_comment:
+    types:
+      - created
+      - edited
+  issues:
+    types:
+      - labeled
+  pull_request_target:
+    types:
+      - labeled
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  issue-manager:
+    if: github.repository_owner == github.event.repository.owner.login
+    runs-on: ubuntu-latest
+    steps:
+      - uses: tiangolo/issue-manager@0.5.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          config: >
+            {
+              "answered": {
+                "delay": 864000,
+                "message": "Assuming the original issue was resolved, this will be automatically closed now. But feel free to add more comments or create new issues or PRs."
+              },
+              "waiting": {
+                "delay": 2628000,
+                "message": "As this issue has been waiting for the original author for a while, it's going to be closed. But feel free to add more comments or create new issues or PRs."
+              }
+            }

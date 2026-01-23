@@ -173,8 +173,10 @@ copyright: >
   <a href="license/">MIT License</a> ·
   This site respects your privacy - no cookies, no tracking, no analytics
 nav:
-  - Elims:
-      - Home: index.md
+  - Home: index.md
+
+  - Backend:
+      - Overview: backend/index.md
       - API:
           - API: api.md
           - Database: db.md
@@ -183,7 +185,28 @@ nav:
           - Modules:
               - Instruments: api/modules/instruments/instruments.md
               - Locations: api/modules/locations/locations.md
+
+  - Frontend:
+      - Overview: frontend/index.md
+
+  - Packages:
+      - ELIMS Common: packages/elims-common/index.md
+      - ELIMS Raspberry: packages/elims-raspberry/index.md
+
+  - Workflows:
+      - CI/CD Overview: workflows/index.md
+      - Testing:
+          - Backend Tests: workflows/test-backend.md
+          - Frontend Tests: workflows/test-frontend.md
+      - Deployment: workflows/deployment.md
+      - Automation: workflows/automation.md
+      - Documentation: workflows/documentation.md
+
+  - Development:
       - Contributing: contributing.md
+      - Release Notes: release-notes.md
+
+  - About:
       - Code of Conduct: code_of_conduct.md
       - License: license.md
       - Privacy: privacy.md

@@ -1,0 +1,84 @@
+name: Test Docker Compose
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Create .env file
+        run: |
+          cat << EOF > .env
+          # Database
+          MARIADB_ROOT_PASSWORD=testpassword
+          MARIADB_DATABASE=elims_test
+          MARIADB_USER=elims
+          MARIADB_PASSWORD=testpassword
+          MARIADB_HOST=mariadb
+          MARIADB_PORT=3306
+
+          # Redis
+          REDIS_PASSWORD=testpassword
+          REDIS_HOST=redis
+          REDIS_PORT=6379
+
+          # MQTT
+          MQTT_HOST=mosquitto
+          MQTT_PORT=1883
+          MQTT_USERNAME=elims
+          MQTT_PASSWORD=testpassword
+
+          # Backend
+          BACKEND_SECRET_KEY=testsecretkey123456789
+          BACKEND_ALGORITHM=HS256
+          BACKEND_ACCESS_TOKEN_EXPIRE_MINUTES=60
+          BACKEND_CORS_ORIGINS=http://localhost:5173,http://localhost:3000
+          ENVIRONMENT=test
+
+          # Grafana
+          GRAFANA_ADMIN_USER=admin
+          GRAFANA_ADMIN_PASSWORD=testpassword
+
+          # Docker
+          DOMAIN=localhost
+          STACK_NAME=elims-test
+          EOF
+
+      - name: Build Docker Compose
+        run: docker compose build
+
+      - name: Start Docker Compose
+        run: docker compose up -d
+
+      - name: Wait for services to be healthy
+        run: |
+          timeout 120 bash -c 'until docker compose ps | grep -q "healthy"; do sleep 2; done'
+
+      - name: Check backend health
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:8000/health; do sleep 2; done'
+
+      - name: Check frontend health
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:5173/; do sleep 2; done'
+
+      - name: Show logs on failure
+        if: failure()
+        run: docker compose logs
+
+      - name: Cleanup
+        if: always()
+        run: docker compose down -v

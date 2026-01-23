@@ -1,0 +1,8 @@
+{% for section in sections %}
+### {{ section.label }}
+
+{% for pr in section.prs %}
+* {{ pr.title }}. PR [#{{ pr.number }}]({{ pr.url }}) by [@{{ pr.author_login }}]({{ pr.author_url }}).
+{% endfor %}
+
+{% endfor %}

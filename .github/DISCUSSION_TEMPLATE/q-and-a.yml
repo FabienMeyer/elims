@@ -1,0 +1,37 @@
+---
+name: Q&A
+about: Ask questions about using ELIMS
+---
+
+## Question
+
+<!-- What do you want to know? -->
+
+## What I'm Trying to Accomplish
+
+<!-- Describe your goal -->
+
+## What I've Tried
+
+<!-- What have you already attempted? -->
+
+## Environment
+
+<!-- If relevant, share your setup -->
+
+- OS:
+- Python Version:
+- ELIMS Version:
+- Installation: Docker / Local / Other
+
+## Additional Context
+
+<!-- Any code, logs, or screenshots that might help -->
+
+```python
+# Relevant code
+```
+
+---
+
+**Tip**: Search existing Q&A discussions first - your question might already be answered!

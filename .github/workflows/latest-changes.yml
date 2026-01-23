@@ -1,0 +1,50 @@
+name: Latest Changes
+
+on:
+  pull_request_target:
+    branches:
+      - main
+      - master
+    types:
+      - closed
+  workflow_dispatch:
+    inputs:
+      number:
+        description: PR number
+        required: true
+      debug_enabled:
+        description: 'Run with tmate.io debugging enabled'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  latest-changes:
+    if: github.repository_owner == github.event.repository.owner.login
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.LATEST_CHANGES || secrets.GITHUB_TOKEN }}
+      - uses: docker://tiangolo/latest-changes:0.3.2
+        with:
+          token: ${{ secrets.LATEST_CHANGES || secrets.GITHUB_TOKEN }}
+          latest_changes_file: docs/release-notes.md
+          latest_changes_header: '## Latest Changes\n\n'
+          template_file: .github/latest-changes-template.jinja2
+          end_regex: '^## '
+          labels: >
+            [
+              {"label": "breaking", "header": "Breaking Changes"},
+              {"label": "security", "header": "Security Fixes"},
+              {"label": "feature", "header": "Features"},
+              {"label": "bug", "header": "Fixes"},
+              {"label": "refactor", "header": "Refactors"},
+              {"label": "upgrade", "header": "Upgrades"},
+              {"label": "docs", "header": "Docs"},
+              {"label": "lang-all", "header": "Translations"},
+              {"label": "internal", "header": "Internal"}
+            ]
