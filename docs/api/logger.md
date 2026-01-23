@@ -1,3 +1,0 @@
-# Logger
-
-::: elims.api.logger
