@@ -1,6 +1,6 @@
 # Privacy
 
-_Last updated: August 5, 2025_
+_Last updated: January 23, 2026_
 
 This website, [Elims Documentation](https://fabienmeyer.github.io/elims/), provides a static site generated using [MkDocs](https://www.mkdocs.org/) and [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/). GitHub Pages hosts and publishes the site.
 

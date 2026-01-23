@@ -1,0 +1,71 @@
+name: ELIMS Backend
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend.yml'
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend.yml'
+
+jobs:
+  elims-backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      # Setup
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: Install Dependencies
+        working-directory: ./backend
+        run: uv sync --extra dev
+
+      # Linting
+      - name: Run ruff check
+        working-directory: ./backend
+        run: uv run ruff check app
+
+      - name: Run ruff formatter
+        working-directory: ./backend
+        run: uv run ruff format app --check
+
+      # Type checking
+      - name: Run mypy
+        working-directory: ./backend
+        run: uv run mypy app --explicit-package-bases
+
+      # Testing
+      - name: Run pytest
+        working-directory: ./backend
+        env:
+          DB_ARCHITECTURE: sqlite
+          SQLITE_PATH: ":memory:"
+        run: uv run pytest tests/ --cov=app --cov-report=term-missing --cov-report=html
+
+      # Artifacts
+      - name: Store coverage files
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: coverage-html
+          path: backend/htmlcov
+          include-hidden-files: true

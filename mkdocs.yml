@@ -173,16 +173,19 @@ copyright: >
   <a href="license/">MIT License</a> ·
   This site respects your privacy - no cookies, no tracking, no analytics
 nav:
-  - Elims:
-      - Home: index.md
-      - API:
-          - API: api.md
-          - Database: db.md
-          - Logger: logger.md
-          - Routers: routers.md
-          - Modules:
-              - Instruments: api/modules/instruments/instruments.md
-              - Locations: api/modules/locations/locations.md
+  - Home: index.md
+
+  - Backend:
+      - Overview: backend/index.md
+
+  - Frontend:
+      - Overview: frontend/index.md
+
+  - Packages:
+      - ELIMS Common: packages/elims-common/index.md
+      - ELIMS Raspberry: packages/elims-raspberry/index.md
+
+  - About:
       - Contributing: contributing.md
       - Code of Conduct: code_of_conduct.md
       - License: license.md
