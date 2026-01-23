@@ -1,0 +1,71 @@
+---
+name: Documentation Improvement
+about: Suggest improvements or report issues with documentation
+title: '[Docs]: '
+labels: ['docs']
+assignees: []
+---
+
+## Documentation Issue
+
+<!-- A clear description of what documentation needs improvement -->
+
+## Location
+
+<!-- Where in the documentation is this issue? -->
+
+- **URL**: https://fabienmeyer.github.io/elims/...
+- **File**: docs/...
+- **Section**:
+
+## What's Wrong?
+
+<!-- What's missing, unclear, incorrect, or outdated? -->
+
+## Suggested Improvement
+
+<!-- How should the documentation be improved? -->
+
+## Proposed Content
+
+<!-- If you have specific content suggestions, provide them here -->
+
+```markdown
+<!-- Your suggested documentation content -->
+```
+
+## Why This Matters
+
+<!-- Who would benefit from this improvement and how? -->
+
+## Screenshots
+
+<!-- If applicable, add screenshots to help explain the issue -->
+
+## Related Documentation
+
+<!-- Link to related docs that might be helpful -->
+
+- Related page:
+- Similar example:
+
+## Impact
+
+<!-- How critical is this documentation issue? -->
+
+- [ ] Critical - Incorrect information that could cause problems
+- [ ] High - Important information is missing
+- [ ] Medium - Could be clearer or more complete
+- [ ] Low - Minor improvement or typo
+
+## Contribution
+
+<!-- Are you willing to help improve this documentation? -->
+
+- [ ] I can submit a PR to fix this
+- [ ] I can provide more details if needed
+- [ ] I prefer someone else handles this
+
+## Additional Context
+
+<!-- Add any other context about the documentation issue here -->

@@ -1,0 +1,68 @@
+name: ELIMS Documentation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+      - 'mkdocs.yml'
+      - '.github/workflows/deploy-docs.yml'
+  release:
+    types:
+      - published
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  elims-documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # Fetch all history for versioning
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: Install Dependencies
+        run: uv sync --group docs
+
+      - name: Configure Git
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email github-actions[bot]@users.noreply.github.com
+
+      - name: Deploy development docs (from main/master)
+        if: github.event_name == 'push'
+        run: |
+          uv run mike deploy --push --update-aliases dev latest
+          uv run mike set-default --push latest
+
+      - name: Deploy release docs (from release tag)
+        if: github.event_name == 'release'
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          uv run mike deploy --push --update-aliases $VERSION stable
+          uv run mike set-default --push stable
+
+      - name: Deploy manual docs (workflow_dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          uv run mike deploy --push dev

@@ -1,0 +1,73 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+      target: development
+    volumes:
+      - ./backend:/app/backend:rw
+    command: ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    ports:
+      - "8000:8000"
+    networks:
+      - elims-network
+    labels: []
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+      target: development
+    volumes:
+      - ./frontend:/app:rw
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    networks:
+      - elims-network
+    labels: []
+
+  # Development: Expose ports for debugging/access
+  mariadb:
+    ports:
+      - "3306:3306"
+
+  redis:
+    ports:
+      - "6379:6379"
+
+  adminer:
+    ports:
+      - "8081:8080"
+    labels: []  # Disable Traefik in dev, use direct port
+    networks:
+      - elims-network
+
+  grafana:
+    ports:
+      - "3000:3000"
+    labels: []  # Disable Traefik in dev, use direct port
+    networks:
+      - elims-network
+
+  loki:
+    ports:
+      - "3100:3100"
+
+  # Development: Mailcatcher for email testing
+  mailcatcher:
+    image: sj26/mailcatcher:latest
+    container_name: elims-mailcatcher
+    restart: unless-stopped
+    ports:
+      - "1080:1080"  # Web interface
+      - "1025:1025"  # SMTP server
+    networks:
+      - elims-network
+    labels: []
+
+networks:
+  traefik-public:
+    external: false

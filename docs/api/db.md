@@ -1,3 +1,0 @@
-# Database
-
-::: elims.api.db

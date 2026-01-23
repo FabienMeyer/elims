@@ -1,0 +1,80 @@
+name: ELIMS Common
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/elims-common/**'
+      - '.github/workflows/elims-common.yml'
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    paths:
+      - 'packages/elims-common/**'
+      - '.github/workflows/elims-common.yml'
+
+jobs:
+  elims-common:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      # Setup
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: Install Dependencies
+        working-directory: ./packages/elims-common
+        run: uv sync --extra dev
+
+      # Linting
+      - name: Run ruff check
+        working-directory: ./packages/elims-common
+        run: uv run ruff check elims_common
+
+      - name: Run ruff formatter
+        working-directory: ./packages/elims-common
+        run: uv run ruff format elims_common --check
+
+      # Type checking
+      - name: Run mypy
+        working-directory: ./packages/elims-common
+        run: uv run mypy elims_common --explicit-package-bases
+
+      # Testing
+      - name: Run pytest
+        working-directory: ./packages/elims-common
+        run: uv run pytest tests/ --cov=elims_common --cov-report=term-missing --cov-report=html
+
+      # Build
+      - name: Build package
+        working-directory: ./packages/elims-common
+        run: uv build
+
+      # Artifacts
+      - name: Store coverage files
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: coverage-html-elims-common
+          path: packages/elims-common/htmlcov
+          include-hidden-files: true
+
+      - name: Store build artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: dist-elims-common
+          path: packages/elims-common/dist/

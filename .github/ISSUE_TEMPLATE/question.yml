@@ -1,0 +1,58 @@
+---
+name: Question
+about: Ask a question about using ELIMS
+title: '[Question]: '
+labels: ['question']
+assignees: []
+---
+
+## Question
+
+<!-- Ask your question clearly and concisely -->
+
+## What I'm Trying to Do
+
+<!-- Describe what you're trying to achieve -->
+
+## What I've Tried
+
+<!-- Describe what you've already attempted -->
+
+1.
+2.
+3.
+
+## Documentation Checked
+
+<!-- Let us know which docs you've already looked at -->
+
+- [ ] [Getting Started Guide](https://fabienmeyer.github.io/elims/)
+- [ ] [API Documentation](https://fabienmeyer.github.io/elims/api/)
+- [ ] [CI/CD Documentation](https://fabienmeyer.github.io/elims/ci-cd/)
+- [ ] [Contributing Guide](https://fabienmeyer.github.io/elims/contributing/)
+- [ ] Other:
+
+## Environment
+
+<!-- If relevant, provide environment details -->
+
+- **OS**:
+- **Python Version**:
+- **ELIMS Version**:
+- **Installation Method**: Docker Compose / Local / Other
+
+## Additional Context
+
+<!-- Add any other context, code snippets, or screenshots that might help -->
+
+```python
+# Relevant code here
+```
+
+## Expected Outcome
+
+<!-- What do you hope to accomplish once you have the answer? -->
+
+---
+
+**Note**: For general discussions, feature ideas, or showing your work, consider starting a [Discussion](https://github.com/FabienMeyer/elims/discussions) instead!
