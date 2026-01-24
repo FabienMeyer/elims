@@ -40,28 +40,4 @@
          <loc>https://fabienmeyer.github.io/elims/dev/packages/elims-raspberry/</loc>
          <lastmod>2026-01-24</lastmod>
     </url>
-    <url>
-         <loc>https://fabienmeyer.github.io/elims/dev/workflows/</loc>
-         <lastmod>2026-01-24</lastmod>
-    </url>
-    <url>
-         <loc>https://fabienmeyer.github.io/elims/dev/workflows/automation/</loc>
-         <lastmod>2026-01-24</lastmod>
-    </url>
-    <url>
-         <loc>https://fabienmeyer.github.io/elims/dev/workflows/deployment/</loc>
-         <lastmod>2026-01-24</lastmod>
-    </url>
-    <url>
-         <loc>https://fabienmeyer.github.io/elims/dev/workflows/documentation/</loc>
-         <lastmod>2026-01-24</lastmod>
-    </url>
-    <url>
-         <loc>https://fabienmeyer.github.io/elims/dev/workflows/test-backend/</loc>
-         <lastmod>2026-01-24</lastmod>
-    </url>
-    <url>
-         <loc>https://fabienmeyer.github.io/elims/dev/workflows/test-frontend/</loc>
-         <lastmod>2026-01-24</lastmod>
-    </url>
 </urlset>
