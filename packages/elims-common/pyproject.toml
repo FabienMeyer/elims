@@ -21,6 +21,7 @@ classifiers = [
 dependencies = [
     "pydantic>=2.0.0",
     "pydantic-settings>=2.0.0",
+    "paho-mqtt>=2.0.0",
 ]
 
 [project.optional-dependencies]
@@ -40,4 +41,9 @@ build-backend = "hatchling.build"
 packages = ["elims_common"]
 
 [tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
 addopts = "-v --cov=elims_common --cov-report=term-missing"
+asyncio_mode = "auto"

@@ -1,0 +1,34 @@
+backend:
+  - changed-files:
+      - any-glob-to-any-file: "backend/**"
+
+frontend:
+  - changed-files:
+      - any-glob-to-any-file: "frontend/**"
+
+docs:
+  - changed-files:
+      - any-glob-to-any-file: "docs/**"
+      - any-glob-to-any-file: "*.md"
+
+docker:
+  - changed-files:
+      - any-glob-to-any-file: "**/Dockerfile*"
+      - any-glob-to-any-file: "compose*.yml"
+      - any-glob-to-any-file: ".dockerignore"
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file: ".github/**"
+
+config:
+  - changed-files:
+      - any-glob-to-any-file: "config/**"
+      - any-glob-to-any-file: "*.toml"
+      - any-glob-to-any-file: "*.json"
+
+tests:
+  - changed-files:
+      - any-glob-to-any-file: "**/tests/**"
+      - any-glob-to-any-file: "**/*.spec.ts"
+      - any-glob-to-any-file: "**/*.test.py"

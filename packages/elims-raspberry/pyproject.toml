@@ -40,4 +40,9 @@ build-backend = "hatchling.build"
 packages = ["elims_raspberry"]
 
 [tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
 addopts = "-v --cov=elims_raspberry --cov-report=term-missing"
+asyncio_mode = "auto"
