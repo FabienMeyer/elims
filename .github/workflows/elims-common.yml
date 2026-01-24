@@ -42,16 +42,16 @@ jobs:
       # Linting
       - name: Run ruff check
         working-directory: ./packages/elims-common
-        run: uv run ruff check elims_common
+        run: uv run ruff check elims_common --config ../../pyproject.toml
 
       - name: Run ruff formatter
         working-directory: ./packages/elims-common
-        run: uv run ruff format elims_common --check
+        run: uv run ruff format elims_common --check --config ../../pyproject.toml
 
       # Type checking
       - name: Run mypy
         working-directory: ./packages/elims-common
-        run: uv run mypy elims_common --explicit-package-bases
+        run: uv run mypy elims_common --explicit-package-bases --config-file ../../pyproject.toml
 
       # Testing
       - name: Run pytest

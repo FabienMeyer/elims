@@ -42,16 +42,16 @@ jobs:
       # Linting
       - name: Run ruff check
         working-directory: ./packages/elims-raspberry
-        run: uv run ruff check elims_raspberry
+        run: uv run ruff check elims_raspberry --config ../../pyproject.toml
 
       - name: Run ruff formatter
         working-directory: ./packages/elims-raspberry
-        run: uv run ruff format elims_raspberry --check
+        run: uv run ruff format elims_raspberry --check --config ../../pyproject.toml
 
       # Type checking
       - name: Run mypy
         working-directory: ./packages/elims-raspberry
-        run: uv run mypy elims_raspberry --explicit-package-bases
+        run: uv run mypy elims_raspberry --explicit-package-bases --config-file ../../pyproject.toml
 
       # Testing
       - name: Run pytest

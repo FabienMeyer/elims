@@ -42,16 +42,16 @@ jobs:
       # Linting
       - name: Run ruff check
         working-directory: ./backend
-        run: uv run ruff check app
+        run: uv run ruff check app --config ../pyproject.toml
 
       - name: Run ruff formatter
         working-directory: ./backend
-        run: uv run ruff format app --check
+        run: uv run ruff format app --check --config ../pyproject.toml
 
       # Type checking
       - name: Run mypy
         working-directory: ./backend
-        run: uv run mypy app --explicit-package-bases
+        run: uv run mypy app --explicit-package-bases --config-file ../pyproject.toml
 
       # Testing
       - name: Run pytest

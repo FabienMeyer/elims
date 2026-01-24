@@ -47,6 +47,16 @@ ignore = [
     "S101",   # Use of assert detected. Need to allow assert statements in tests
 ]
 
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**/*.py" = [
+    "ANN401",  # Allow typing.Any in tests for mocks
+    "PT019",   # Allow pytest fixtures as function arguments (needed for @patch decorator)
+]
+"packages/**/tests/**/*.py" = [
+    "ANN401",  # Allow typing.Any in tests for mocks
+    "PT019",   # Allow pytest fixtures as function arguments (needed for @patch decorator)
+]
+
 [tool.mypy]
 python_version = "3.13"
 strict = true
@@ -57,14 +67,6 @@ pretty = true
 plugins = ["pydantic.mypy"]
 namespace_packages = true
 explicit_package_bases = true
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = ["test_*.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
-addopts = "-v --cov-report=term-missing"
-asyncio_mode = "auto"
 
 [tool.mdformat]
 wrap = 80

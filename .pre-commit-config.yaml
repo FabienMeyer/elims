@@ -25,9 +25,10 @@ repos:
     hooks:
       # Run formatter check (same as CI: ruff format --check)
       - id: ruff-format
+        args: [--config, pyproject.toml]
       # Run the linter (same as CI: ruff check)
       - id: ruff
-        args: [--fix]
+        args: [--fix, --config, pyproject.toml]
 
   # Python type checking (uses [tool.mypy] from pyproject.toml)
   # Note: Disabled in pre-commit due to workspace structure complexity
