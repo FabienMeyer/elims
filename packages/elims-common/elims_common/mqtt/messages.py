@@ -43,19 +43,21 @@ class MQTTLogMessages:
 
     # Publish messages
     @staticmethod
-    def published(topic: str, mid: int) -> str:
+    def published(topic: str, mid: int | str) -> str:
         """Generate message published log message."""
         return f"Message published to {topic} (mid: {mid})"
 
     @staticmethod
     def publishing(topic: str, payload: str | bytes) -> str:
         """Generate publishing log message."""
-        return f"Publishing to {topic}: {payload}"
+        return f"Publishing to {topic}: {payload!r}"
 
     # Subscribe messages
     @staticmethod
-    def subscribed(topic: str) -> str:
+    def subscribed(topic: str, qos: int | None = None) -> str:
         """Generate subscribed log message."""
+        if qos is not None:
+            return f"Subscribed to {topic} (QoS: {qos})"
         return f"Subscribed to {topic}"
 
     @staticmethod
@@ -75,6 +77,8 @@ class MQTTLogMessages:
         return f"Received message on {topic}: {payload}"
 
     @staticmethod
-    def callback_error(topic: str) -> str:
+    def callback_error(topic: str, error: Exception | None = None) -> str:
         """Generate callback error log message."""
+        if error:
+            return f"Error in callback for {topic}: {error}"
         return f"Error in callback for {topic}"

@@ -7,8 +7,8 @@ from threading import Event
 import paho.mqtt.client as mqtt
 
 from elims_common.logger.logger import logger
-from elims_common.mqtt.codes import MQTTConnectionFlags, MQTTReturnCode, TLSVersion
 from elims_common.mqtt.config import MQTTConfig
+from elims_common.mqtt.constants import MQTTConnectionFlags, MQTTReturnCode, MQTTTLSVersion
 from elims_common.mqtt.exceptions import MQTTConnectionError
 from elims_common.mqtt.messages import MQTTLogMessages
 from elims_common.mqtt.utils import MQTTUtils
@@ -40,17 +40,17 @@ class MQTTSubscriber:
 
             # Set TLS version
             if config.tls_version:
-                tls_context.minimum_version = ssl.TLSVersion.TLSv1_3 if config.tls_version == TLSVersion.TLSv1_3 else ssl.TLSVersion.TLSv1_2
+                tls_context.minimum_version = ssl.TLSVersion.TLSv1_3 if config.tls_version == MQTTTLSVersion.V1_3 else ssl.TLSVersion.TLSv1_2
 
             # Load CA certificates
-            if config.ca_certs:
-                tls_context.load_verify_locations(cafile=str(config.ca_certs))
+            if config.certificate_authority_file:
+                tls_context.load_verify_locations(cafile=str(config.certificate_authority_file))
             else:
                 tls_context.load_default_certs()
 
             # Load client certificate and key if provided
-            if config.certfile and config.keyfile:
-                tls_context.load_cert_chain(certfile=str(config.certfile), keyfile=str(config.keyfile))
+            if config.certificate_file and config.key_file:
+                tls_context.load_cert_chain(certfile=str(config.certificate_file), keyfile=str(config.key_file))
 
             # Configure certificate verification
             if config.tls_insecure:
@@ -75,7 +75,7 @@ class MQTTSubscriber:
         self._should_reconnect = False
         self._subscriptions: dict[str, list[Callable[[str, str], None]]] = {}
 
-    def _on_connect(self, _client: mqtt.Client, _userdata: object, flags: dict, rc: int) -> None:
+    def _on_connect(self, _client: mqtt.Client | None, _userdata: object, flags: dict[str, object], rc: int) -> None:
         """Handle connection callback when client connects to broker.
 
         Args:
@@ -90,7 +90,7 @@ class MQTTSubscriber:
         if rc == MQTTReturnCode.SUCCESS:
             self._connected = True
             self._connection_error = None
-            logger.info(MQTTLogMessages.connected("Subscriber", connection_flags.session_present))
+            logger.info(MQTTLogMessages.connected("Subscriber", session_present=connection_flags.session_present))
             for topic in self._subscriptions:
                 self._client.subscribe(topic, qos=self.config.qos)
                 logger.info(MQTTLogMessages.resubscribed(topic))
@@ -104,7 +104,7 @@ class MQTTSubscriber:
         # Signal that connection attempt is complete
         self._connect_event.set()
 
-    def _on_disconnect(self, _client: mqtt.Client, _userdata: object, rc: int) -> None:
+    def _on_disconnect(self, _client: mqtt.Client | None, _userdata: object, rc: int) -> None:
         """Handle disconnection callback when client disconnects from broker.
 
         Args:
@@ -125,7 +125,7 @@ class MQTTSubscriber:
             if self.config.reconnect_on_failure and self._should_reconnect:
                 if self.config.max_reconnect_attempts == -1 or self._reconnect_attempts < self.config.max_reconnect_attempts:
                     self._reconnect_attempts += 1
-                    logger.info(f"Subscriber attempting reconnection {self._reconnect_attempts} " f"in {self.config.reconnect_delay} seconds")
+                    logger.info(f"Subscriber attempting reconnection {self._reconnect_attempts} in {self.config.reconnect_delay} seconds")
                     # Note: paho-mqtt will handle reconnection with reconnect_delay_set
                 else:
                     logger.error(f"Subscriber max reconnection attempts ({self.config.max_reconnect_attempts}) reached")
@@ -135,7 +135,7 @@ class MQTTSubscriber:
             if was_connected:
                 logger.info(MQTTLogMessages.disconnected("Subscriber"))
 
-    def _on_message(self, _client: mqtt.Client, _userdata: object, msg: mqtt.MQTTMessage) -> None:
+    def _on_message(self, _client: mqtt.Client | None, _userdata: object, msg: mqtt.MQTTMessage) -> None:
         """Handle message callback when message is received."""
         topic = msg.topic
         payload = msg.payload.decode("utf-8")

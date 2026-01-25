@@ -88,7 +88,7 @@ def test_resubscribed_message() -> None:
     """Test resubscribed log message."""
     msg = MQTTLogMessages.resubscribed("sensor/#")
     assert "sensor/#" in msg
-    assert "resubscrib" in msg.lower()
+    assert "re-subscribed" in msg.lower()
 
 
 def test_unsubscribed_message() -> None:

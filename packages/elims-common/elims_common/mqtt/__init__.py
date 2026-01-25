@@ -1,17 +1,12 @@
 """ELIMS Common Package - MQTT Module."""
 
-from elims_common.mqtt.codes import MQTTConnectionFlags, MQTTReturnCode, TLSVersion
 from elims_common.mqtt.config import MQTTConfig
+from elims_common.mqtt.constants import MQTTConnectionFlags, MQTTReturnCode, MQTTTLSVersion
 from elims_common.mqtt.exceptions import (
     MQTTConnectionError,
     MQTTError,
     MQTTPublishError,
     MQTTSubscribeError,
-)
-from elims_common.mqtt.pool import (
-    MQTTConnectionPool,
-    MQTTPublisherPool,
-    MQTTSubscriberPool,
 )
 from elims_common.mqtt.publisher import MQTTPublisher
 from elims_common.mqtt.subscriber import MQTTSubscriber
@@ -23,15 +18,12 @@ __all__ = [
     "MQTTConfig",
     "MQTTConnectionError",
     "MQTTConnectionFlags",
-    "MQTTConnectionPool",
     "MQTTError",
     "MQTTPublishError",
     "MQTTPublisher",
-    "MQTTPublisherPool",
     "MQTTReturnCode",
     "MQTTSubscribeError",
     "MQTTSubscriber",
-    "MQTTSubscriberPool",
+    "MQTTTLSVersion",
     "MQTTUtils",
-    "TLSVersion",
 ]

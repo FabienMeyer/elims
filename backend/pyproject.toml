@@ -50,10 +50,6 @@ packages = ["app"]
 [tool.hatch.metadata]
 allow-direct-references = true
 
-[[tool.mypy.overrides]]
-module = ["elims.config"]
-disallow_subclassing_any = false
-
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]

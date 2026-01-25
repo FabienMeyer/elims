@@ -5,11 +5,11 @@ from enum import IntEnum
 from pydantic import BaseModel
 
 
-class TLSVersion(IntEnum):
+class MQTTTLSVersion(IntEnum):
     """TLS protocol versions for MQTT."""
 
-    TLSv1_2 = 2
-    TLSv1_3 = 3
+    V1_2 = 2
+    V1_3 = 3
 
 
 class MQTTReturnCode(IntEnum):
@@ -46,7 +46,7 @@ class MQTTConnectionFlags(BaseModel):
     session_present: bool = False
 
     @classmethod
-    def from_dict(cls, flags: dict) -> "MQTTConnectionFlags":
+    def from_dict(cls, flags: dict[str, object]) -> "MQTTConnectionFlags":
         """Create MQTTConnectionFlags from paho-mqtt callback flags dictionary.
 
         Args:
@@ -56,4 +56,4 @@ class MQTTConnectionFlags(BaseModel):
             MQTTConnectionFlags instance
 
         """
-        return cls(session_present=flags.get("session present", False))
+        return cls(session_present=bool(flags.get("session present", False)))

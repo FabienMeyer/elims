@@ -251,7 +251,7 @@ def test_subscriber_resubscribe_on_reconnect(_mock_client: Any, mqtt_config: MQT
     subscriber._on_connect(None, None, {"session present": False}, 0)  # noqa: SLF001
 
     # Should resubscribe to all topics
-    assert subscriber._client.subscribe.call_count == 2  # noqa: PLR2004, SLF001
+    assert subscriber._client.subscribe.call_count == 2  # noqa: PLR2004, SLF001  # type: ignore[attr-defined]
 
 
 @patch("paho.mqtt.client.Client")
