@@ -30,27 +30,6 @@ repos:
       - id: ruff
         args: [--fix, --config, pyproject.toml]
 
-  # Python type checking (uses [tool.mypy] from pyproject.toml)
-  # Note: Disabled in pre-commit due to workspace structure complexity
-  # Run manually with: uv run mypy backend/
-  # - repo: https://github.com/pre-commit/mirrors-mypy
-  #   rev: v1.13.0
-  #   hooks:
-  #     - id: mypy
-  #       files: ^backend/
-  #       args: [--explicit-package-bases]
-  #       additional_dependencies:
-  #         - pydantic>=2.0
-  #         - pydantic-settings>=2.0
-  #         - sqlmodel
-  #         - pytest
-  #         - pytest-asyncio
-  #         - fastapi
-  #         - sqlalchemy
-  #         - loguru
-  #         - alembic
-  #         - httpx
-
   # Markdown formatting (uses [tool.mdformat] from pyproject.toml)
   - repo: https://github.com/executablebooks/mdformat
     rev: 0.7.22

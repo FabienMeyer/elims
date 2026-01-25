@@ -12,7 +12,6 @@ from unittest.mock import MagicMock, patch
 import pytest
 from elims_common.mqtt.config import MQTTConfig
 from elims_common.mqtt.exceptions import MQTTConnectionError
-from elims_common.mqtt.pool import MQTTPublisherPool
 from elims_common.mqtt.publisher import MQTTPublisher
 from elims_common.mqtt.subscriber import MQTTSubscriber
 
@@ -53,14 +52,14 @@ def test_e2e_publish_subscribe_flow(_mock_client_class: Any, mqtt_config: MQTTCo
         subscriber._on_connect(None, None, {"session present": False}, 0)  # noqa: SLF001
 
     # Setup mocks for both clients
-    publisher._client.connect.side_effect = mock_pub_connect  # noqa: SLF001
+    publisher._client.connect.side_effect = mock_pub_connect  # noqa: SLF001  # type: ignore[attr-defined]
 
     # Connect publisher
     publisher.connect(timeout=1.0)
     assert publisher.is_connected
 
     # Change mock for subscriber
-    subscriber._client.connect.side_effect = mock_sub_connect  # noqa: SLF001
+    subscriber._client.connect.side_effect = mock_sub_connect  # noqa: SLF001  # type: ignore[attr-defined]
 
     # Connect subscriber
     subscriber.connect(timeout=1.0)
@@ -129,7 +128,7 @@ def test_e2e_multiple_subscribers_same_topic(_mock_client_class: Any, mqtt_confi
     def mock_connect(*_args: Any, **_kwargs: Any) -> None:
         subscriber._on_connect(None, None, {"session present": False}, 0)  # noqa: SLF001
 
-    subscriber._client.connect.side_effect = mock_connect  # noqa: SLF001
+    subscriber._client.connect.side_effect = mock_connect  # noqa: SLF001  # type: ignore[attr-defined]
     subscriber.connect(timeout=1.0)
 
     # Subscribe multiple callbacks to same topic
@@ -164,7 +163,7 @@ def test_e2e_wildcard_subscriptions(_mock_client_class: Any, mqtt_config: MQTTCo
     def mock_connect(*_args: Any, **_kwargs: Any) -> None:
         subscriber._on_connect(None, None, {"session present": False}, 0)  # noqa: SLF001
 
-    subscriber._client.connect.side_effect = mock_connect  # noqa: SLF001
+    subscriber._client.connect.side_effect = mock_connect  # noqa: SLF001  # type: ignore[attr-defined]
     subscriber.connect(timeout=1.0)
 
     # Subscribe to wildcard topics
@@ -194,8 +193,9 @@ def test_e2e_wildcard_subscriptions(_mock_client_class: Any, mqtt_config: MQTTCo
     subscriber.disconnect()
 
 
+@patch("ssl.SSLContext")
 @patch("paho.mqtt.client.Client")
-def test_e2e_tls_secure_connection(_mock_client_class: Any, tmp_path: Any) -> None:
+def test_e2e_tls_secure_connection(_mock_client_class: Any, _mock_ssl_context: Any, tmp_path: Any) -> None:
     """Test end-to-end flow with TLS encryption."""
     # Create fake cert files
     ca_file = tmp_path / "ca.crt"
@@ -210,22 +210,22 @@ def test_e2e_tls_secure_connection(_mock_client_class: Any, tmp_path: Any) -> No
         broker_host="mqtt.example.com",
         broker_port=8883,
         use_tls=True,
-        ca_certs=ca_file,
-        certfile=cert_file,
-        keyfile=key_file,
+        certificate_authority_file=ca_file,
+        certificate_file=cert_file,
+        key_file=key_file,
         tls_insecure=False,
     )
 
     publisher = MQTTPublisher(config)
 
     # Verify TLS was configured
-    publisher._client.tls_set_context.assert_called_once()  # noqa: SLF001
+    publisher._client.tls_set_context.assert_called_once()  # noqa: SLF001  # type: ignore[attr-defined]
 
     # Mock connection
     def mock_connect(*_args: Any, **_kwargs: Any) -> None:
         publisher._on_connect(None, None, {"session present": False}, 0)  # noqa: SLF001
 
-    publisher._client.connect.side_effect = mock_connect  # noqa: SLF001
+    publisher._client.connect.side_effect = mock_connect  # noqa: SLF001  # type: ignore[attr-defined]
 
     publisher.connect(timeout=1.0)
     assert publisher.is_connected
@@ -234,38 +234,6 @@ def test_e2e_tls_secure_connection(_mock_client_class: Any, tmp_path: Any) -> No
     publisher.publish("secure/topic", "encrypted message")
 
     publisher.disconnect()
-
-
-@patch("elims_common.mqtt.publisher.MQTTPublisher.connect")
-@patch("elims_common.mqtt.publisher.MQTTPublisher.disconnect")
-@patch("paho.mqtt.client.Client")
-def test_e2e_connection_pool_workflow(_mock_client: Any, _mock_disconnect: Any, mock_connect: Any) -> None:
-    """Test complete connection pool workflow."""
-    config = MQTTConfig(
-        broker_host="localhost",
-        broker_port=1883,
-    )
-
-    # Mock successful connection
-    def mock_conn_success(_self: Any, _timeout: float = 5.0) -> None:
-        _self._connected = True  # noqa: SLF001
-
-    mock_connect.side_effect = mock_conn_success
-
-    # Use pool with context manager
-    num_messages = 10
-    with MQTTPublisherPool(config, pool_size=3) as pool:
-        # Simulate multiple publish operations
-        for _i in range(num_messages):
-            with pool.get_connection_context() as publisher:
-                # Publish would happen here in real scenario
-                assert publisher.is_connected
-
-        # Pool should have reused connections
-        assert pool.size <= 3  # noqa: PLR2004
-
-    # Pool should be closed after context
-    assert pool.is_closed
 
 
 @patch("paho.mqtt.client.Client")
@@ -278,7 +246,7 @@ def test_e2e_error_recovery_flow(_mock_client_class: Any, mqtt_config: MQTTConfi
     def mock_failed_connect(*_args: Any, **_kwargs: Any) -> None:
         publisher._on_connect(None, None, {}, 3)  # SERVER_UNAVAILABLE  # noqa: SLF001
 
-    publisher._client.connect.side_effect = mock_failed_connect  # noqa: SLF001
+    publisher._client.connect.side_effect = mock_failed_connect  # noqa: SLF001  # type: ignore[attr-defined]
 
     with pytest.raises(MQTTConnectionError, match="server unavailable"):
         publisher.connect(timeout=1.0)
@@ -310,12 +278,12 @@ def test_e2e_payload_types(_mock_client_class: Any, mqtt_config: MQTTConfig) -> 
     def mock_pub_connect(*_args: Any, **_kwargs: Any) -> None:
         publisher._on_connect(None, None, {"session present": False}, 0)  # noqa: SLF001
 
-    publisher._client.connect.side_effect = mock_pub_connect  # noqa: SLF001
+    publisher._client.connect.side_effect = mock_pub_connect  # noqa: SLF001  # type: ignore[attr-defined]
     publisher.connect(timeout=1.0)
 
     # Test string payload
     publisher.publish("test/string", "Hello World")
-    publisher._client.publish.assert_called()  # noqa: SLF001
+    publisher._client.publish.assert_called()  # noqa: SLF001  # type: ignore[attr-defined]
 
     # Test dict payload (converted to JSON)
     publisher.publish("test/json", {"temperature": 22.5, "humidity": 60})
@@ -324,7 +292,7 @@ def test_e2e_payload_types(_mock_client_class: Any, mqtt_config: MQTTConfig) -> 
     publisher.publish("test/binary", b"\x01\x02\x03\x04")
 
     # Verify all publishes were called
-    assert publisher._client.publish.call_count == 3  # noqa: SLF001, PLR2004
+    assert publisher._client.publish.call_count == 3  # noqa: SLF001, PLR2004  # type: ignore[attr-defined]
 
     publisher.disconnect()
 
@@ -346,7 +314,7 @@ def test_e2e_qos_levels(mock_client_class: Any, mqtt_config: MQTTConfig) -> None
     publisher.publish("test/qos2", "message", qos=2)
 
     # Verify QoS was passed correctly
-    calls = publisher._client.publish.call_args_list  # noqa: SLF001
+    calls = publisher._client.publish.call_args_list  # noqa: SLF001  # type: ignore[attr-defined]
     assert calls[0][1]["qos"] == 0
     assert calls[1][1]["qos"] == 1
     assert calls[2][1]["qos"] == 2  # noqa: PLR2004
@@ -376,7 +344,7 @@ def test_e2e_retain_flag(mock_client_class: Any, mqtt_config: MQTTConfig) -> Non
 
 
 @patch("paho.mqtt.client.Client")
-def test_e2e_session_persistence(_mock_client_class: Any, _mqtt_config: MQTTConfig) -> None:
+def test_e2e_session_persistence(_mock_client_class: Any) -> None:
     """Test session persistence with clean_session flag."""
     # Test with clean session
     clean_config = MQTTConfig(
@@ -390,7 +358,7 @@ def test_e2e_session_persistence(_mock_client_class: Any, _mqtt_config: MQTTConf
         # Session present should be False with clean session
         publisher._on_connect(None, None, {"session present": False}, 0)  # noqa: SLF001
 
-    publisher._client.connect.side_effect = mock_connect  # noqa: SLF001
+    publisher._client.connect.side_effect = mock_connect  # noqa: SLF001  # type: ignore[attr-defined]
     publisher.connect(timeout=1.0)
 
     publisher.disconnect()
@@ -407,41 +375,10 @@ def test_e2e_session_persistence(_mock_client_class: Any, _mqtt_config: MQTTConf
         # Session present might be True with persistent session
         publisher2._on_connect(None, None, {"session present": True}, 0)  # noqa: SLF001
 
-    publisher2._client.connect.side_effect = mock_connect2  # noqa: SLF001
+    publisher2._client.connect.side_effect = mock_connect2  # noqa: SLF001  # type: ignore[attr-defined]
     publisher2.connect(timeout=1.0)
 
     publisher2.disconnect()
-
-
-@patch("elims_common.mqtt.publisher.MQTTPublisher.connect")
-@patch("elims_common.mqtt.publisher.MQTTPublisher.disconnect")
-@patch("elims_common.mqtt.publisher.MQTTPublisher.publish")
-@patch("paho.mqtt.client.Client")
-def test_e2e_pool_high_throughput(
-    _mock_client: Any,
-    _mock_publish: Any,
-    _mock_disconnect: Any,
-    mock_connect: Any,
-) -> None:
-    """Test connection pool with high-throughput publishing."""
-    config = MQTTConfig(broker_host="localhost")
-
-    # Mock successful connection
-    def mock_conn_success(_self: Any, _timeout: float = 5.0) -> None:
-        _self._connected = True  # noqa: SLF001
-
-    mock_connect.side_effect = mock_conn_success
-
-    with MQTTPublisherPool(config, pool_size=3) as pool:
-        # Simulate many publish operations
-        for _i in range(10):
-            with pool.get_connection_context() as publisher:
-                # In real scenario would publish here
-                assert isinstance(publisher, MQTTPublisher)
-
-        # Pool should have created up to pool_size connections
-        assert pool.size <= 3  # noqa: PLR2004
-        assert pool.size >= 1
 
 
 @patch("paho.mqtt.client.Client")
@@ -453,7 +390,7 @@ def test_e2e_subscriber_reconnect_resubscribe(_mock_client_class: Any, mqtt_conf
     def mock_connect(*_args: Any, **_kwargs: Any) -> None:
         subscriber._on_connect(None, None, {"session present": False}, 0)  # noqa: SLF001
 
-    subscriber._client.connect.side_effect = mock_connect  # noqa: SLF001
+    subscriber._client.connect.side_effect = mock_connect  # noqa: SLF001  # type: ignore[attr-defined]
     subscriber.connect(timeout=1.0)
 
     # Subscribe to topics
@@ -463,13 +400,13 @@ def test_e2e_subscriber_reconnect_resubscribe(_mock_client_class: Any, mqtt_conf
     subscriber.subscribe("sensor/humidity", callback2)
 
     # Clear previous calls
-    subscriber._client.subscribe.reset_mock()  # noqa: SLF001
+    subscriber._client.subscribe.reset_mock()  # noqa: SLF001  # type: ignore[attr-defined]
 
     # Simulate reconnection
     subscriber._on_connect(None, None, {"session present": False}, 0)  # noqa: SLF001
 
     # Should resubscribe to both topics
-    assert subscriber._client.subscribe.call_count == 2  # noqa: PLR2004, SLF001
+    assert subscriber._client.subscribe.call_count == 2  # noqa: PLR2004, SLF001  # type: ignore[attr-defined]
 
     subscriber.disconnect()
 

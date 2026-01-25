@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from elims_common import MQTTConfig, MQTTPublisher, MQTTSubscriber
+from elims_common.mqtt.exceptions import MQTTConnectionError
 
 # Constants for test configuration
 DEFAULT_BROKER_PORT = 1883
@@ -45,7 +46,7 @@ def test_mqtt_config_custom() -> None:
     assert config.broker_host == "mqtt.example.com"
     assert config.broker_port == SECURE_BROKER_PORT
     assert config.username == "user"
-    assert config.password == "pass"  # noqa: S105
+    assert config.password.get_secret_value() == "pass"
     assert config.qos == HIGH_QOS
 
 
@@ -61,6 +62,14 @@ def test_publisher_initialization(_mock_client: Any, mqtt_config: MQTTConfig) ->
 def test_publisher_connect(mock_client: Any, mqtt_config: MQTTConfig) -> None:
     """Test MQTT publisher connection."""
     publisher = MQTTPublisher(mqtt_config)
+
+    # Mock successful connection callback
+    def mock_connect(*_args: Any, **_kwargs: Any) -> None:
+        # Simulate the on_connect callback being triggered
+        publisher._on_connect(None, None, {"session present": False}, 0)  # noqa: SLF001
+
+    mock_client.return_value.connect.side_effect = mock_connect
+
     publisher.connect()
 
     mock_client.return_value.connect.assert_called_once_with(
@@ -113,7 +122,7 @@ def test_publisher_publish_not_connected(_mock_client: Any, mqtt_config: MQTTCon
     """Test publishing when not connected raises error."""
     publisher = MQTTPublisher(mqtt_config)
 
-    with pytest.raises(ValueError, match="Not connected"):
+    with pytest.raises(MQTTConnectionError, match="Not connected"):
         publisher.publish("test/topic", "message")
 
 
@@ -193,8 +202,10 @@ def test_subscriber_multiple_callbacks(_mock_client: Any, mqtt_config: MQTTConfi
 @patch("paho.mqtt.client.Client")
 def test_publisher_with_auth(mock_client: Any, mqtt_config: MQTTConfig) -> None:
     """Test MQTT publisher with authentication."""
+    from pydantic import SecretStr
+
     mqtt_config.username = "testuser"
-    mqtt_config.password = "testpass"  # noqa: S105
+    mqtt_config.password = SecretStr("testpass")
 
     _ = MQTTPublisher(mqtt_config)
 
@@ -204,8 +215,10 @@ def test_publisher_with_auth(mock_client: Any, mqtt_config: MQTTConfig) -> None:
 @patch("paho.mqtt.client.Client")
 def test_subscriber_with_auth(mock_client: Any, mqtt_config: MQTTConfig) -> None:
     """Test MQTT subscriber with authentication."""
+    from pydantic import SecretStr
+
     mqtt_config.username = "testuser"
-    mqtt_config.password = "testpass"  # noqa: S105
+    mqtt_config.password = SecretStr("testpass")
 
     _ = MQTTSubscriber(mqtt_config)
 

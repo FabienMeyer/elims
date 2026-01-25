@@ -285,16 +285,17 @@ def test_publisher_reconnection_config(_mock_client: Any) -> None:
     def mock_connect(*_args: Any, **_kwargs: Any) -> None:
         publisher._on_connect(None, None, {}, 0)  # noqa: SLF001
 
-    publisher._client.connect.side_effect = mock_connect  # noqa: SLF001
+    publisher._client.connect.side_effect = mock_connect  # noqa: SLF001  # type: ignore[attr-defined]
 
     publisher.connect(timeout=1.0)
 
     # Verify reconnect_delay_set was called
-    publisher._client.reconnect_delay_set.assert_called_once()  # noqa: SLF001
+    publisher._client.reconnect_delay_set.assert_called_once()  # noqa: SLF001  # type: ignore[attr-defined]
 
 
+@patch("ssl.SSLContext")
 @patch("paho.mqtt.client.Client")
-def test_publisher_tls_config(mock_client: Any, tmp_path: Any) -> None:
+def test_publisher_tls_config(_mock_client: Any, _mock_ssl_context: Any, tmp_path: Any) -> None:
     """Test publisher with TLS configuration."""
     # Create fake cert files
     ca_file = tmp_path / "ca.crt"
@@ -303,14 +304,14 @@ def test_publisher_tls_config(mock_client: Any, tmp_path: Any) -> None:
     config = MQTTConfig(
         broker_host="localhost",
         use_tls=True,
-        ca_certs=ca_file,
+        certificate_authority_file=ca_file,
         tls_insecure=False,
     )
 
     MQTTPublisher(config)
 
     # Verify TLS was configured
-    mock_client.return_value.tls_set_context.assert_called_once()
+    _mock_client.return_value.tls_set_context.assert_called_once()
 
 
 @patch("paho.mqtt.client.Client")

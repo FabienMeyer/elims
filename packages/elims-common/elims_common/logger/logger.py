@@ -2,7 +2,9 @@
 
 import sys
 
-from loguru import logger
+from loguru import logger as logger  # noqa: PLC0414
+
+__all__ = ["configure_logging", "logger"]
 
 
 def configure_logging() -> None:

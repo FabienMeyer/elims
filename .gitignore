@@ -70,3 +70,7 @@ dist-ssr/
 
 # Nginx
 docker/config/nginx/.htpasswd
+
+# Mosquitto security files
+config/mosquitto/passwd
+config/mosquitto/acl
