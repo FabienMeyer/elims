@@ -4,7 +4,7 @@ from ipaddress import AddressValueError, IPv4Address, IPv6Address
 from pathlib import Path
 from typing import Annotated
 
-from pydantic import BaseModel, Field, SecretStr, field_validator
+from pydantic import BaseModel, Field, SecretStr, ValidationInfo, field_validator
 
 from elims_common.mqtt.constants import MQTTTLSVersion
 
@@ -23,6 +23,7 @@ class MQTTConfig(BaseModel):
     username: Username | None = Field(default=None, description="MQTT username")
     password: SecretStr | None = Field(default=None, description="MQTT password")
     client_id: ClientID | None = Field(default=None, description="MQTT client ID")
+    require_client_id: bool = Field(default=True, description="Require a client_id for connections")
 
     # Connection settings
     keepalive: int = Field(default=60, ge=1, le=3600, description="Keepalive interval in seconds")
@@ -36,6 +37,14 @@ class MQTTConfig(BaseModel):
     key_file: Path | None = Field(default=None, description="Path to client private key file")
     tls_version: MQTTTLSVersion | None = Field(default=None, description="TLS protocol version")
     tls_insecure: bool = Field(default=False, description="Skip certificate verification (insecure!)")
+    require_tls: bool = Field(default=False, description="Require TLS for connections")
+    allow_insecure_tls: bool = Field(default=False, description="Allow tls_insecure in non-production settings")
+
+    # Last Will and Testament (LWT)
+    lwt_topic: str | None = Field(default=None, description="LWT topic for unexpected disconnects")
+    lwt_payload: str | bytes | dict[str, object] | None = Field(default=None, description="LWT payload")
+    lwt_qos: int = Field(default=1, ge=0, le=2, description="LWT QoS level")
+    lwt_retain: bool = Field(default=True, description="Retain LWT message")
 
     # Reconnection settings
     reconnect_on_failure: bool = Field(default=True, description="Auto-reconnect on connection loss")
@@ -45,6 +54,7 @@ class MQTTConfig(BaseModel):
     # Logging security
     log_payloads: bool = Field(default=False, description="Log message payloads (may expose sensitive data)")
     max_payload_log_length: int = Field(default=100, ge=0, description="Max payload length in logs (0 for no limit)")
+    max_payload_bytes: int = Field(default=262144, ge=1, description="Max payload size in bytes")
 
     @field_validator("broker_host")
     @classmethod
@@ -83,5 +93,14 @@ class MQTTConfig(BaseModel):
         """Validate that TLS certificate files exist if provided."""
         if v is not None and not v.exists():
             msg = f"Certificate file not found: {v}"
+            raise ValueError(msg)
+        return v
+
+    @field_validator("client_id")
+    @classmethod
+    def validate_client_id(cls, v: str | None, info: ValidationInfo) -> str | None:
+        """Validate client_id when required."""
+        if info.data.get("require_client_id", True) and not v:
+            msg = "client_id is required"
             raise ValueError(msg)
         return v

@@ -31,51 +31,84 @@ class MQTTPublisher:
             protocol=mqtt.MQTTv311,
         )
 
-        # --- AUTH ---
-        if config.username and config.password:
-            self._client.username_pw_set(
-                config.username,
-                config.password.get_secret_value(),
-            )
-
-        # --- TLS ---
-        if config.use_tls:
-            tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-
-            if config.tls_version:
-                tls_context.minimum_version = ssl.TLSVersion.TLSv1_3 if config.tls_version == MQTTTLSVersion.V1_3 else ssl.TLSVersion.TLSv1_2
-
-            if config.certificate_authority_file:
-                tls_context.load_verify_locations(cafile=str(config.certificate_authority_file))
-            else:
-                tls_context.load_default_certs()
-
-            if config.certificate_file and config.key_file:
-                tls_context.load_cert_chain(
-                    certfile=str(config.certificate_file),
-                    keyfile=str(config.key_file),
-                )
-
-            if config.tls_insecure:
-                tls_context.check_hostname = False
-                tls_context.verify_mode = ssl.CERT_NONE
-                logger.warning("Publisher TLS verification disabled (INSECURE)")
-            else:
-                tls_context.check_hostname = True
-                tls_context.verify_mode = ssl.CERT_REQUIRED
-
-            self._client.tls_set_context(tls_context)
-
-        # --- CALLBACKS ---
-        self._client.on_connect = self._on_connect
-        self._client.on_disconnect = self._on_disconnect
-        self._client.on_publish = self._on_publish
+        self._setup_auth()
+        self._setup_tls()
+        self._setup_lwt()
+        self._setup_callbacks()
 
         self._connected = False
         self._connection_error: MQTTConnectionError | None = None
         self._connect_event = Event()
         self._should_reconnect = False
         self._reconnect_attempts = 0
+
+    def _setup_auth(self) -> None:
+        if self.config.username and self.config.password:
+            self._client.username_pw_set(
+                self.config.username,
+                self.config.password.get_secret_value(),
+            )
+
+    def _setup_tls(self) -> None:
+        if not self.config.use_tls:
+            return
+
+        tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+
+        if self.config.tls_version:
+            tls_context.minimum_version = ssl.TLSVersion.TLSv1_3 if self.config.tls_version == MQTTTLSVersion.V1_3 else ssl.TLSVersion.TLSv1_2
+
+        if self.config.certificate_authority_file:
+            tls_context.load_verify_locations(cafile=str(self.config.certificate_authority_file))
+        else:
+            tls_context.load_default_certs()
+
+        if self.config.certificate_file and self.config.key_file:
+            tls_context.load_cert_chain(
+                certfile=str(self.config.certificate_file),
+                keyfile=str(self.config.key_file),
+            )
+
+        if self.config.tls_insecure:
+            tls_context.check_hostname = False
+            tls_context.verify_mode = ssl.CERT_NONE
+            logger.warning("Publisher TLS verification disabled (INSECURE)")
+        else:
+            tls_context.check_hostname = True
+            tls_context.verify_mode = ssl.CERT_REQUIRED
+
+        self._client.tls_set_context(tls_context)
+
+    def _setup_lwt(self) -> None:
+        lwt_topic = self.config.lwt_topic
+        lwt_payload = self.config.lwt_payload
+
+        if lwt_topic is None and lwt_payload is None and self.config.client_id:
+            lwt_topic = f"devices/{self.config.client_id}/status"
+            lwt_payload = {"status": "offline"}
+
+        if not lwt_topic or lwt_payload is None:
+            return
+
+        MQTTUtils.validate_topic(lwt_topic)
+        if "+" in lwt_topic or "#" in lwt_topic:
+            msg = MQTTLogMessages.publish_failed_wildcards(lwt_topic)
+            raise ValueError(msg)
+
+        if isinstance(lwt_payload, dict):
+            lwt_payload = json.dumps(lwt_payload)
+
+        self._client.will_set(
+            lwt_topic,
+            payload=lwt_payload,
+            qos=self.config.lwt_qos,
+            retain=self.config.lwt_retain,
+        )
+
+    def _setup_callbacks(self) -> None:
+        self._client.on_connect = self._on_connect
+        self._client.on_disconnect = self._on_disconnect
+        self._client.on_publish = self._on_publish
 
     # ------------------------------------------------------------------ #
     # CALLBACKS
@@ -137,6 +170,8 @@ class MQTTPublisher:
 
     def connect(self, timeout: float = 5.0) -> None:
         """Connect to the MQTT broker with an optional timeout."""
+        self._ensure_security_preconditions()
+
         self._connection_error = None
         self._connected = False
         self._connect_event.clear()
@@ -173,6 +208,15 @@ class MQTTPublisher:
             self._client.loop_stop()
             raise self._connection_error or MQTTConnectionError("MQTT connection failed")
 
+    def _ensure_security_preconditions(self) -> None:
+        if self.config.require_tls and not self.config.use_tls:
+            msg = "TLS is required but use_tls is disabled"
+            raise MQTTConnectionError(msg)
+
+        if self.config.tls_insecure and not self.config.allow_insecure_tls:
+            msg = "tls_insecure is not allowed in this environment"
+            raise MQTTConnectionError(msg)
+
     def disconnect(self) -> None:
         """Disconnect from the MQTT broker."""
         self._should_reconnect = False
@@ -206,6 +250,12 @@ class MQTTPublisher:
 
         if isinstance(payload, dict):
             payload = json.dumps(payload)
+
+        payload_bytes = payload if isinstance(payload, bytes) else str(payload).encode("utf-8")
+        if len(payload_bytes) > self.config.max_payload_bytes:
+            msg = f"Payload too large: {len(payload_bytes)} bytes " f"(max {self.config.max_payload_bytes})"
+            logger.error(msg)
+            raise ValueError(msg)
 
         qos_level = qos if qos is not None else self.config.qos
 

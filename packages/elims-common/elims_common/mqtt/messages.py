@@ -52,6 +52,16 @@ class MQTTLogMessages:
         """Generate publishing log message."""
         return f"Publishing to {topic}: {payload!r}"
 
+    @staticmethod
+    def publish_failed_not_connected(topic: str) -> str:
+        """Generate publish failed message for disconnected client."""
+        return f"Cannot publish to {topic}: client not connected"
+
+    @staticmethod
+    def publish_failed_wildcards(topic: str) -> str:
+        """Generate publish failed message for wildcard topics."""
+        return f"Cannot publish to {topic}: wildcards are not allowed"
+
     # Subscribe messages
     @staticmethod
     def subscribed(topic: str, qos: int | None = None) -> str:
