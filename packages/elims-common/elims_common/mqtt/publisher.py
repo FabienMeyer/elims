@@ -186,7 +186,7 @@ class MQTTPublisher:
     def publish(
         self,
         topic: str,
-        payload: str | dict | bytes,
+        payload: str | dict[str, object] | bytes,
         qos: int | None = None,
         *,
         retain: bool = False,
