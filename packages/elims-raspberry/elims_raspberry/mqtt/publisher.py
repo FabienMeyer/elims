@@ -20,6 +20,8 @@ RASPBERRY_MQTT_CONFIG = MQTTConfig(
     keepalive=60,
     reconnect_on_failure=True,
     client_id="raspberry-01",
+    use_tls=True,
+    certificate_authority_file=settings.mqtt_ca_file,
 )
 
 
@@ -37,15 +39,15 @@ class RaspberryMQTTPublisher(MQTTPublisher):
             config = RASPBERRY_MQTT_CONFIG
         super().__init__(config)
 
-    def publish_sensor_data(self, sensor_id: str, data: dict) -> None:
-        """Publish sensor data to standardized topic."""
+    def publish_sensor_data(self, sensor_id: str, data: dict[str, object]) -> None:
+        """Publish sensor telemetry data to device topic."""
         topic = f"devices/{self.config.client_id}/telemetry"
         # Include sensor_id in the payload instead
         payload = {"sensor_id": sensor_id, **data}
         self.publish(topic, payload)
 
     def publish_status(self, status: str) -> None:
-        """Publish system status."""
+        """Publish device status (online/offline) with retain flag."""
         self.publish(
             f"devices/{self.config.client_id}/status",
             {"status": status},

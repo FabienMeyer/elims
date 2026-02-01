@@ -65,12 +65,14 @@ services:
     restart: unless-stopped
     ports:
       - "1883:1883"
+      - "8883:8883"
       - "9001:9001" # optional websocket
     volumes:
       # Config files
       - ./config/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
       - ./config/mosquitto/passwd:/mosquitto/config/passwd:ro
       - ./config/mosquitto/acl:/mosquitto/config/acl:ro
+      - ./config/mosquitto/certs:/mosquitto/certs:ro
 
       # Persistent data and logs
       - mosquitto-data:/mosquitto/data

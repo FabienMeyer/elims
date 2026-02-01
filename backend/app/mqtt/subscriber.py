@@ -1,9 +1,8 @@
-"""ELIMS Raspberry Package - MQTT Subscriber Module."""
+"""ELIMS Backend - MQTT Subscriber Module."""
 
 import json
 import time
-from collections.abc import Callable, Generator
-from contextlib import contextmanager
+from collections.abc import Callable
 
 from app.config import settings
 from elims_common.logger.logger import logger
@@ -22,6 +21,8 @@ RASPBERRY_MQTT_CONFIG = MQTTConfig(
     keepalive=60,
     reconnect_on_failure=True,
     client_id="fastapi",
+    use_tls=bool(settings.mqtt_ca_file),
+    certificate_authority_file=settings.mqtt_ca_file,
 )
 
 
@@ -34,8 +35,8 @@ class MQTTSubscriber(BaseMQTTSubscriber):
             config = RASPBERRY_MQTT_CONFIG
         super().__init__(config)
 
-    def subscribe_all_sensors(self, callback: Callable[[str, dict], None]) -> None:
-        """Subscribe to all sensor data."""
+    def subscribe_all_sensors(self, callback: Callable[[str, dict[str, object]], None]) -> None:
+        """Subscribe to all sensor telemetry data from devices."""
 
         def wrapper(topic: str, payload: str) -> None:
             try:
@@ -46,12 +47,8 @@ class MQTTSubscriber(BaseMQTTSubscriber):
 
         self.subscribe("devices/+/telemetry", wrapper)
 
-    def subscribe_alerts(self, callback: Callable[[str, str], None]) -> None:
-        """Subscribe to all alerts."""
-        self.subscribe("alerts/#", callback)
-
-    def subscribe_system_status(self, callback: Callable[[str, dict], None]) -> None:
-        """Subscribe to system status updates."""
+    def subscribe_system_status(self, callback: Callable[[str, dict[str, object]], None]) -> None:
+        """Subscribe to device status updates (online/offline)."""
 
         def wrapper(topic: str, payload: str) -> None:
             try:
@@ -63,22 +60,11 @@ class MQTTSubscriber(BaseMQTTSubscriber):
         self.subscribe("devices/+/status", wrapper)
 
 
-@contextmanager
-def mqtt_subscriber(config: MQTTConfig = RASPBERRY_MQTT_CONFIG) -> Generator[MQTTSubscriber]:
-    """Context manager for MQTT subscriber."""
-    subscriber = MQTTSubscriber(config)
-    try:
-        subscriber.connect()
-        yield subscriber
-    finally:
-        subscriber.disconnect()
-
-
 def main() -> None:
-    """MQTT subscriber for ELIMS Raspberry Pi."""
+    """MQTT subscriber for ELIMS backend."""
     subscriber = MQTTSubscriber(RASPBERRY_MQTT_CONFIG)
 
-    def handle_sensor_data(topic: str, data: dict) -> None:
+    def handle_sensor_data(topic: str, data: dict[str, object]) -> None:
         # Extract the device ID from the topic (e.g., 'raspberry-01')
         device_id = topic.split("/")[1]
         sensor_id = data.get("sensor_id", "unknown")
@@ -89,7 +75,7 @@ def main() -> None:
         # Log with a specific format to make it stand out
         logger.info(f"⚡ [SENSOR UPDATE] | DEVICE: {device_id:<12} | SENSOR: {sensor_id:<12} | DATA: {data_str}")
 
-    def handle_status(topic: str, status: dict) -> None:
+    def handle_status(topic: str, status: dict[str, object]) -> None:
         device_id = topic.split("/")[1]
         logger.info(f"🌐 [SYSTEM STATUS] | DEVICE: {device_id} | {status.get('status', 'unknown').upper()}")
 

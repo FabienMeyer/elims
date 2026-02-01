@@ -72,5 +72,12 @@ dist-ssr/
 docker/config/nginx/.htpasswd
 
 # Mosquitto security files
+config/mosquitto/certs/*.crt
+config/mosquitto/certs/*.key
+config/mosquitto/certs/*.pem
+config/mosquitto/certs/*.csr
+config/mosquitto/certs/*.pfx
+config/mosquitto/certs/*.p12
+config/mosquitto/certs/*.srl
 config/mosquitto/passwd
 config/mosquitto/acl

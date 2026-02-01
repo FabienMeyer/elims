@@ -1,0 +1,8 @@
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = mosquitto
+DNS.2 = localhost
+DNS.3 = elims-mosquitto
+IP.1 = 192.168.1.130
+IP.2 = 127.0.0.1
