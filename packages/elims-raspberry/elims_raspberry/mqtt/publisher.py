@@ -39,13 +39,15 @@ class RaspberryMQTTPublisher(MQTTPublisher):
 
     def publish_sensor_data(self, sensor_id: str, data: dict) -> None:
         """Publish sensor data to standardized topic."""
-        topic = f"raspberry/sensors/{sensor_id}"
-        self.publish(topic, data)
+        topic = f"devices/{self.config.client_id}/telemetry"
+        # Include sensor_id in the payload instead
+        payload = {"sensor_id": sensor_id, **data}
+        self.publish(topic, payload)
 
     def publish_status(self, status: str) -> None:
         """Publish system status."""
         self.publish(
-            "raspberry/status",
+            f"devices/{self.config.client_id}/status",
             {"status": status},
             retain=True,
         )

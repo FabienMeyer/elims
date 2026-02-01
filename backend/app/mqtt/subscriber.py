@@ -44,7 +44,7 @@ class MQTTSubscriber(BaseMQTTSubscriber):
             except json.JSONDecodeError:
                 logger.error(f"Invalid JSON from {topic}: {payload}")
 
-        self.subscribe("raspberry/sensors/+", wrapper)
+        self.subscribe("devices/+/telemetry", wrapper)
 
     def subscribe_alerts(self, callback: Callable[[str, str], None]) -> None:
         """Subscribe to all alerts."""
@@ -56,11 +56,11 @@ class MQTTSubscriber(BaseMQTTSubscriber):
         def wrapper(topic: str, payload: str) -> None:
             try:
                 data = json.loads(payload)
-                callback(data)
+                callback(topic, data)
             except json.JSONDecodeError:
                 logger.error(f"Invalid JSON from {topic}: {payload}")
 
-        self.subscribe("raspberry/status", wrapper)
+        self.subscribe("devices/+/status", wrapper)
 
 
 @contextmanager
@@ -79,18 +79,19 @@ def main() -> None:
     subscriber = MQTTSubscriber(RASPBERRY_MQTT_CONFIG)
 
     def handle_sensor_data(topic: str, data: dict) -> None:
-        # Extract the sensor name from the topic (e.g., 'sensor_01')
-        sensor_id = topic.split("/")[-1]
+        # Extract the device ID from the topic (e.g., 'raspberry-01')
+        device_id = topic.split("/")[1]
+        sensor_id = data.get("sensor_id", "unknown")
 
         # Create a clean string representation of the data
-        # We use json.dumps for a pretty-printed single line
         data_str = json.dumps(data)
 
         # Log with a specific format to make it stand out
-        logger.info(f"⚡ [SENSOR UPDATE] | ID: {sensor_id:<12} | DATA: {data_str}")
+        logger.info(f"⚡ [SENSOR UPDATE] | DEVICE: {device_id:<12} | SENSOR: {sensor_id:<12} | DATA: {data_str}")
 
-    def handle_status(status: dict) -> None:
-        logger.info(f"🌐 [SYSTEM STATUS] | {status.get('status', 'unknown').upper()}")
+    def handle_status(topic: str, status: dict) -> None:
+        device_id = topic.split("/")[1]
+        logger.info(f"🌐 [SYSTEM STATUS] | DEVICE: {device_id} | {status.get('status', 'unknown').upper()}")
 
     # Wire up the callbacks
     subscriber.subscribe_all_sensors(handle_sensor_data)
