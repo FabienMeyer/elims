@@ -5,7 +5,7 @@ import json
 import paho.mqtt.client as mqtt
 
 from elims_common.logger.logger import logger
-from elims_common.mqtt.base import MQTTClient
+from elims_common.mqtt.client import MQTTClient
 from elims_common.mqtt.config import MQTTConfig
 from elims_common.mqtt.exceptions import MQTTConnectionError
 from elims_common.mqtt.messages import MQTTLogMessages
