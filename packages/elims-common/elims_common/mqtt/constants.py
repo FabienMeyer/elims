@@ -5,11 +5,11 @@ from enum import IntEnum
 from pydantic import BaseModel
 
 
-class MQTTTLSVersion(IntEnum):
-    """TLS protocol versions for MQTT."""
+class MQTTClientType:
+    """Types of MQTT clients for logging purposes."""
 
-    V1_2 = 2
-    V1_3 = 3
+    PUBLISHER = "Publisher"
+    SUBSCRIBER = "Subscriber"
 
 
 class MQTTReturnCode(IntEnum):

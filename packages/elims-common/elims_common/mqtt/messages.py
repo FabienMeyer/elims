@@ -30,6 +30,11 @@ class MQTTLogMessages:
         """Generate connection error log message."""
         return f"{client_type} failed to connect to MQTT broker: {error}"
 
+    @staticmethod
+    def connection_authentication_error(client_type: str = "Client", error_msg: str = "") -> str:
+        """Generate connection authentication error log message."""
+        return f"{client_type} authentication error during connection: {error_msg}"
+
     # Disconnection messages
     @staticmethod
     def disconnected(client_type: str = "Client") -> str:

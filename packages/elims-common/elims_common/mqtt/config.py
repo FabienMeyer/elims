@@ -6,7 +6,7 @@ from typing import Annotated
 
 from pydantic import BaseModel, Field, SecretStr, ValidationInfo, field_validator
 
-from elims_common.mqtt.constants import MQTTTLSVersion
+from elims_common.mqtt.constants import MQTTClientType
 
 Username = Annotated[str, Field(min_length=3, pattern="^[a-zA-Z0-9_-]+$")]
 ClientID = Annotated[str, Field(min_length=1, pattern="^[a-zA-Z0-9_-]+$")]
@@ -22,23 +22,18 @@ class MQTTConfig(BaseModel):
     # Authentication
     username: Username | None = Field(default=None, description="MQTT username")
     password: SecretStr | None = Field(default=None, description="MQTT password")
-    client_id: ClientID | None = Field(default=None, description="MQTT client ID")
-    require_client_id: bool = Field(default=True, description="Require a client_id for connections")
+    client_id: ClientID = Field(default=None, description="MQTT client ID")
+    client_type: MQTTClientType = Field(default=MQTTClientType.SUBSCRIBER, description="Type of MQTT client")
+
+    # TLS/SSL settings
+    certificate_authority_file: Path = Field(default=None, description="Path to CA certificates file")
+    certificate_file: Path = Field(default=None, description="Path to client certificate file")
+    key_file: Path | None = Field(default=None, description="Path to client private key file")
 
     # Connection settings
     keepalive: int = Field(default=60, ge=1, le=3600, description="Keepalive interval in seconds")
     clean_session: bool = Field(default=True, description="Clean session flag")
     qos: int = Field(default=1, ge=0, le=2, description="Quality of Service level (0, 1, or 2)")
-
-    # TLS/SSL settings
-    use_tls: bool = Field(default=False, description="Enable TLS/SSL encryption")
-    certificate_authority_file: Path | None = Field(default=None, description="Path to CA certificates file")
-    certificate_file: Path | None = Field(default=None, description="Path to client certificate file")
-    key_file: Path | None = Field(default=None, description="Path to client private key file")
-    tls_version: MQTTTLSVersion | None = Field(default=None, description="TLS protocol version")
-    tls_insecure: bool = Field(default=False, description="Skip certificate verification (insecure!)")
-    require_tls: bool = Field(default=False, description="Require TLS for connections")
-    allow_insecure_tls: bool = Field(default=False, description="Allow tls_insecure in non-production settings")
 
     # Last Will and Testament (LWT)
     lwt_topic: str | None = Field(default=None, description="LWT topic for unexpected disconnects")
