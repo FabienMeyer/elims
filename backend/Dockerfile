@@ -22,15 +22,23 @@ FROM base AS development
 COPY pyproject.toml ./
 COPY README.md ./
 COPY backend ./backend
+COPY packages ./packages
+COPY config ./backend/config
 
-# Install dependencies (without local packages first)
-RUN uv pip install --system fastapi pydantic pydantic-settings 'uvicorn[standard]' pytest pytest-cov pytest-asyncio httpx ruff mypy
+# Install local packages first (elims_common, elims_raspberry)
+RUN uv pip install --system ./packages/elims-common
+
+# Install all dependencies from pyproject.toml using uv pip
+RUN uv pip install --system aiomysql alembic 'fastapi[standard]' loguru pydantic pydantic-settings pymysql sqlmodel 'uvicorn[standard]' pytest pytest-cov pytest-asyncio httpx ruff mypy
+
+# Set working directory for development
+WORKDIR /app/backend
 
 # Expose port
 EXPOSE 8000
 
 # Development command
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
 # Stage 3: Production
 FROM base AS production
@@ -39,9 +47,17 @@ FROM base AS production
 COPY pyproject.toml ./
 COPY README.md ./
 COPY backend ./backend
+COPY packages ./packages
+COPY config ./backend/config
+
+# Install local packages first (elims_common)
+RUN uv pip install --system ./packages/elims-common
 
 # Install production dependencies only
-RUN uv pip install --system fastapi pydantic pydantic-settings 'uvicorn[standard]'
+RUN uv pip install --system aiomysql alembic 'fastapi[standard]' loguru pydantic pydantic-settings pymysql sqlmodel 'uvicorn[standard]' gunicorn
+
+# Set working directory for production
+WORKDIR /app/backend
 
 # Create non-root user
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
@@ -51,4 +67,4 @@ USER appuser
 EXPOSE 8000
 
 # Production command with Gunicorn
-CMD ["gunicorn", "backend.main:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "main:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]

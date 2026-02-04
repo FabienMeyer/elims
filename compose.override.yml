@@ -6,7 +6,7 @@ services:
       target: development
     volumes:
       - ./backend:/app/backend:rw
-    command: ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
     ports:
       - "8000:8000"
     networks:
@@ -27,6 +27,7 @@ services:
       - VITE_API_URL=http://localhost:8000
     networks:
       - elims-network
+      - traefik-public
     labels: []
 
   # Development: Expose ports for debugging/access
@@ -70,4 +71,5 @@ services:
 
 networks:
   traefik-public:
+    name: traefik-public
     external: false

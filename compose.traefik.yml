@@ -47,7 +47,8 @@ services:
 
 networks:
   traefik-public:
-    external: true
+    driver: bridge
+    name: traefik-public
 
 volumes:
   traefik-certificates:

@@ -1,62 +1,53 @@
 services:
   # Database - MariaDB
-  # mariadb:
-  #   image: mariadb:11
-  #   container_name: elims-mariadb
-  #   restart: unless-stopped
-  #   environment:
-  #     MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
-  #     MARIADB_DATABASE: ${MARIADB_DATABASE}
-  #     MARIADB_USER: ${MARIADB_USER}
-  #     MARIADB_PASSWORD: ${MARIADB_PASSWORD}
-  #   volumes:
-  #     - mariadb-data:/var/lib/mysql
-  #   networks:
-  #     - elims-network
-  #   healthcheck:
-  #     test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
+  mariadb:
+    image: mariadb:11
+    container_name: elims-mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    networks:
+      - elims-network
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  # # Database Management - Adminer
-  # adminer:
-  #   image: adminer:latest
-  #   container_name: elims-adminer
-  #   restart: unless-stopped
-  #   environment:
-  #     - ADMINER_DEFAULT_SERVER=mariadb
-  #   networks:
-  #     - elims-network
-  #     - traefik-public
-  #   depends_on:
-  #     - mariadb
-  #   labels:
-  #     - traefik.enable=true
-  #     - traefik.docker.network=traefik-public
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-adminer-http.rule=Host(`adminer.${DOMAIN?Variable not set}`)
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-adminer-http.entrypoints=web
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-adminer-https.rule=Host(`adminer.${DOMAIN?Variable not set}`)
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-adminer-https.entrypoints=websecure
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-adminer-https.tls=true
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-adminer-https.tls.certresolver=letsencrypt
-  #     - traefik.http.services.${STACK_NAME?Variable not set}-adminer.loadbalancer.server.port=8080
+  # Database Management - Adminer
+  adminer:
+    image: adminer:latest
+    container_name: elims-adminer
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    environment:
+      - ADMINER_DEFAULT_SERVER=mariadb
+    networks:
+      - elims-network
+    depends_on:
+      - mariadb
 
-  # # Cache - Redis
-  # redis:
-  #   image: redis:7-alpine
-  #   container_name: elims-redis
-  #   restart: unless-stopped
-  #   command: redis-server --requirepass ${REDIS_PASSWORD}
-  #   volumes:
-  #     - redis-data:/data
-  #   networks:
-  #     - elims-network
-  #   healthcheck:
-  #     test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
-  #     interval: 10s
-  #     timeout: 3s
-  #     retries: 5
+  # Cache - Redis
+  redis:
+    image: redis:7-alpine
+    container_name: elims-redis
+    restart: unless-stopped
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis-data:/data
+    networks:
+      - elims-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
 
   # MQTT Broker - Mosquitto
   mosquitto:
@@ -85,167 +76,168 @@ services:
       timeout: 10s
       retries: 3
 
-  # # Backend - FastAPI
-  # backend:
-  #   build:
-  #     context: .
-  #     dockerfile: ./backend/Dockerfile
-  #     target: production
-  #   container_name: elims-backend
-  #   restart: unless-stopped
-  #   environment:
-  #     - MARIADB_HOST=${MARIADB_HOST}
-  #     - MARIADB_PORT=${MARIADB_PORT}
-  #     - MARIADB_USER=${MARIADB_USER}
-  #     - MARIADB_PASSWORD=${MARIADB_PASSWORD}
-  #     - MARIADB_DATABASE=${MARIADB_DATABASE}
-  #     - REDIS_HOST=${REDIS_HOST}
-  #     - REDIS_PORT=${REDIS_PORT}
-  #     - REDIS_PASSWORD=${REDIS_PASSWORD}
-  #     - MQTT_HOST=${MQTT_HOST}
-  #     - MQTT_PORT=${MQTT_PORT}
-  #     - MQTT_USERNAME=${MQTT_USERNAME}
-  #     - MQTT_PASSWORD=${MQTT_PASSWORD}
-  #     - BACKEND_SECRET_KEY=${BACKEND_SECRET_KEY}
-  #     - BACKEND_ALGORITHM=${BACKEND_ALGORITHM}
-  #     - BACKEND_ACCESS_TOKEN_EXPIRE_MINUTES=${BACKEND_ACCESS_TOKEN_EXPIRE_MINUTES}
-  #     - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS}
-  #     - ENVIRONMENT=${ENVIRONMENT}
-  #   networks:
-  #     - elims-network
-  #     - traefik-public
-  #   depends_on:
-  #     mariadb:
-  #       condition: service_healthy
-  #     redis:
-  #       condition: service_healthy
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #   labels:
-  #     - traefik.enable=true
-  #     - traefik.docker.network=traefik-public
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-backend-http.rule=Host(`api.${DOMAIN?Variable not set}`)
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-backend-http.entrypoints=web
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-backend-https.rule=Host(`api.${DOMAIN?Variable not set}`)
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-backend-https.entrypoints=websecure
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-backend-https.tls=true
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-backend-https.tls.certresolver=letsencrypt
-  #     - traefik.http.services.${STACK_NAME?Variable not set}-backend.loadbalancer.server.port=8000
+  # Backend - FastAPI
+  backend:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+      target: production
+    container_name: elims-backend
+    restart: unless-stopped
+    environment:
+      - MARIADB_HOST=${MARIADB_HOST}
+      - MARIADB_PORT=${MARIADB_PORT}
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD}
+      - MARIADB_DATABASE=${MARIADB_DATABASE}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - MQTT_HOST=${MQTT_HOST}
+      - MQTT_PORT=${MQTT_PORT}
+      - MQTT_USERNAME=${MQTT_USERNAME}
+      - MQTT_PASSWORD=${MQTT_PASSWORD}
+      - BACKEND_SECRET_KEY=${BACKEND_SECRET_KEY}
+      - BACKEND_ALGORITHM=${BACKEND_ALGORITHM}
+      - BACKEND_ACCESS_TOKEN_EXPIRE_MINUTES=${BACKEND_ACCESS_TOKEN_EXPIRE_MINUTES}
+      - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS}
+      - ENVIRONMENT=${ENVIRONMENT}
+    networks:
+      - elims-network
+      - traefik-public
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik-public
+      - traefik.http.routers.${STACK_NAME?Variable not set}-backend-http.rule=Host(`api.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.${STACK_NAME?Variable not set}-backend-http.entrypoints=web
+      - traefik.http.routers.${STACK_NAME?Variable not set}-backend-https.rule=Host(`api.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.${STACK_NAME?Variable not set}-backend-https.entrypoints=websecure
+      - traefik.http.routers.${STACK_NAME?Variable not set}-backend-https.tls=true
+      - traefik.http.routers.${STACK_NAME?Variable not set}-backend-https.tls.certresolver=letsencrypt
+      - traefik.http.services.${STACK_NAME?Variable not set}-backend.loadbalancer.server.port=8000
 
-  # # Frontend - React/Vite
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: ./Dockerfile
-  #     target: production
-  #   container_name: elims-frontend
-  #   restart: unless-stopped
-  #   networks:
-  #     - traefik-public
-  #   healthcheck:
-  #     test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 3
-  #   labels:
-  #     - traefik.enable=true
-  #     - traefik.docker.network=traefik-public
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-frontend-http.rule=Host(`dashboard.${DOMAIN?Variable not set}`)
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-frontend-http.entrypoints=web
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-frontend-https.rule=Host(`dashboard.${DOMAIN?Variable not set}`)
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-frontend-https.entrypoints=websecure
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-frontend-https.tls=true
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-frontend-https.tls.certresolver=letsencrypt
-  #     - traefik.http.services.${STACK_NAME?Variable not set}-frontend.loadbalancer.server.port=80
+  # Frontend - React/Vite
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+      target: production
+    container_name: elims-frontend
+    restart: unless-stopped
+    networks:
+      - traefik-public
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    ports:
+      - "80:80"  # Add this line
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik-public
+      - traefik.http.routers.${STACK_NAME?Variable not set}-frontend-http.rule=Host(`dashboard.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.${STACK_NAME?Variable not set}-frontend-http.entrypoints=web
+      - traefik.http.routers.${STACK_NAME?Variable not set}-frontend-https.rule=Host(`dashboard.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.${STACK_NAME?Variable not set}-frontend-https.entrypoints=websecure
+      - traefik.http.routers.${STACK_NAME?Variable not set}-frontend-https.tls=true
+      - traefik.http.routers.${STACK_NAME?Variable not set}-frontend-https.tls.certresolver=letsencrypt
+      - traefik.http.services.${STACK_NAME?Variable not set}-frontend.loadbalancer.server.port=80
 
-  # # Observability - Loki (Log Storage)
-  # loki:
-  #   image: grafana/loki:latest
-  #   container_name: elims-loki
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./config/loki/loki-config.yml:/etc/loki/local-config.yaml:ro
-  #     - loki-data:/loki
-  #   command: -config.file=/etc/loki/local-config.yaml
-  #   networks:
-  #     - elims-network
-  #   healthcheck:
-  #     test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3100/ready"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
+  # Observability - Loki (Log Storage)
+  loki:
+    image: grafana/loki:latest
+    container_name: elims-loki
+    restart: unless-stopped
+    volumes:
+      - ./config/loki/loki-config.yml:/etc/loki/local-config.yaml:ro
+      - loki-data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - elims-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3100/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  # # Observability - Alloy (Log Collector)
-  # alloy:
-  #   image: grafana/alloy:latest
-  #   container_name: elims-alloy
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./config/alloy/config.alloy:/etc/alloy/config.alloy:ro
-  #     - /var/run/docker.sock:/var/run/docker.sock:ro
-  #   command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
-  #   networks:
-  #     - elims-network
-  #   depends_on:
-  #     - loki
+  # Observability - Alloy (Log Collector)
+  alloy:
+    image: grafana/alloy:latest
+    container_name: elims-alloy
+    restart: unless-stopped
+    volumes:
+      - ./config/alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
+    networks:
+      - elims-network
+    depends_on:
+      - loki
 
-  # # Observability - Grafana (Visualization)
-  # grafana:
-  #   image: grafana/grafana:latest
-  #   container_name: elims-grafana
-  #   restart: unless-stopped
-  #   environment:
-  #     - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
-  #     - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
-  #     - GF_USERS_ALLOW_SIGN_UP=false
-  #   volumes:
-  #     - ./config/grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
-  #     - ./config/grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:ro
-  #     - grafana-data:/var/lib/grafana
-  #   networks:
-  #     - elims-network
-  #     - traefik-public
-  #   depends_on:
-  #     - loki
-  #   healthcheck:
-  #     test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #   labels:
-  #     - traefik.enable=true
-  #     - traefik.docker.network=traefik-public
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-grafana-http.rule=Host(`grafana.${DOMAIN?Variable not set}`)
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-grafana-http.entrypoints=web
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-grafana-https.rule=Host(`grafana.${DOMAIN?Variable not set}`)
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-grafana-https.entrypoints=websecure
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-grafana-https.tls=true
-  #     - traefik.http.routers.${STACK_NAME?Variable not set}-grafana-https.tls.certresolver=letsencrypt
-  #     - traefik.http.services.${STACK_NAME?Variable not set}-grafana.loadbalancer.server.port=3000
+  # Observability - Grafana (Visualization)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: elims-grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./config/grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
+      - ./config/grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:ro
+      - grafana-data:/var/lib/grafana
+    networks:
+      - elims-network
+      - traefik-public
+    depends_on:
+      - loki
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik-public
+      - traefik.http.routers.${STACK_NAME?Variable not set}-grafana-http.rule=Host(`grafana.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.${STACK_NAME?Variable not set}-grafana-http.entrypoints=web
+      - traefik.http.routers.${STACK_NAME?Variable not set}-grafana-https.rule=Host(`grafana.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.${STACK_NAME?Variable not set}-grafana-https.entrypoints=websecure
+      - traefik.http.routers.${STACK_NAME?Variable not set}-grafana-https.tls=true
+      - traefik.http.routers.${STACK_NAME?Variable not set}-grafana-https.tls.certresolver=letsencrypt
+      - traefik.http.services.${STACK_NAME?Variable not set}-grafana.loadbalancer.server.port=3000
 
-  # # Observability - Loki Canary (Watchdog)
-  # loki-canary:
-  #   image: grafana/loki-canary:latest
-  #   container_name: elims-loki-canary
-  #   restart: unless-stopped
-  #   command:
-  #     - -addr=loki:3100
-  #     - -labelname=pod
-  #     - -labelvalue=loki-canary
-  #   networks:
-  #     - elims-network
-  #   depends_on:
-  #     - loki
+  # Observability - Loki Canary (Watchdog)
+  loki-canary:
+    image: grafana/loki-canary:latest
+    container_name: elims-loki-canary
+    restart: unless-stopped
+    command:
+      - -addr=loki:3100
+      - -labelname=pod
+      - -labelvalue=loki-canary
+    networks:
+      - elims-network
+    depends_on:
+      - loki
 
 networks:
   elims-network:
     driver: bridge
     name: elims-network
   traefik-public:
-    external: true
+    driver: bridge
+    name: traefik-public
 
 volumes:
   mariadb-data:

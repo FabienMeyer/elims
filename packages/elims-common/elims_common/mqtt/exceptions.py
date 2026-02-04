@@ -1,49 +1,41 @@
 """ELIMS Common Package - MQTT Module - Exceptions."""
 
+from elims_common.logger.logger import logger
+from elims_common.mqtt.constants import MQTTReturnCode
+
 
 class MQTTError(Exception):
     """Base exception for MQTT-related errors."""
 
 
-class MQTTConnectionError(MQTTError):
-    """Exception raised when MQTT connection fails or is not established."""
+class MQTTLWTTopicError(MQTTError):
+    """Exception raised for invalid MQTT LWT topics."""
 
-    def __init__(
-        self,
-        message: str,
-        *,
-        broker_host: str | None = None,
-        broker_port: int | None = None,
-        return_code: int | None = None,
-        client_id: str | None = None,
-    ) -> None:
-        """Initialize MQTT connection error.
+    def __init__(self, msg: str) -> None:
+        """Initialize MQTT LWT topic error.
 
         Args:
-            message: Error message
-            broker_host: MQTT broker hostname or IP
-            broker_port: MQTT broker port
-            return_code: MQTT connection return code
-            client_id: MQTT client ID
+            msg: Error message
+            topic: Invalid MQTT topic
 
         """
-        self.broker_host = broker_host
-        self.broker_port = broker_port
-        self.return_code = return_code
-        self.client_id = client_id
+        logger.error(msg)
+        super().__init__(msg)
 
-        # Build detailed error message
-        parts = [message]
-        if broker_host:
-            broker_info = f"{broker_host}:{broker_port or 1883}"
-            parts.append(f"broker={broker_info}")
-        if client_id:
-            parts.append(f"client_id={client_id}")
-        if return_code is not None:
-            parts.append(f"return_code={return_code}")
 
-        full_message = parts[0] if len(parts) == 1 else f"{parts[0]} ({', '.join(parts[1:])})"
-        super().__init__(full_message)
+class MQTTConnectionError(MQTTError):
+    """Exception raised when MQTT connection fails."""
+
+    def __init__(self, rc: int) -> None:
+        """Initialize MQTT connection authentication error.
+
+        Args:
+            rc: MQTT return code
+
+        """
+        msg = self.msg.connection_failed(MQTTReturnCode.get_message(rc))
+        logger.error(msg)
+        super().__init__(msg)
 
 
 class MQTTPublishError(MQTTError):

@@ -9,6 +9,8 @@ RUN bun install
 
 COPY . /app/
 
+RUN bun run generate-client
+
 EXPOSE 5173
 
 CMD ["bun", "run", "dev", "--host", "0.0.0.0"]
@@ -24,6 +26,8 @@ COPY package.json bun.lock* /app/
 RUN bun install
 
 COPY . /app/
+
+RUN bun run generate-client
 
 RUN bun run build
 
