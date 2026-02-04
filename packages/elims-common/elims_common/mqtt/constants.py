@@ -4,6 +4,8 @@ from enum import IntEnum
 
 from pydantic import BaseModel
 
+MQTT_MAX_TOPIC_LENGTH = 65535
+
 
 class MQTTClientType:
     """Types of MQTT clients for logging purposes."""

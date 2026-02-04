@@ -1,7 +1,7 @@
 """ELIMS Common Package - MQTT Module."""
 
 from elims_common.mqtt.config import MQTTConfig
-from elims_common.mqtt.constants import MQTTConnectionFlags, MQTTReturnCode, MQTTTLSVersion
+from elims_common.mqtt.constants import MQTTConnectionFlags, MQTTReturnCode
 from elims_common.mqtt.exceptions import (
     MQTTConnectionError,
     MQTTError,

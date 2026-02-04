@@ -12,17 +12,22 @@ from elims_common.mqtt import MQTTSubscriber as BaseMQTTSubscriber
 # ---------------------------------------------------------------------
 # MQTT CONFIG
 # ---------------------------------------------------------------------
-
-RASPBERRY_MQTT_CONFIG = MQTTConfig(
+CLIENT_TYPE = "subscriber"
+CLIENT_ID = f"elims-backend-{CLIENT_TYPE}"
+MQTT_BACKEND_CONFIG = MQTTConfig(
     broker_host=settings.mqtt_host,
     broker_port=settings.mqtt_port,
     username=settings.mqtt_username,
     password=settings.mqtt_password,
+    client_id=CLIENT_ID,
+    client_type=CLIENT_TYPE,
+    lwt_topic=f"elims/{CLIENT_ID}/status",
+    lwt_payload=json.dumps({"status": "offline"}),
     keepalive=60,
     reconnect_on_failure=True,
-    client_id="fastapi",
-    use_tls=bool(settings.mqtt_ca_file),
-    certificate_authority_file=settings.mqtt_ca_file,
+    certificate_authority_file=settings.mqtt_certificate_authority_file,
+    certificate_file=settings.mqtt_certificate_file,
+    key_file=settings.mqtt_key_file,
 )
 
 
@@ -32,7 +37,7 @@ class MQTTSubscriber(BaseMQTTSubscriber):
     def __init__(self, config: MQTTConfig | None = None) -> None:
         """Initialize subscriber with environment defaults."""
         if config is None:
-            config = RASPBERRY_MQTT_CONFIG
+            config = MQTT_BACKEND_CONFIG
         super().__init__(config)
 
     def subscribe_all_sensors(self, callback: Callable[[str, dict[str, object]], None]) -> None:
@@ -62,7 +67,7 @@ class MQTTSubscriber(BaseMQTTSubscriber):
 
 def main() -> None:
     """MQTT subscriber for ELIMS backend."""
-    subscriber = MQTTSubscriber(RASPBERRY_MQTT_CONFIG)
+    subscriber = MQTTSubscriber(MQTT_BACKEND_CONFIG)
 
     def handle_sensor_data(topic: str, data: dict[str, object]) -> None:
         # Extract the device ID from the topic (e.g., 'raspberry-01')

@@ -19,7 +19,7 @@ class MQTTSubscriber(MQTTClient):
     def __init__(self, config: MQTTConfig) -> None:
         """Initialize the MQTT Subscriber."""
         self._subscriptions: dict[str, list[Callable[[str, str], None]]] = {}
-        super().__init__(config, "Subscriber")
+        super().__init__(config)
 
     def _setup_callbacks(self) -> None:
         """Set up MQTT client callbacks."""

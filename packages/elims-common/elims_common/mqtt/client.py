@@ -1,6 +1,5 @@
 """ELIMS Common Package - MQTT Module - Client."""
 
-import json
 import ssl
 from threading import Event
 
@@ -67,27 +66,14 @@ class MQTTClient:
 
     def _setup_lwt(self) -> None:
         """Configure Last Will and Testament (LWT) message."""
-        lwt_topic = self.config.lwt_topic
-        lwt_payload = self.config.lwt_payload
-
-        if lwt_topic is None and lwt_payload is None and self.config.client_id:
-            lwt_topic = f"devices/{self.config.client_id}/status"
-            lwt_payload = {"status": "offline"}
-
-        if not lwt_topic or lwt_payload is None:
-            return
-
-        MQTTUtils.validate_topic(lwt_topic)
-        if "+" in lwt_topic or "#" in lwt_topic:
-            msg = MQTTLogMessages.publish_failed_wildcards(lwt_topic)
+        MQTTUtils.validate_topic(self.config.lwt_topic)
+        if "+" in self.config.lwt_topic or "#" in self.config.lwt_topic:
+            msg = MQTTLogMessages.publish_failed_wildcards(self.config.lwt_topic)
             raise ValueError(msg)
 
-        if isinstance(lwt_payload, dict):
-            lwt_payload = json.dumps(lwt_payload)
-
         self._client.will_set(
-            lwt_topic,
-            payload=lwt_payload,
+            topic=self.config.lwt_topic,
+            payload=self.config.lwt_payload,
             qos=self.config.lwt_qos,
             retain=self.config.lwt_retain,
         )
@@ -141,20 +127,8 @@ class MQTTClient:
         elif was_connected:
             logger.info(MQTTLogMessages.disconnected(self.config.client_type))
 
-    def _ensure_security_preconditions(self) -> None:
-        """Validate security configuration before connecting."""
-        if self.config.require_tls and not self.config.use_tls:
-            msg = "TLS is required but use_tls is disabled"
-            raise MQTTConnectionError(msg)
-
-        if self.config.tls_insecure and not self.config.allow_insecure_tls:
-            msg = "tls_insecure is not allowed in this environment"
-            raise MQTTConnectionError(msg)
-
     def connect(self, timeout: float = 5.0) -> None:
         """Connect to the MQTT broker with an optional timeout."""
-        self._ensure_security_preconditions()
-
         self._connection_error = None
         self._connected = False
         self._connect_event.clear()
