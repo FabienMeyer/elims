@@ -1,7 +1,7 @@
 """ELIMS Common Package - MQTT Module."""
 
 from elims_common.mqtt.config import MQTTConfig
-from elims_common.mqtt.constants import MQTTConnectionFlags, MQTTReturnCode, MQTTTLSVersion
+from elims_common.mqtt.constants import MQTTConnectionFlags, MQTTReturnCode
 from elims_common.mqtt.exceptions import (
     MQTTConnectionError,
     MQTTError,
@@ -10,9 +10,6 @@ from elims_common.mqtt.exceptions import (
 )
 from elims_common.mqtt.publisher import MQTTPublisher
 from elims_common.mqtt.subscriber import MQTTSubscriber
-from elims_common.mqtt.utils import MQTTUtils
-
-__version__ = "0.0.1"
 
 __all__ = [
     "MQTTConfig",
@@ -25,5 +22,4 @@ __all__ = [
     "MQTTSubscribeError",
     "MQTTSubscriber",
     "MQTTTLSVersion",
-    "MQTTUtils",
 ]

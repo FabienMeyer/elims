@@ -1,5 +1,6 @@
 """ELIMS Raspberry Package - MQTT Module."""
 
+import json
 import time
 from collections.abc import Generator
 from contextlib import contextmanager
@@ -12,16 +13,22 @@ from elims_common.mqtt import MQTTConfig, MQTTPublisher
 # MQTT CONFIG
 # ---------------------------------------------------------------------
 
+CLIENT_TYPE = "publisher"
+CLIENT_ID = f"elims-raspberry-01-{CLIENT_TYPE}"
 RASPBERRY_MQTT_CONFIG = MQTTConfig(
     broker_host=settings.mqtt_host,
     broker_port=settings.mqtt_port,
     username=settings.mqtt_username,
     password=settings.mqtt_password,
+    client_id=CLIENT_ID,
+    client_type=CLIENT_TYPE,
+    lwt_topic=f"elims/{CLIENT_ID}/status",
+    lwt_payload=json.dumps({"status": "offline"}),
     keepalive=60,
     reconnect_on_failure=True,
-    client_id="raspberry-01",
-    use_tls=True,
-    certificate_authority_file=settings.mqtt_ca_file,
+    certificate_authority_file=settings.mqtt_certificate_authority_file,
+    certificate_file=settings.mqtt_certificate_file,
+    key_file=settings.mqtt_key_file,
 )
 
 
@@ -33,31 +40,23 @@ RASPBERRY_MQTT_CONFIG = MQTTConfig(
 class RaspberryMQTTPublisher(MQTTPublisher):
     """Raspberry-specific MQTT Publisher."""
 
-    def __init__(self, config: MQTTConfig | None = None) -> None:
+    def __init__(self, config: MQTTConfig) -> None:
         """Initialize publisher with environment defaults."""
-        if config is None:
-            config = RASPBERRY_MQTT_CONFIG
         super().__init__(config)
 
-    def publish_sensor_data(self, sensor_id: str, data: dict[str, object]) -> None:
-        """Publish sensor telemetry data to device topic."""
+    def publish_raspberry_telemetry(self, sensor_id: str, data: dict[str, object]) -> None:
+        """Publish raspberry telemetry data to a topic."""
         topic = f"devices/{self.config.client_id}/telemetry"
-        # Include sensor_id in the payload instead
         payload = {"sensor_id": sensor_id, **data}
         self.publish(topic, payload)
+        logger.info(self.msg.publishing(topic=topic, payload=payload))
 
-    def publish_status(self, status: str) -> None:
-        """Publish device status (online/offline) with retain flag."""
-        self.publish(
-            f"devices/{self.config.client_id}/status",
-            {"status": status},
-            retain=True,
-        )
-
-
-# ---------------------------------------------------------------------
-# CONTEXT MANAGER (OPTIONAL USE)
-# ---------------------------------------------------------------------
+    def publish_raspberry_status(self, status: str) -> None:
+        """Publish raspberry status (online/offline) with retain flag."""
+        topic = f"devices/{self.config.client_id}/status"
+        payload = {"status": status}
+        self.publish(topic, payload)
+        logger.info(self.msg.publishing(topic=topic, payload=payload))
 
 
 @contextmanager
@@ -69,31 +68,18 @@ def mqtt_publisher(config: MQTTConfig) -> Generator[MQTTPublisher]:
         yield publisher
     finally:
         if publisher.is_connected:
-            publisher.publish("raspberry/status", {"status": "offline"}, retain=True)
+            publisher.publish_raspberry_status("offline")
             publisher.disconnect()
-
-
-# ---------------------------------------------------------------------
-# MAIN LOOP
-# ---------------------------------------------------------------------
 
 
 def main() -> None:
     """MQTT publisher."""
-    logger.info(f"Connecting to MQTT broker at " f"{RASPBERRY_MQTT_CONFIG.broker_host}:" f"{RASPBERRY_MQTT_CONFIG.broker_port}")
-
     publisher = RaspberryMQTTPublisher(RASPBERRY_MQTT_CONFIG)
 
     try:
-        # --- CONNECT ONCE ---
         publisher.connect()
-        logger.info("Connected to MQTT broker")
+        publisher.publish_raspberry_status("online")
 
-        # Publish online status once
-        publisher.publish_status("online")
-        logger.info("Published status: online")
-
-        # --- PUBLISH LOOP ---
         while True:
             sensor_data = {
                 "temperature": 22.5,
@@ -101,23 +87,17 @@ def main() -> None:
                 "timestamp": "2026-01-29T12:00:00Z",
             }
 
-            publisher.publish_sensor_data("sensor_01", sensor_data)
-            logger.info(f"Published sensor data: {sensor_data}")
-
+            publisher.publish_raspberry_telemetry("sensor_01", sensor_data)
             time.sleep(10)
 
     except KeyboardInterrupt:
         logger.warning("Shutdown requested by user")
 
     finally:
-        # --- CLEAN SHUTDOWN ---
         if publisher.is_connected:
-            publisher.publish_status("offline")
+            publisher.publish_raspberry_status("offline")
             publisher.disconnect()
-        logger.info("Disconnected from MQTT broker")
 
-
-# ---------------------------------------------------------------------
 
 if __name__ == "__main__":
     main()

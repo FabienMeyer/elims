@@ -41,7 +41,7 @@ COPY README.md ./
 COPY backend ./backend
 
 # Install production dependencies only
-RUN uv pip install --system fastapi pydantic pydantic-settings 'uvicorn[standard]'
+RUN uv pip install --system fastapi pydantic pydantic-settings 'uvicorn[standard]' gunicorn
 
 # Create non-root user
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app

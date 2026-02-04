@@ -4,6 +4,8 @@ from enum import IntEnum
 
 from pydantic import BaseModel
 
+MQTT_MAX_TOPIC_LENGTH = 65535
+
 
 class MQTTClientType:
     """Types of MQTT clients for logging purposes."""
@@ -22,22 +24,29 @@ class MQTTReturnCode(IntEnum):
     BAD_CREDENTIALS = 4
     NOT_AUTHORIZED = 5
 
-    def get_message(self) -> str:
+    @classmethod
+    def get_message(cls, code: int) -> str:
         """Get human-readable error message for the return code.
+
+        Args:
+            code: MQTT return code
 
         Returns:
             Error message describing the return code
 
         """
         messages = {
-            MQTTReturnCode.SUCCESS: "Connection successful",
-            MQTTReturnCode.PROTOCOL_ERROR: "Connection refused - incorrect protocol version",
-            MQTTReturnCode.CLIENT_ID_REJECTED: "Connection refused - invalid client identifier",
-            MQTTReturnCode.SERVER_UNAVAILABLE: "Connection refused - server unavailable",
-            MQTTReturnCode.BAD_CREDENTIALS: "Connection refused - bad username or password",
-            MQTTReturnCode.NOT_AUTHORIZED: "Connection refused - not authorized",
+            cls.SUCCESS: "Connection successful",
+            cls.PROTOCOL_ERROR: "Connection refused - incorrect protocol version",
+            cls.CLIENT_ID_REJECTED: "Connection refused - invalid client identifier",
+            cls.SERVER_UNAVAILABLE: "Connection refused - server unavailable",
+            cls.BAD_CREDENTIALS: "Connection refused - bad username or password",
+            cls.NOT_AUTHORIZED: "Connection refused - not authorized",
         }
-        return messages.get(self, f"Unknown error (code {self})")
+        try:
+            return messages[cls(code)]
+        except (ValueError, KeyError):
+            return f"Unknown error (code {code})"
 
 
 class MQTTConnectionFlags(BaseModel):

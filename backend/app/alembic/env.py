@@ -4,6 +4,11 @@ import asyncio
 from logging.config import fileConfig
 
 from alembic import context
+
+# Import all models here for alembic autogenerate to detect them
+from app.api.instruments.models import Instrument  # noqa: F401
+from app.api.locations.models import Location  # noqa: F401
+from app.api.temperature.models import Temperature  # noqa: F401
 from app.db import async_url
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection

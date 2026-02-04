@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
+import { Route as LayoutTemperaturesRouteImport } from './routes/_layout/temperatures'
 
 const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
@@ -21,24 +22,32 @@ const LayoutIndexRoute = LayoutIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutTemperaturesRoute = LayoutTemperaturesRouteImport.update({
+  id: '/temperatures',
+  path: '/temperatures',
+  getParentRoute: () => LayoutRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
+  '/temperatures': typeof LayoutTemperaturesRoute
 }
 export interface FileRoutesByTo {
+  '/temperatures': typeof LayoutTemperaturesRoute
   '/': typeof LayoutIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_layout': typeof LayoutRouteWithChildren
+  '/_layout/temperatures': typeof LayoutTemperaturesRoute
   '/_layout/': typeof LayoutIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/temperatures'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/_layout' | '/_layout/'
+  to: '/temperatures' | '/'
+  id: '__root__' | '/_layout' | '/_layout/temperatures' | '/_layout/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -61,14 +70,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutIndexRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/temperatures': {
+      id: '/_layout/temperatures'
+      path: '/temperatures'
+      fullPath: '/temperatures'
+      preLoaderRoute: typeof LayoutTemperaturesRouteImport
+      parentRoute: typeof LayoutRoute
+    }
   }
 }
 
 interface LayoutRouteChildren {
+  LayoutTemperaturesRoute: typeof LayoutTemperaturesRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
+  LayoutTemperaturesRoute: LayoutTemperaturesRoute,
   LayoutIndexRoute: LayoutIndexRoute,
 }
 

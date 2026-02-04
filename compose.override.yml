@@ -27,6 +27,7 @@ services:
       - VITE_API_URL=http://localhost:8000
     networks:
       - elims-network
+      - traefik-public
     labels: []
 
   # Development: Expose ports for debugging/access
@@ -70,4 +71,5 @@ services:
 
 networks:
   traefik-public:
+    name: traefik-public
     external: false

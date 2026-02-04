@@ -57,9 +57,11 @@ class Settings(BaseSettings):
     # MQTT Configuration
     mqtt_host: str = Field(default="mosquitto", description="MQTT broker host")
     mqtt_port: int = Field(default=1883, description="MQTT broker port")
-    mqtt_username: str = Field(default="mqtt_user", description="MQTT username")
-    mqtt_password: str = Field(default="nR4tY7uI0oP3aS6dF9gH2jK5lZ8xC1vB", description="MQTT password")
-    mqtt_ca_file: Path | None = Field(default=None, description="Path to MQTT CA certificate file")
+    mqtt_username: str = Field(default="", description="MQTT username")
+    mqtt_password: str = Field(default="", description="MQTT password")
+    mqtt_certificate_authority_file: Path = Field(default=Path("config/mosquitto/certs/ca.crt"), description="Path to MQTT CA certificate file")
+    mqtt_certificate_file: Path = Field(default=Path("config/mosquitto/certs/client.crt"), description="Path to MQTT client certificate file")
+    mqtt_key_file: Path = Field(default=Path("config/mosquitto/certs/client.key"), description="Path to MQTT client key file")
 
     # Project Configuration
     project_name: str = Field(default="ELIMS", description="Project name")
