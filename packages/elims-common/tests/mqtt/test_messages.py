@@ -5,9 +5,9 @@ from elims_common.mqtt.messages import MQTTLogMessages
 
 def test_connecting_message() -> None:
     """Test connecting log message."""
-    msg = MQTTLogMessages.connecting("localhost", 1883, "Publisher")
+    msg = MQTTLogMessages.connecting("localhost", 8883, "Publisher")
     assert "Publisher" in msg
-    assert "localhost:1883" in msg
+    assert "localhost:8883" in msg
     assert "Connecting" in msg or "connecting" in msg
 
 
@@ -119,7 +119,7 @@ def test_all_messages_return_strings() -> None:
     error = Exception("test")
 
     messages = [
-        MQTTLogMessages.connecting("host", 1883, "Publisher"),
+        MQTTLogMessages.connecting("host", 8883, "Publisher"),
         MQTTLogMessages.connected("Publisher", session_present=False),
         MQTTLogMessages.connection_failed("Publisher", "error"),
         MQTTLogMessages.connection_timeout("Publisher", 5.0),

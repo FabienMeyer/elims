@@ -27,7 +27,7 @@ from elims_common import MQTTConfig, MQTTPublisher
 # Configure MQTT connection
 config = MQTTConfig(
     broker_host="localhost",
-    broker_port=1883,
+    broker_port=8883,
     username="your_username",  # Optional
     password="your_password",  # Optional
     client_id="publisher_client",
@@ -59,7 +59,7 @@ from elims_common import MQTTConfig, MQTTSubscriber
 # Configure MQTT connection
 config = MQTTConfig(
     broker_host="localhost",
-    broker_port=1883,
+    broker_port=8883,
     qos=1,
 )
 
@@ -86,7 +86,7 @@ while True:
 ## Configuration Options
 
 - `broker_host`: MQTT broker hostname (default: "localhost")
-- `broker_port`: MQTT broker port (default: 1883)
+- `broker_port`: MQTT broker port (default: 8883)
 - `username`: Authentication username (optional)
 - `password`: Authentication password (optional)
 - `client_id`: Unique client identifier (optional)

@@ -16,8 +16,6 @@ from elims_common.mqtt import MQTTSubscriber as BaseMQTTSubscriber
 
 CLIENT_TYPE = "subscriber"
 CLIENT_ID = f"elims-backend-{CLIENT_TYPE}"
-
-# Build MQTT config - always include certificate paths (even for plaintext, they just won't be used)
 MQTT_BACKEND_CONFIG = MQTTConfig(
     broker_host=settings.mqtt_host,
     broker_port=settings.mqtt_port,
@@ -82,16 +80,13 @@ def run_subscriber(stop_event: Event | None = None) -> None:
         data_str = json.dumps(data)
         logger.info(f"[TELEMETRY UPDATE] | DEVICE: {device_id:<12} | DATA: {data_str}")
 
-        # Extract temperature and timestamp from payload
+        # Extract temperature and timestamp (unix) from payload
         temperature_value = data.get("temperature")
         timestamp_value = data.get("timestamp")
-
         if temperature_value is not None and timestamp_value is not None:
             try:
-                # Convert temperature to float
-                temp_float = float(temperature_value)
-                # Timestamp can be either a float (Unix timestamp) or a string (ISO format)
-                asyncio.run(save_temperature(device_id, temp_float, timestamp_value))
+                # Run async database operation in event loop
+                asyncio.run(save_temperature(device_id, float(temperature_value), float(timestamp_value)))
             except (ValueError, TypeError) as e:
                 logger.error(f"Invalid telemetry values: temperature={temperature_value}, timestamp={timestamp_value}, error: {e}")
             except RuntimeError as e:
@@ -134,13 +129,13 @@ def start_subscriber_thread() -> tuple[Thread, Event]:
     return thread, stop_event
 
 
-async def save_temperature(device_id: str, temperature: float, timestamp: float | str) -> None:
+async def save_temperature(device_id: str, temperature: float, timestamp: float) -> None:
     """Save temperature data to the database.
 
     Args:
         device_id: The unique identifier of the device.
         temperature: The temperature value in Celsius.
-        timestamp: Unix timestamp from sensor (seconds) or ISO format string.
+        timestamp: Unix timestamp from sensor (seconds).
 
     """
     from datetime import datetime
@@ -149,21 +144,8 @@ async def save_temperature(device_id: str, temperature: float, timestamp: float 
         service = TemperatureService(session)
         from app.api.temperature.schemas import TemperatureCreate
 
-        # Parse timestamp - handle both Unix timestamp and ISO format
-        if isinstance(timestamp, str):
-            # ISO format string (e.g., "2026-01-29T12:00:00Z")
-            try:
-                parsed_timestamp = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
-            except ValueError:
-                logger.error(f"Could not parse ISO timestamp: {timestamp}, using current time")
-                parsed_timestamp = datetime.now(UTC)
-        else:
-            # Unix timestamp (seconds)
-            try:
-                parsed_timestamp = datetime.fromtimestamp(float(timestamp), tz=UTC)
-            except (ValueError, TypeError):
-                logger.error(f"Could not parse Unix timestamp: {timestamp}, using current time")
-                parsed_timestamp = datetime.now(UTC)
+        # Parse unix timestamp
+        parsed_timestamp = datetime.fromtimestamp(timestamp, tz=UTC)
 
         temperature_data = TemperatureCreate(device_id=device_id, temperature=temperature, timestamp=parsed_timestamp)
         await service.create(temperature_data)

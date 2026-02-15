@@ -19,7 +19,7 @@ class MQTTConfig(BaseModel):
 
     # Broker connection
     broker_host: str = Field(default="localhost", description="MQTT broker hostname")
-    broker_port: int = Field(default=1883, ge=1, le=65535, description="MQTT broker port")
+    broker_port: int = Field(default=8883, ge=1, le=65535, description="MQTT broker port")
 
     # Authentication
     username: Username = Field(description="MQTT username")

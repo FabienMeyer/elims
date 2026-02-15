@@ -183,6 +183,7 @@ nav:
 
   - Packages:
       - ELIMS Common: packages/elims-common/index.md
+        - MQTT: packages/elims-common/mqtt/mqtt.md
       - ELIMS Raspberry: packages/elims-raspberry/index.md
 
   - About:

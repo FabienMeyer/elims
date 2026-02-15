@@ -8,7 +8,7 @@ from elims_common import MQTTConfig, MQTTPublisher, MQTTSubscriber
 from elims_common.mqtt.exceptions import MQTTConnectionError
 
 # Constants for test configuration
-DEFAULT_BROKER_PORT = 1883
+DEFAULT_BROKER_PORT = 8883
 SECURE_BROKER_PORT = 8883
 DEFAULT_QOS = 1
 HIGH_QOS = 2
