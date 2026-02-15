@@ -4,7 +4,11 @@ import json
 import time
 from collections.abc import Generator
 from contextlib import contextmanager
+from datetime import UTC, datetime
 
+import adafruit_bmp280
+import adafruit_dht
+import board
 from app.config import settings
 from elims_common.logger.logger import logger
 from elims_common.mqtt import MQTTConfig, MQTTPublisher
@@ -80,14 +84,36 @@ def main() -> None:
         publisher.connect()
         publisher.publish_raspberry_status("online")
 
+        i2c = board.I2C()  # uses board.SCL and board.SDA
+        bmp280 = adafruit_bmp280.Adafruit_BMP280_I2C(i2c)
+        dht11 = adafruit_dht.DHT11(board.D22)
+
         while True:
+            now = datetime.now(UTC)
+            timestamp = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+
             sensor_data = {
-                "temperature": 22.5,
-                "humidity": 45.0,
-                "timestamp": "2026-01-29T12:00:00Z",
+                "timestamp": timestamp,
             }
 
-            publisher.publish_raspberry_telemetry("sensor_01", sensor_data)
+            # Read BMP280 temperature (pressure sensor)
+            try:
+                sensor_data["temperature"] = bmp280.temperature
+            except (RuntimeError, OSError) as e:
+                logger.error(f"Failed to read BMP280 temperature: {e}")
+
+            # Read DHT11 humidity sensor
+            try:
+                sensor_data["humidity"] = dht11.humidity
+            except (RuntimeError, OSError) as e:
+                logger.error(f"Failed to read DHT11 humidity: {e}")
+
+            # Only publish if we have at least one sensor reading
+            if len(sensor_data) > 1:  # More than just timestamp
+                publisher.publish_raspberry_telemetry("sensor_01", sensor_data)
+            else:
+                logger.warning("No sensor data available, skipping publish cycle")
+
             time.sleep(10)
 
     except KeyboardInterrupt:

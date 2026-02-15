@@ -56,12 +56,13 @@ class Settings(BaseSettings):
 
     # MQTT Configuration
     mqtt_host: str = Field(default="mosquitto", description="MQTT broker host")
-    mqtt_port: int = Field(default=1883, description="MQTT broker port")
-    mqtt_username: str = Field(default="elims_subscriber", description="MQTT username")
-    mqtt_password: str = Field(default="mqtt_secure_password_123", description="MQTT password")
+    mqtt_port: int = Field(default=8883, description="MQTT broker port (8883 for TLS, 8883 for plaintext)")
+    mqtt_username: str = Field(default="elims-backend-subscriber", description="MQTT username for backend service")
+    mqtt_password: str = Field(default="SecurePassword123!_FastAPI", description="MQTT password for backend service")
     mqtt_certificate_authority_file: Path = Field(default=Path("config/mosquitto/certs/ca.crt"), description="Path to MQTT CA certificate file")
     mqtt_certificate_file: Path = Field(default=Path("config/mosquitto/certs/client.crt"), description="Path to MQTT client certificate file")
     mqtt_key_file: Path = Field(default=Path("config/mosquitto/certs/client.key"), description="Path to MQTT client key file")
+    mqtt_tls_insecure: bool = Field(default=True, description="Disable SSL certificate verification for self-signed certs (development only)")
 
     # Project Configuration
     project_name: str = Field(default="ELIMS", description="Project name")

@@ -21,7 +21,7 @@ def mqtt_config() -> MQTTConfig:
     """Create a test MQTT configuration for E2E tests."""
     return MQTTConfig(
         broker_host="localhost",
-        broker_port=1883,
+        broker_port=8883,
         username="test_user",
         password="test_password",  # noqa: S106
         client_id="e2e_test",

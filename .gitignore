@@ -79,5 +79,5 @@ config/mosquitto/certs/*.csr
 config/mosquitto/certs/*.pfx
 config/mosquitto/certs/*.p12
 config/mosquitto/certs/*.srl
+config/mosquitto/certs-new/
 config/mosquitto/passwd
-config/mosquitto/acl

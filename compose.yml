@@ -55,14 +55,12 @@ services:
     container_name: elims-mosquitto
     restart: unless-stopped
     ports:
-      - "1883:1883"
       - "8883:8883"
-      - "9001:9001" # optional websocket
     volumes:
       # Config files
       - ./config/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
-      - ./config/mosquitto/passwd:/mosquitto/config/passwd:ro
-      - ./config/mosquitto/acl:/mosquitto/config/acl:ro
+      #- ./config/mosquitto/acl:/mosquitto/config/acl:ro
+      #- ./config/mosquitto/passwd:/mosquitto/config/passwd:ro
       - ./config/mosquitto/certs:/mosquitto/certs:ro
 
       # Persistent data and logs
@@ -84,6 +82,8 @@ services:
       target: production
     container_name: elims-backend
     restart: unless-stopped
+    ports:
+      - "8080:8000"
     environment:
       - MARIADB_HOST=${MARIADB_HOST}
       - MARIADB_PORT=${MARIADB_PORT}
@@ -95,8 +95,6 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - MQTT_HOST=${MQTT_HOST}
       - MQTT_PORT=${MQTT_PORT}
-      - MQTT_USERNAME=${MQTT_USERNAME}
-      - MQTT_PASSWORD=${MQTT_PASSWORD}
       - BACKEND_SECRET_KEY=${BACKEND_SECRET_KEY}
       - BACKEND_ALGORITHM=${BACKEND_ALGORITHM}
       - BACKEND_ACCESS_TOKEN_EXPIRE_MINUTES=${BACKEND_ACCESS_TOKEN_EXPIRE_MINUTES}
@@ -109,7 +107,13 @@ services:
       mariadb:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=5)",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5

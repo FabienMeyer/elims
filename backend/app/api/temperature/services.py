@@ -51,7 +51,7 @@ class TemperatureService:
             logger.error(f"Failed to create temperature record: {e}")
             raise
 
-    async def get(self, temperature_id: int) -> Temperature:
+    async def get(self, temperature_id: int) -> TemperatureRead:
         """Retrieve a temperature record by its ID.
 
         Args:
@@ -65,15 +65,15 @@ class TemperatureService:
 
         """
         query = select(Temperature).where(Temperature.id == temperature_id)
-        result = await self.session.exec(query)
-        temperature = result.one_or_none()
+        result = await self.session.execute(query)
+        temperature = result.scalar_one_or_none()
         if not temperature:
             logger.warning(f"Instrument with ID {temperature_id} not found")
             raise TemperatureNotFoundError(temperature_id)
         logger.debug(f"Retrieved temperature with ID {temperature_id}")
         return TemperatureRead.model_validate(temperature)
 
-    async def gets(self) -> list[Temperature]:
+    async def gets(self) -> list[TemperatureRead]:
         """Retrieve temperature records with optional filters.
 
         Returns:
@@ -81,8 +81,8 @@ class TemperatureService:
 
         """
         query = select(Temperature)
-        result = await self.session.exec(query)
-        temperatures = result.all()
+        result = await self.session.execute(query)
+        temperatures = result.scalars().all()
         logger.debug(f"Retrieved {len(temperatures)} temperatures")
         return [TemperatureRead.model_validate(temperature) for temperature in temperatures]
 
@@ -97,8 +97,8 @@ class TemperatureService:
 
         """
         query = select(Temperature).where(Temperature.id == temperature_id)
-        result = await self.session.exec(query)
-        temperature = result.one_or_none()
+        result = await self.session.execute(query)
+        temperature = result.scalar_one_or_none()
         if not temperature:
             logger.warning(f"Temperature with ID {temperature_id} not found for deletion")
             raise TemperatureNotFoundError(temperature_id)

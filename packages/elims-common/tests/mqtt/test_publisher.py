@@ -11,7 +11,7 @@ from elims_common.mqtt.publisher import MQTTPublisher
 from pydantic import SecretStr
 
 # Constants for test configuration
-DEFAULT_BROKER_PORT = 1883
+DEFAULT_BROKER_PORT = 8883
 DEFAULT_QOS = 1
 HIGH_QOS = 2
 DEFAULT_KEEPALIVE = 60

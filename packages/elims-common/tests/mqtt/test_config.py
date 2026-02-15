@@ -14,7 +14,7 @@ def mqtt_config_defaults() -> dict[str, Any]:
     """Return default MQTT configuration values."""
     return {
         "broker_host": "localhost",
-        "broker_port": 1883,
+        "broker_port": 8883,
         "qos": 1,
         "keepalive": 60,
         "clean_session": True,
@@ -97,7 +97,7 @@ def test_mqtt_config_password_security() -> None:
 @pytest.mark.parametrize(
     ("field", "valid_values"),
     [
-        ("broker_port", [1, 1883, 8883, 65535]),
+        ("broker_port", [1, 8883, 8883, 65535]),
         ("qos", [0, 1, 2]),
         ("keepalive", [1, 60, 300, 3600]),
         ("reconnect_delay", [1, 5, 30, 100]),

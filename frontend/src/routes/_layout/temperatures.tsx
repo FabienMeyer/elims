@@ -26,7 +26,7 @@ function TemperaturesView() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["temperatures"],
     queryFn: async () => {
-      const response = await fetch("/api/v1/temperatures")
+      const response = await fetch("/api/v1/temperatures/")
       if (!response.ok) {
         throw new Error("Failed to load temperatures")
       }

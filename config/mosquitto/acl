@@ -1,0 +1,13 @@
+# 1. BACKEND SUBSCRIBER (use cert CN = elims-backend-subscriber)
+user elims-backend-subscriber
+topic read devices/+/telemetry
+topic read devices/+/status
+topic read elims/#
+topic write devices/+/config
+topic write devices/+/command
+topic write devices/+/firmware
+
+# 2. RASPBERRY CLIENTS (use cert CN = device id, e.g., raspberry-01)
+pattern write devices/%u/telemetry
+pattern write devices/%u/status
+pattern read devices/%u/config

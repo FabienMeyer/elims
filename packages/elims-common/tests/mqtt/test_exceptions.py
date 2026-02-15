@@ -44,9 +44,9 @@ def test_mqtt_exception_inherits_from_mqtt_error(exception_class: type[Exception
 @pytest.mark.parametrize(
     ("broker_host", "broker_port", "return_code", "client_id", "expected_in_message"),
     [
-        ("192.168.1.1", 1883, 5, "client-123", ["192.168.1.1:1883", "client_id=client-123", "return_code=5"]),
+        ("192.168.1.1", 8883, 5, "client-123", ["192.168.1.1:8883", "client_id=client-123", "return_code=5"]),
         ("mqtt.example.com", 8883, None, None, ["mqtt.example.com:8883"]),
-        ("127.0.0.1", None, 4, None, ["127.0.0.1:1883", "return_code=4"]),
+        ("127.0.0.1", None, 4, None, ["127.0.0.1:8883", "return_code=4"]),
         (None, None, None, "test-client", ["client_id=test-client"]),
     ],
 )

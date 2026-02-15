@@ -25,11 +25,9 @@ class MQTTClient:
         self.config = config
         self.msg = MQTTLogMessages(config=config)
         self._setup_client()
-        self._setup_authentication()
         self._setup_tls()
         self._setup_lwt()
         self._setup_callbacks()
-
         self._connected = False
         self._connection_error: MQTTConnectionError | None = None
         self._connect_event = Event()
@@ -48,17 +46,21 @@ class MQTTClient:
         )
         logger.debug(self.msg.setup_client())
 
-    def _setup_authentication(self) -> None:
-        """Configure MQTT authentication."""
-        self._client.username_pw_set(self.config.username, self.config.password.get_secret_value())
-        logger.debug(self.msg.setup_authentication())
-
     def _setup_tls(self) -> None:
         """Configure MQTT TLS/SSL."""
         tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
         tls_context.minimum_version = ssl.TLSVersion.TLSv1_3
-        tls_context.check_hostname = True
-        tls_context.verify_mode = ssl.CERT_REQUIRED
+
+        if self.config.tls_insecure:
+            # Development mode: disable certificate verification
+            tls_context.check_hostname = False
+            tls_context.verify_mode = ssl.CERT_NONE
+            logger.warning("TLS certificate verification is DISABLED. Only use this in development!")
+        else:
+            # Production mode: strict certificate verification
+            tls_context.check_hostname = True
+            tls_context.verify_mode = ssl.CERT_REQUIRED
+
         tls_context.load_verify_locations(cafile=str(self.config.certificate_authority_file))
         tls_context.load_cert_chain(certfile=str(self.config.certificate_file), keyfile=str(self.config.key_file))
         self._client.tls_set_context(tls_context)
@@ -98,7 +100,11 @@ class MQTTClient:
             logger.info(self.msg.connected(session_present=session_present))
         else:
             self._connected = False
-            self._connection_error = MQTTConnectionError(rc)
+            self._connection_error = MQTTConnectionError(
+                self.msg.connection_failed(MQTTReturnCode.get_message(rc)),
+                return_code=rc,
+                client_id=self.config.client_id,
+            )
         self._connect_event.set()
 
     def _on_disconnect(self, _client: mqtt.Client | None, _userdata: object | None, rc: int) -> None:
@@ -114,7 +120,11 @@ class MQTTClient:
         self._connected = False
         if rc != 0:
             if not self._connection_error:
-                self._connection_error = MQTTConnectionError(rc)
+                self._connection_error = MQTTConnectionError(
+                    self.msg.unexpected_disconnect(rc),
+                    return_code=rc,
+                    client_id=self.config.client_id,
+                )
             logger.warning(self.msg.unexpected_disconnect(rc))
         elif was_connected:
             logger.info(self.msg.disconnected())

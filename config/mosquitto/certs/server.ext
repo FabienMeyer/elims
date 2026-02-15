@@ -6,3 +6,8 @@ DNS.2 = localhost
 DNS.3 = elims-mosquitto
 IP.1 = 192.168.1.130
 IP.2 = 127.0.0.1
+[v3_server]
+basicConstraints = CA:FALSE
+keyUsage = digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
