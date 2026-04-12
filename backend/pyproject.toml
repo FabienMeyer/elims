@@ -20,7 +20,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "aiomysql>=0.2.0",
+    "aiomysql>=0.3.2",
     "alembic>=1.14.4",
     "fastapi[standard]>=0.128.0",
     "loguru>=0.7.3",
