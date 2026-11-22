@@ -5,7 +5,7 @@ version = "0.1.0"
 description = "Transport-neutral communication contracts for ELIMS."
 license = "MIT"
 requires-python = ">=3.13"
-dependencies = ["elims-utils", "pydantic>=2.10"]
+dependencies = ["elims-utils", "pydantic>=2.14.4"]
 
 [project.urls]
 Documentation = "https://fabienmeyer.github.io/elims/"
