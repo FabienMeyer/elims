@@ -1,0 +1,26 @@
+site_name: ELIMS backend
+site_description: Backend architecture, API, development, and operations
+theme:
+  name: material
+nav:
+  - Home: index.md
+  - Product vision: product/vision.md
+  - Architecture: architecture.md
+  - Specifications: specifications/index.md
+  - Decisions: decisions/index.md
+  - API: api.md
+  - Database: database.md
+  - Security: security.md
+  - Configuration: configuration.md
+  - Development: development.md
+  - Operations: operations.md
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [.]
+          options:
+            docstring_style: google
+            show_root_heading: true
+            show_source: false

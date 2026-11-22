@@ -1,0 +1,17 @@
+site_name: ELIMS frontend
+site_description: Frontend architecture, design system, accessibility, and development
+theme:
+  name: material
+nav:
+  - Home: index.md
+  - Product vision: product/vision.md
+  - Architecture: architecture.md
+  - Specifications: specifications/index.md
+  - Decisions: decisions/index.md
+  - Design system: design-system.md
+  - Accessibility: accessibility.md
+  - Configuration: configuration.md
+  - Development: development.md
+  - Testing: testing.md
+plugins:
+  - search

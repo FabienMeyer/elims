@@ -1,0 +1,23 @@
+site_name: elims-database
+site_description: Asynchronous SQLModel database infrastructure for ELIMS
+theme:
+  name: material
+nav:
+  - Home: index.md
+  - Product vision: product/vision.md
+  - Architecture: architecture.md
+  - Specifications: specifications/index.md
+  - Decisions: decisions/index.md
+  - Usage: usage.md
+  - API reference: api.md
+  - Changelog: changelog.md
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            docstring_style: google
+            show_root_heading: true
+            show_source: false

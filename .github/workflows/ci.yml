@@ -1,0 +1,115 @@
+name: CI
+on:
+  workflow_call:
+  push:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  pull-request-title:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate Conventional Commit title
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          pattern='^(feat|fix|docs|refactor|perf|test|build|ci|chore|revert)\((frontend|backend|database|cli|com|instruments|utils|docs|infra|ci|repository|release|deps|security|docker)\)!?: .+'
+          if [[ ! "$TITLE" =~ $pattern ]]; then
+            echo "Invalid pull-request title: $TITLE"
+            echo "Use type(scope): description with an approved ELIMS scope."
+            exit 1
+          fi
+
+  python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with: { version: "0.13.7" }
+      - run: uv sync --locked --all-packages --all-extras --group dev --group docs --group quality
+      - run: uv run ruff check backend packages scripts docs/hooks.py .claude/skills
+      - run: uv run ruff format --check backend packages scripts docs/hooks.py .claude/skills
+      - run: uv run mypy backend/app packages/elims-cli/src packages/elims-utils/src packages/elims-com/src packages/elims-database/src packages/elims-instruments/src
+      - run: uv run --locked pytest --cov --cov-report=xml --cov-report=term-missing
+        env:
+          DATABASE_URL: sqlite+aiosqlite:///./test.db
+      - name: Build aggregate documentation
+        run: uv run mkdocs build --strict
+      - name: Build standalone package documentation
+        run: |
+          for component in backend frontend; do
+            (cd "$component" && uv run mkdocs build --strict)
+          done
+          for package in packages/*; do
+            if [ -f "$package/mkdocs.yml" ]; then
+              (cd "$package" && uv run mkdocs build --strict)
+            fi
+          done
+      - run: uv build --all-packages
+      - run: uv run --locked python scripts/check_wheels.py
+      - run: git ls-files -z -- '*.yml' '*.yaml' | xargs -0 uv run --locked --group quality yamllint
+
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults: { run: { working-directory: frontend } }
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with: { node-version: "24", cache: npm, cache-dependency-path: frontend/package-lock.json }
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test:coverage
+      - run: npm run build
+      - run: npx playwright install --with-deps chrome
+      - run: npm run test:e2e
+      - run: npx markdownlint-cli2 --config ../.markdownlint-cli2.jsonc '../docs/**/*.md' '../backend/docs/**/*.md' '../frontend/docs/**/*.md' '../packages/*/docs/**/*.md'
+
+  stack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Build and start disposable stack
+        run: docker compose --env-file .env.example -p elims-ci up --build -d --wait --wait-timeout 120
+      - name: Exercise public proxy and MariaDB
+        run: python scripts/smoke.py
+      - name: Show logs on failure
+        if: failure()
+        run: docker compose --env-file .env.example -p elims-ci logs --tail=100
+      - name: Remove disposable stack
+        if: always()
+        run: docker compose --env-file .env.example -p elims-ci down --volumes
+
+  docker-package:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { component: backend, context: ., dockerfile: backend/Dockerfile }
+          - { component: frontend, context: frontend, dockerfile: frontend/Dockerfile }
+    name: docker-package (${{ matrix.component }})
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803  # v6
+      - uses: ./.github/actions/build-scan-image
+        with:
+          context: ${{ matrix.context }}
+          dockerfile: ${{ matrix.dockerfile }}
+
+  infrastructure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Lint GitHub Actions
+        run: docker run --rm -v "$PWD:/repo:ro" -w /repo rhysd/actionlint:1.7.12 -color
+      - name: Lint Dockerfiles
+        run: docker run --rm -v "$PWD:/repo:ro" -w /repo hadolint/hadolint:v2.15.1 hadolint backend/Dockerfile frontend/Dockerfile

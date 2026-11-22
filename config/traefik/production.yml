@@ -1,0 +1,21 @@
+http:
+  routers:
+    app:
+      rule: Host(`{{ env "DOMAIN" }}`)
+      entryPoints: [websecure]
+      service: frontend
+      tls:
+        certResolver: letsencrypt
+      middlewares: [headers]
+  middlewares:
+    headers:
+      headers:
+        contentTypeNosniff: true
+        frameDeny: true
+        stsSeconds: 31536000
+        referrerPolicy: same-origin
+  services:
+    frontend:
+      loadBalancer:
+        servers:
+          - url: http://frontend:8080

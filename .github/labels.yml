@@ -1,0 +1,42 @@
+schema-version: 1
+repository: FabienMeyer/elims
+
+labels:
+  - { name: "type:feature", color: "1D76DB", description: "New product behavior" }
+  - { name: "type:bug", color: "D73A4A", description: "Correction of incorrect behavior" }
+  - { name: "type:refactor", color: "C5DEF5", description: "Behavior-preserving code improvement" }
+  - { name: "type:maintenance", color: "D4C5F9", description: "Repository or dependency maintenance" }
+  - { name: "type:documentation", color: "0075CA", description: "Documentation-only change" }
+  - { name: "type:security", color: "B60205", description: "Security improvement or correction" }
+  - { name: "type:performance", color: "FBCA04", description: "Measured performance improvement" }
+  - { name: "type:migration", color: "E99695", description: "Data or compatibility migration" }
+  - { name: "type:tracking", color: "5319E7", description: "Parent issue with no implementation work" }
+
+  - { name: "area:frontend", color: "7057FF", description: "React frontend" }
+  - { name: "area:backend", color: "0E8A16", description: "FastAPI backend" }
+  - { name: "area:database", color: "006B75", description: "Database schema, persistence, or migration" }
+  - { name: "area:cli", color: "BFDADC", description: "elims-cli package" }
+  - { name: "area:com", color: "BFD4F2", description: "elims-com package" }
+  - { name: "area:instruments", color: "C2E0C6", description: "elims-instruments package" }
+  - { name: "area:utils", color: "D4E5F7", description: "elims-utils package" }
+  - { name: "area:documentation", color: "0075CA", description: "Project and component documentation" }
+  - { name: "area:infrastructure", color: "F9D0C4", description: "Containers, deployment, proxy, or observability" }
+  - { name: "area:ci", color: "FEF2C0", description: "Continuous integration and automation" }
+  - { name: "area:repository", color: "EDEDED", description: "Genuinely repository-wide work" }
+
+  - { name: "risk:low", color: "C2E0C6", description: "Isolated and easy to reverse" }
+  - { name: "risk:medium", color: "FBCA04", description: "Contained application or delivery risk" }
+  - { name: "risk:high", color: "D93F0B", description: "Significant delivery or operational risk" }
+  - { name: "risk:critical", color: "B60205", description: "Data-loss, security, or system-wide outage risk" }
+
+  - { name: "impact:breaking", color: "B60205", description: "Breaks a supported interface or behavior" }
+  - { name: "impact:migration", color: "E99695", description: "Requires a data or compatibility migration" }
+  - { name: "impact:security", color: "D93F0B", description: "Affects security controls or exposure" }
+  - { name: "impact:privacy", color: "D93F0B", description: "Affects personal or sensitive data" }
+  - { name: "impact:accessibility", color: "F143AB", description: "Affects accessibility behavior" }
+  - { name: "impact:operations", color: "FBCA04", description: "Affects deployment or operation" }
+  - { name: "impact:documentation", color: "0075CA", description: "Requires documentation changes" }
+
+  - { name: "rdy-to-implement", color: "0E8A16", description: "Approved implementation leaf" }
+  - { name: "blocked", color: "B60205", description: "Cannot progress without an external change" }
+  - { name: "needs-decision", color: "D876E3", description: "Requires an explicit human decision" }
