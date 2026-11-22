@@ -1,4 +1,4 @@
-FROM python:3.13-alpine3.24 AS build
+FROM python:3.15-alpine3.24 AS build
 WORKDIR /app
 COPY --from=ghcr.io/astral-sh/uv:0.13.7 /uv /usr/local/bin/uv
 ENV UV_LINK_MODE=copy UV_PYTHON_DOWNLOADS=0
@@ -7,7 +7,7 @@ COPY backend ./backend
 COPY packages ./packages
 RUN uv sync --locked --package elims-backend --no-dev --no-editable
 
-FROM python:3.13-alpine3.24 AS runtime
+FROM python:3.15-alpine3.24 AS runtime
 WORKDIR /app/backend
 ENV PATH="/app/.venv/bin:$PATH" PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 COPY --from=build /app/.venv /app/.venv
