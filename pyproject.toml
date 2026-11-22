@@ -18,7 +18,7 @@ elims-instruments = { workspace = true }
 [dependency-groups]
 dev = ["mypy>=1.19", "pytest>=9", "pytest-cov>=7", "ruff>=0.14"]
 quality = ["pre-commit>=4", "yamllint>=1.35"]
-docs = ["mkdocs-material>=9.6", "mkdocstrings[python]>=0.30"]
+docs = ["mkdocs-material>=9.6", "mkdocstrings[python]>=1.0.8"]
 
 [tool.ruff]
 target-version = "py313"
