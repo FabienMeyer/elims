@@ -17,7 +17,7 @@ jobs:
         env:
           TITLE: ${{ github.event.pull_request.title }}
         run: |
-          pattern='^(feat|fix|docs|refactor|perf|test|build|ci|chore|revert)\((frontend|backend|database|cli|com|instruments|utils|docs|infra|ci|repository|release|deps|security|docker)\)!?: .+'
+          pattern='^(feat|fix|docs|refactor|perf|test|build|ci|chore|revert)\((frontend|backend|database|cli|com|instruments|utils|docs|infra|ci|repository|release|deps|deps-dev|security|docker)\)!?: .+'
           if [[ ! "$TITLE" =~ $pattern ]]; then
             echo "Invalid pull-request title: $TITLE"
             echo "Use type(scope): description with an approved ELIMS scope."

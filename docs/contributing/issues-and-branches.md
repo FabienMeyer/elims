@@ -146,7 +146,7 @@ docs(infra): document GHCR authentication
 Allowed types are `feat`, `fix`, `docs`, `refactor`, `perf`, `test`, `build`,
 `ci`, `chore`, and `revert`. Allowed scopes are `frontend`, `backend`,
 `database`, `cli`, `com`, `instruments`, `utils`, `docs`, `infra`, `ci`,
-`repository`, `release`, `deps`, `security`, and `docker`.
+`repository`, `release`, `deps`, `deps-dev`, `security`, and `docker`.
 
 Add `!` before the colon for a breaking change, for example
 `feat(backend)!: replace the sample response schema`. Link the pull request to
