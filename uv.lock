@@ -490,7 +490,7 @@ requires-dist = [
     { name = "sqlalchemy", extras = ["asyncio"], specifier = ">=2.1.9" },
     { name = "sqlmodel", specifier = ">=0.0.24" },
     { name = "structlog", specifier = ">=25.5,<27" },
-    { name = "uvicorn", extras = ["standard"], specifier = ">=0.34" },
+    { name = "uvicorn", extras = ["standard"], specifier = ">=0.54.0" },
 ]
 provides-extras = ["dev"]
 
