@@ -5,7 +5,7 @@ version = "0.1.0"
 description = "Minimal Typer application shell for ELIMS."
 license = "MIT"
 requires-python = ">=3.13"
-dependencies = ["typer>=0.21"]
+dependencies = ["typer>=0.29.2"]
 
 [project.urls]
 Documentation = "https://fabienmeyer.github.io/elims/"
