@@ -1,0 +1,122 @@
+schema-version: 1
+
+repository: FabienMeyer/elims
+project:
+  owner: FabienMeyer
+  number: 14
+  closed: false
+  status-field: Status
+  enabled-workflows:
+    - Auto-add ELIMS issues
+    - Auto-add sub-issues to project
+    - Item added to project
+    - Item closed
+    - Pull request merged
+
+  statuses:
+    - Backlog
+    - Ready to implement
+    - Implementation
+    - Technical verification
+    - Agent system validation
+    - Technical documentation
+    - Human acceptance
+    - Ready to merge
+    - Done
+    - Blocked
+
+  views:
+    - name: All work
+      rename-from: View 1
+      layout: board
+      filter: ""
+      group-by: Status
+      fields: [Title, Status, Labels, Assignees, Parent issue]
+
+    - name: Frontend
+      layout: board
+      filter: 'label:"area:frontend"'
+      group-by: Status
+      fields: [Title, Status, Labels, Assignees, Parent issue]
+
+    - name: Backend
+      layout: board
+      filter: 'label:"area:backend"'
+      group-by: Status
+      fields: [Title, Status, Labels, Assignees, Parent issue]
+
+    - name: Database
+      layout: board
+      filter: 'label:"area:database"'
+      group-by: Status
+      fields: [Title, Status, Labels, Assignees, Parent issue]
+
+    - name: CLI
+      layout: board
+      filter: 'label:"area:cli"'
+      group-by: Status
+      fields: [Title, Status, Labels, Assignees, Parent issue]
+
+    - name: Communications
+      layout: board
+      filter: 'label:"area:com"'
+      group-by: Status
+      fields: [Title, Status, Labels, Assignees, Parent issue]
+
+    - name: Instruments
+      layout: board
+      filter: 'label:"area:instruments"'
+      group-by: Status
+      fields: [Title, Status, Labels, Assignees, Parent issue]
+
+    - name: Utilities
+      layout: board
+      filter: 'label:"area:utils"'
+      group-by: Status
+      fields: [Title, Status, Labels, Assignees, Parent issue]
+
+    - name: Documentation
+      layout: board
+      filter: 'label:"area:documentation"'
+      group-by: Status
+      fields: [Title, Status, Labels, Assignees, Parent issue]
+
+    - name: Infrastructure
+      layout: board
+      filter: 'label:"area:infrastructure"'
+      group-by: Status
+      fields: [Title, Status, Labels, Assignees, Parent issue]
+
+    - name: CI
+      layout: board
+      filter: 'label:"area:ci"'
+      group-by: Status
+      fields: [Title, Status, Labels, Assignees, Parent issue]
+
+    - name: Ready work
+      layout: table
+      filter: 'label:"rdy-to-implement"'
+      fields: [Title, Status, Labels, Assignees, Parent issue]
+
+    - name: Blocked
+      layout: table
+      filter: 'status:"Blocked"'
+      fields: [Title, Status, Labels, Assignees, Parent issue]
+
+    - name: High risk
+      layout: table
+      filter: 'label:"risk:high","risk:critical"'
+      group-by: Status
+      fields: [Title, Status, Labels, Assignees, Parent issue]
+
+    - name: Bugs
+      rename-from: "Bugs 🐛 "
+      layout: table
+      filter: 'label:"type:bug"'
+      fields: [Title, Status, Labels, Assignees, Parent issue]
+
+    - name: Technical verification
+      rename-from: In review
+      layout: table
+      filter: 'status:"Technical verification"'
+      fields: [Title, Status, Labels, Assignees, Parent issue]

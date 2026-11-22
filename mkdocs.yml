@@ -1,0 +1,109 @@
+site_name: ELIMS
+hooks: [docs/hooks.py]
+theme:
+  name: material
+nav:
+  - Home: index.md
+  - Product:
+      - Vision: product/vision.md
+      - Principles: product/principles.md
+      - Roadmap: product/roadmap.md
+  - Specifications:
+      - Overview: specifications/index.md
+  - Decisions:
+      - Overview: decisions/index.md
+  - Agents:
+      - Idea Shaper: agents/idea-shaper.md
+  - Architecture:
+      - Overview: architecture.md
+      - Components: components/index.md
+  - Backend:
+      - Overview: components/backend/index.md
+      - Vision: components/backend/product/vision.md
+      - Architecture: components/backend/architecture.md
+      - Specifications: components/backend/specifications/index.md
+      - Decisions: components/backend/decisions/index.md
+      - API: components/backend/api.md
+      - Database: components/backend/database.md
+      - Security: components/backend/security.md
+      - Configuration: components/backend/configuration.md
+      - Development: components/backend/development.md
+      - Operations: components/backend/operations.md
+  - Frontend:
+      - Overview: components/frontend/index.md
+      - Vision: components/frontend/product/vision.md
+      - Architecture: components/frontend/architecture.md
+      - Specifications: components/frontend/specifications/index.md
+      - Decisions: components/frontend/decisions/index.md
+      - Design system: components/frontend/design-system.md
+      - Accessibility: components/frontend/accessibility.md
+      - Configuration: components/frontend/configuration.md
+      - Development: components/frontend/development.md
+      - Testing: components/frontend/testing.md
+  - Package architecture: packages/architecture.md
+  - Python packages:
+      - Overview: packages/index.md
+      - elims-cli:
+          - Overview: packages/elims-cli/index.md
+          - Vision: packages/elims-cli/product/vision.md
+          - Architecture: packages/elims-cli/architecture.md
+          - Specifications: packages/elims-cli/specifications/index.md
+          - Decisions: packages/elims-cli/decisions/index.md
+          - Usage: packages/elims-cli/usage.md
+          - API: packages/elims-cli/api.md
+          - Changelog: packages/elims-cli/changelog.md
+      - elims-utils:
+          - Overview: packages/elims-utils/index.md
+          - Vision: packages/elims-utils/product/vision.md
+          - Architecture: packages/elims-utils/architecture.md
+          - Specifications: packages/elims-utils/specifications/index.md
+          - Decisions: packages/elims-utils/decisions/index.md
+          - Usage: packages/elims-utils/usage.md
+          - API: packages/elims-utils/api.md
+          - Changelog: packages/elims-utils/changelog.md
+      - elims-com:
+          - Overview: packages/elims-com/index.md
+          - Vision: packages/elims-com/product/vision.md
+          - Architecture: packages/elims-com/architecture.md
+          - Specifications: packages/elims-com/specifications/index.md
+          - Decisions: packages/elims-com/decisions/index.md
+          - Usage: packages/elims-com/usage.md
+          - API: packages/elims-com/api.md
+          - Changelog: packages/elims-com/changelog.md
+      - elims-database:
+          - Overview: packages/elims-database/index.md
+          - Vision: packages/elims-database/product/vision.md
+          - Architecture: packages/elims-database/architecture.md
+          - Specifications: packages/elims-database/specifications/index.md
+          - Decisions: packages/elims-database/decisions/index.md
+          - Usage: packages/elims-database/usage.md
+          - API: packages/elims-database/api.md
+          - Changelog: packages/elims-database/changelog.md
+      - elims-instruments:
+          - Overview: packages/elims-instruments/index.md
+          - Vision: packages/elims-instruments/product/vision.md
+          - Architecture: packages/elims-instruments/architecture.md
+          - Specifications: packages/elims-instruments/specifications/index.md
+          - Decisions: packages/elims-instruments/decisions/index.md
+          - Usage: packages/elims-instruments/usage.md
+          - API: packages/elims-instruments/api.md
+          - Changelog: packages/elims-instruments/changelog.md
+  - Operations:
+      - Command reference: operations/command-reference.md
+      - AFK implementation: operations/afk-implementation.md
+      - Development and checks: operations/development.md
+      - Deployment and recovery: operations/deployment.md
+      - Authentication: operations/authentication.md
+      - Observability: operations/observability.md
+  - Contributing:
+      - Issues and branches: contributing/issues-and-branches.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_root_heading: true
+            show_source: false

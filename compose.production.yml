@@ -1,0 +1,55 @@
+# Standalone file; do not merge with compose.yml.
+# Business routes stay closed until app.security is connected to an identity provider.
+x-backend: &backend
+  image: ${BACKEND_IMAGE:?Set the tested backend image digest}
+  environment:
+    ENVIRONMENT: production
+    APP_DEBUG: "false"
+    DATABASE_URL: ${DATABASE_URL:?Set the external MariaDB connection URL}
+    BACKEND_CORS_ORIGINS: ""
+  security_opt: ["no-new-privileges:true"]
+  cap_drop: [ALL]
+  read_only: true
+  tmpfs: [/tmp]
+  logging:
+    driver: json-file
+    options: { max-size: "10m", max-file: "3" }
+
+services:
+  migrate:
+    <<: *backend
+    command: ["alembic", "upgrade", "head"]
+  backend:
+    <<: *backend
+    restart: unless-stopped
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/ready')"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+  frontend:
+    image: ${FRONTEND_IMAGE:?Set the tested frontend image digest}
+    restart: unless-stopped
+    depends_on:
+      backend: { condition: service_healthy }
+  traefik:
+    image: traefik:v3.6
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:?Set the public application hostname}
+    command:
+      - --providers.file.filename=/etc/traefik/dynamic.yml
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL:?Set the certificate contact email}
+      - --certificatesresolvers.letsencrypt.acme.storage=/certificates/acme.json
+      - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./config/traefik/production.yml:/etc/traefik/dynamic.yml:ro
+      - certificates:/certificates
+volumes:
+  certificates:

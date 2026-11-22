@@ -1,0 +1,3 @@
+"""ELIMS installation and operations CLI."""
+
+__version__ = "0.1.0"

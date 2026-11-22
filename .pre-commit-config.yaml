@@ -1,0 +1,29 @@
+repos:
+  - repo: local
+    hooks:
+      - id: ruff
+        name: Ruff lint
+        entry: uv run --locked ruff check --fix
+        language: system
+        types: [python]
+      - id: ruff-format
+        name: Ruff format
+        entry: uv run --locked ruff format
+        language: system
+        types: [python]
+      - id: biome
+        name: Biome
+        entry: npm --prefix frontend run lint
+        pass_filenames: false
+        language: system
+        files: ^frontend/.*\.(tsx?|jsx?|json)$
+      - id: yaml
+        name: YAML lint
+        entry: uv run --locked --group quality yamllint
+        language: system
+        types: [yaml]
+      - id: secrets
+        name: Gitleaks staged secrets
+        entry: ghcr.io/gitleaks/gitleaks:v8.30.1 git --pre-commit --staged --redact
+        language: docker_image
+        pass_filenames: false

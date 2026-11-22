@@ -1,0 +1,53 @@
+name: Publish images
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    uses: ./.github/workflows/ci.yml
+  security:
+    uses: ./.github/workflows/security.yml
+  images:
+    needs: [validate, security]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        include:
+          - name: backend
+            context: .
+            dockerfile: backend/Dockerfile
+          - name: frontend
+            context: frontend
+            dockerfile: frontend/Dockerfile
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Select release target
+        id: target
+        env:
+          COMPONENT: ${{ matrix.name }}
+        run: |
+          image="ghcr.io/${GITHUB_REPOSITORY,,}-$COMPONENT"
+          tag="sha-$GITHUB_SHA"
+          if [[ "$GITHUB_REF_TYPE" == tag ]]; then tag="$GITHUB_REF_NAME"; fi
+          [[ "$tag" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ ]]
+          echo "ref=$image:$tag" >> "$GITHUB_OUTPUT"
+      - uses: ./.github/actions/build-scan-image
+        with:
+          context: ${{ matrix.context }}
+          dockerfile: ${{ matrix.dockerfile }}
+      - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550  # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish the scanned candidate and its attestations
+        env:
+          IMAGE_REF: ${{ steps.target.outputs.ref }}
+        run: skopeo copy --all --preserve-digests "oci-archive:$RUNNER_TEMP/candidate.tar" "docker://$IMAGE_REF"

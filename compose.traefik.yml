@@ -1,0 +1,10 @@
+# Optional local proxy; production uses compose.production.yml.
+services:
+  traefik:
+    image: traefik:v3.6
+    command:
+      - --providers.file.filename=/etc/traefik/dynamic.yml
+      - --entrypoints.web.address=:80
+    ports: ["127.0.0.1:8088:80"]
+    volumes:
+      - ./config/traefik/development.yml:/etc/traefik/dynamic.yml:ro
