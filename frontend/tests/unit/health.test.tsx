@@ -6,7 +6,7 @@ import { afterAll, afterEach, beforeAll, expect, it } from "vitest"
 import { HealthCard } from "@/features/health/components/health-card"
 
 const server = setupServer()
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }))
+beforeAll(() => server.listen({ onUnhandledFrame: "error" }))
 afterEach(() => {
   cleanup()
   server.resetHandlers()
