@@ -75,7 +75,7 @@ uv run mypy backend/app packages/elims-cli/src packages/elims-utils/src packages
 ## Backend development
 
 ```powershell
-uv run --package template-backend uvicorn app.main:app --app-dir backend --reload --host 127.0.0.1 --port 8000
+uv run --package elims-backend uvicorn app.main:app --app-dir backend --reload --host 127.0.0.1 --port 8000
 ```
 
 Useful endpoints:

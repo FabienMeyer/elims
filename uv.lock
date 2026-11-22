@@ -14,7 +14,7 @@ members = [
     "elims-database",
     "elims-instruments",
     "elims-utils",
-    "template-backend",
+    "elims-backend",
 ]
 
 [manifest.dependency-groups]
@@ -1810,7 +1810,7 @@ wheels = [
 ]
 
 [[package]]
-name = "template-backend"
+name = "elims-backend"
 version = "0.1.0"
 source = { editable = "backend" }
 dependencies = [

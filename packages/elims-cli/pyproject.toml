@@ -3,8 +3,14 @@ readme = "README.md"
 name = "elims-cli"
 version = "0.1.0"
 description = "Minimal Typer application shell for ELIMS."
+license = "MIT"
 requires-python = ">=3.13"
 dependencies = ["typer>=0.21"]
+
+[project.urls]
+Documentation = "https://fabienmeyer.github.io/elims/"
+Repository = "https://github.com/FabienMeyer/elims"
+Issues = "https://github.com/FabienMeyer/elims/issues"
 
 [project.scripts]
 elims = "elims_cli.app:app"

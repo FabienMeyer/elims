@@ -25,3 +25,7 @@ docker compose --profile observability up --build
 See [docs/architecture.md](./docs/architecture.md) for the template boundaries.
 
 See the [command reference](./docs/operations/command-reference.md) for setup, development, testing, documentation, Docker, security, and release commands.
+
+Release history is recorded in the [changelog](./CHANGELOG.md). See
+[releases and GitHub packages](./docs/operations/releases.md) for the GHCR
+publishing process.

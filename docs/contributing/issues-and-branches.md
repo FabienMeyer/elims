@@ -134,11 +134,22 @@ Work without an issue must be exceptional. When authorized, use
 
 ## Pull-request titles
 
-Match the approved issue title and append the issue number:
+Use a Conventional Commit title. The scope identifies the primary affected
+area and the description states the outcome:
 
 ```text
-[backend] Reject duplicate instrument identifiers (#157)
+feat(frontend): show validation errors on the item form
+fix(backend): reject duplicate instrument identifiers
+docs(infra): document GHCR authentication
 ```
 
-The pull request must implement one approved leaf issue. Link it to its issue
-and do not use a tracking issue as the implementation target.
+Allowed types are `feat`, `fix`, `docs`, `refactor`, `perf`, `test`, `build`,
+`ci`, `chore`, and `revert`. Allowed scopes are `frontend`, `backend`,
+`database`, `cli`, `com`, `instruments`, `utils`, `docs`, `infra`, `ci`,
+`repository`, `release`, `deps`, `security`, and `docker`.
+
+Add `!` before the colon for a breaking change, for example
+`feat(backend)!: replace the sample response schema`. Link the pull request to
+its approved leaf issue in the body and do not use a tracking issue as the
+implementation target. Squash merging preserves the validated pull-request
+title as the commit Release Please reads from `main`.

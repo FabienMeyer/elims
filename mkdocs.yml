@@ -90,6 +90,7 @@ nav:
           - Changelog: packages/elims-instruments/changelog.md
   - Operations:
       - Command reference: operations/command-reference.md
+      - Releases and GitHub packages: operations/releases.md
       - AFK implementation: operations/afk-implementation.md
       - Development and checks: operations/development.md
       - Deployment and recovery: operations/deployment.md

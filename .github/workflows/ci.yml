@@ -8,6 +8,21 @@ permissions:
   contents: read
 
 jobs:
+  pull-request-title:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate Conventional Commit title
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          pattern='^(feat|fix|docs|refactor|perf|test|build|ci|chore|revert)\((frontend|backend|database|cli|com|instruments|utils|docs|infra|ci|repository|release|deps|security|docker)\)!?: .+'
+          if [[ ! "$TITLE" =~ $pattern ]]; then
+            echo "Invalid pull-request title: $TITLE"
+            echo "Use type(scope): description with an approved ELIMS scope."
+            exit 1
+          fi
+
   python:
     runs-on: ubuntu-latest
     timeout-minutes: 15

@@ -11,7 +11,7 @@ def main() -> None:
     """Install only built wheels and verify their public imports with Mypy."""
     root = Path(__file__).resolve().parents[1]
     packages = ("cli", "com", "database", "instruments", "utils")
-    wheels = [next((root / "dist").glob(f"elims_{name}-*.whl")) for name in packages]
+    wheels = [next((root / "dist").rglob(f"elims_{name}-*.whl")) for name in packages]
     for name, wheel in zip(packages, wheels, strict=True):
         with ZipFile(wheel) as archive:
             if f"elims_{name}/py.typed" not in archive.namelist():

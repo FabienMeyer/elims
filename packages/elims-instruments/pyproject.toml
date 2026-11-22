@@ -2,8 +2,15 @@
 readme = "README.md"
 name = "elims-instruments"
 version = "0.1.0"
+description = "Instrument domain contracts for ELIMS."
+license = "MIT"
 requires-python = ">=3.13"
 dependencies = []
+
+[project.urls]
+Documentation = "https://fabienmeyer.github.io/elims/"
+Repository = "https://github.com/FabienMeyer/elims"
+Issues = "https://github.com/FabienMeyer/elims/issues"
 
 [project.optional-dependencies]
 dev = ["mypy>=1.19", "pytest>=9", "pytest-cov>=7", "ruff>=0.14"]

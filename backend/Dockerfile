@@ -5,7 +5,7 @@ ENV UV_LINK_MODE=copy UV_PYTHON_DOWNLOADS=0
 COPY pyproject.toml uv.lock ./
 COPY backend ./backend
 COPY packages ./packages
-RUN uv sync --locked --package template-backend --no-dev --no-editable
+RUN uv sync --locked --package elims-backend --no-dev --no-editable
 
 FROM python:3.13-alpine3.24 AS runtime
 WORKDIR /app/backend
