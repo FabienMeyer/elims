@@ -1,7 +1,7 @@
 [project]
 readme = "README.md"
 name = "elims-database"
-version = "0.1.0"
+version = "1.0.0"
 description = "Reusable asynchronous SQLModel database infrastructure."
 license = "MIT"
 requires-python = ">=3.13"
