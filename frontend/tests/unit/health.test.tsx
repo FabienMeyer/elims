@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { cleanup, render, screen } from "@testing-library/react"
+import { render, screen } from "@testing-library/react"
 import { HttpResponse, http } from "msw"
 import { setupServer } from "msw/node"
 import { afterAll, afterEach, beforeAll, expect, it } from "vitest"
@@ -7,10 +7,7 @@ import { HealthCard } from "@/features/health/components/health-card"
 
 const server = setupServer()
 beforeAll(() => server.listen({ onUnhandledFrame: "error" }))
-afterEach(() => {
-  cleanup()
-  server.resetHandlers()
-})
+afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
 
 function renderHealth() {
