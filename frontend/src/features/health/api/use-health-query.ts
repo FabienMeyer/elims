@@ -8,6 +8,6 @@ const healthSchema = z.object({ status: z.literal("healthy") })
 export function useHealthQuery() {
   return useQuery({
     queryKey: ["health"],
-    queryFn: () => apiGet("/health", healthSchema),
+    queryFn: ({ signal }) => apiGet("/health", healthSchema, { signal }),
   })
 }

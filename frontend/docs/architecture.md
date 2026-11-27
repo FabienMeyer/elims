@@ -14,4 +14,6 @@ UI components do not communicate with the backend directly. Server calls live be
 
 `apiGet` in `src/lib/api.ts` validates every response against a Zod schema. It raises `ApiContractError` when a response is not JSON or does not match its schema, so features can tell a contract break from an unavailable API. Any other failure, such as a network error or an unsuccessful HTTP status, is a plain `Error`.
 
+Every request asks for `application/json` and gives up after 10 seconds, including the time to read the body; the timeout rejects with a `TimeoutError`. Pass the `signal` that TanStack Query gives a query function to `apiGet`, so a cancelled or unmounted query also cancels its HTTP request.
+
 No routing or styling library is adopted yet. When a feature first needs one, choose it through `/architecture-shaper` and record it in the [frontend decisions](decisions/index.md).
