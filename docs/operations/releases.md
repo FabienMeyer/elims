@@ -27,13 +27,28 @@ For a release such as `v0.1.0`, the workflow publishes:
    before PyPI publication, until the bound allows the new `elims-utils`
    version.
 4. Merge the release pull request when its changelog and calculated version are
-   correct.
+   correct and its checks pass. A failing `uv sync --locked` means `uv.lock`
+   does not match the new package versions; see
+   [Lockfile versions](#lockfile-versions).
 5. Confirm that the **Release** workflow publishes both container images and
    all five Python packages.
 
 Do not edit generated version sections in `CHANGELOG.md` separately. Correct
 the source commit or edit the open release pull request when release notes need
 adjustment.
+
+## Lockfile versions
+
+`uv.lock` records the version of each workspace package, so Release Please
+updates those six entries in the same release pull request through the
+`uv.lock` entries in `release-please-config.json`.
+
+Release Please parses TOML into values that carry their source location, so
+an entry's JSONPath filter must compare `@.name.value`, not `@.name`. A filter
+that matches nothing does not fail the **Release** workflow: it logs
+`No entries modified in <jsonpath>` and leaves `uv.lock` unchanged. When you
+add a workspace package or change these entries, check that log on the next
+release pull request.
 
 ## PyPI trusted publishing setup
 
