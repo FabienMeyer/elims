@@ -1,7 +1,7 @@
 [project]
 readme = "README.md"
 name = "elims-utils"
-version = "1.0.0"
+version = "1.0.1"
 description = "Shared utility functions for ELIMS packages."
 license = "MIT"
 requires-python = ">=3.13"
