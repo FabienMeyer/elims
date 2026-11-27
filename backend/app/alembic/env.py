@@ -1,13 +1,21 @@
 """Alembic runtime configuration."""
 
+import importlib
+import pkgutil
 from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 from sqlmodel import SQLModel
 
-from app.api.items.models import Item  # noqa: F401
+import app.api
 from app.config import get_settings
+
+# Import every app.api.<domain>.models module. A model that is not imported is invisible to autogenerate:
+# its new table is never migrated, and its existing table looks dropped.
+for module in pkgutil.walk_packages(app.api.__path__, f"{app.api.__name__}."):
+    if module.name.rsplit(".", 1)[-1] == "models":
+        importlib.import_module(module.name)
 
 config = context.config
 driver, separator, address = get_settings().database_url.get_secret_value().partition(":")

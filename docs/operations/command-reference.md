@@ -97,12 +97,13 @@ uv run alembic current
 uv run alembic history
 uv run alembic upgrade head
 uv run alembic downgrade -1
+uv run alembic check
 uv run alembic revision --autogenerate -m "describe change"
 uv run alembic revision -m "describe change"
 Set-Location ..
 ```
 
-Review generated migrations and their data-loss implications before applying them.
+Review generated migrations and their data-loss implications before applying them. `alembic check` fails when the models and the migrations differ; the backend test suite runs it as well.
 
 ## Frontend development
 
