@@ -10,7 +10,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     """Settings loaded from environment variables."""
 
-    environment: Literal["development", "test", "production"] = "development"
+    # Required: a deployment that forgets ENVIRONMENT must not start with development's open business routes.
+    environment: Literal["development", "test", "production"]
     database_url: str = "sqlite+aiosqlite:///./app.db"
     backend_cors_origins: str = "http://localhost:5173"
     project_name: str = "Full-stack template"
@@ -25,7 +26,8 @@ class Settings(BaseSettings):
             raise ValueError("Production requires a configured database and debug disabled")
         return self
 
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    # Validation errors would otherwise echo every input, including the database URL and its password.
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore", hide_input_in_errors=True)
 
     @property
     def cors_origins(self) -> list[str]:

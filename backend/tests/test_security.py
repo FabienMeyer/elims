@@ -23,6 +23,17 @@ def test_production_rejects_development_database() -> None:
         Settings(environment="production", database_url="sqlite+aiosqlite:///:memory:")
 
 
+def test_missing_environment_is_rejected_without_echoing_secrets(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A deployment that omits ENVIRONMENT must not start open, and the error must not print the database password."""
+    monkeypatch.delenv("ENVIRONMENT", raising=False)
+    # Short enough that Pydantic would print it whole rather than truncating the middle.
+    monkeypatch.setenv("DATABASE_URL", "mysql+aiomysql://e:private-pw@db/e")
+    with pytest.raises(ValidationError) as error:
+        Settings(_env_file=None)
+    assert "environment" in str(error.value)
+    assert "private-pw" not in str(error.value)
+
+
 def test_logs_omit_sensitive_request_data(client: TestClient, capsys: pytest.CaptureFixture[str]) -> None:
     """Correlation is retained without logging headers, query strings or bodies."""
     capsys.readouterr()

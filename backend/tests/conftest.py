@@ -19,6 +19,7 @@ def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[TestClie
         "TEST_DATABASE_URL",
         f"sqlite+aiosqlite:///{(tmp_path / 'test.db').as_posix()}",
     )
+    monkeypatch.setenv("ENVIRONMENT", "test")
     monkeypatch.setenv("DATABASE_URL", database_url)
     get_settings.cache_clear()
     config = Config(str(Path(__file__).parents[1] / "alembic.ini"))

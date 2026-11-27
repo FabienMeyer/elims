@@ -1,7 +1,7 @@
 [project]
 readme = "README.md"
 name = "elims-com"
-version = "1.0.0"
+version = "1.0.1"
 description = "Transport-neutral communication contracts for ELIMS."
 license = "MIT"
 requires-python = ">=3.13"

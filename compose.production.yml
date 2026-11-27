@@ -7,6 +7,8 @@ x-backend: &backend
     APP_DEBUG: "false"
     DATABASE_URL: ${DATABASE_URL:?Set the external MariaDB connection URL}
     BACKEND_CORS_ORIGINS: ""
+    # Trust the frontend proxy's X-Forwarded-* headers; the backend publishes no port.
+    FORWARDED_ALLOW_IPS: "*"
   security_opt: ["no-new-privileges:true"]
   cap_drop: [ALL]
   read_only: true
