@@ -1,7 +1,7 @@
 [project]
 readme = "README.md"
 name = "elims-com"
-version = "1.0.1"
+version = "1.0.2"
 description = "Transport-neutral communication contracts for ELIMS."
 license = "MIT"
 license-files = ["LICENSE"]
