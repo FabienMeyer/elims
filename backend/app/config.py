@@ -3,8 +3,13 @@
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import model_validator
+from pydantic import SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+def split_origins(value: str) -> list[str]:
+    """Split a comma-separated origin list, dropping blanks."""
+    return [origin.strip() for origin in value.split(",") if origin.strip()]
 
 
 class Settings(BaseSettings):
@@ -12,16 +17,26 @@ class Settings(BaseSettings):
 
     # Required: a deployment that forgets ENVIRONMENT must not start with development's open business routes.
     environment: Literal["development", "test", "production"]
-    database_url: str = "sqlite+aiosqlite:///./app.db"
+    # SecretStr keeps the password out of repr(), str() and JSON dumps; unwrap it only where a connection is made.
+    database_url: SecretStr = SecretStr("sqlite+aiosqlite:///./app.db")
     backend_cors_origins: str = "http://localhost:5173"
     project_name: str = "Full-stack template"
     app_debug: bool = False
 
+    @field_validator("backend_cors_origins")
+    @classmethod
+    def reject_wildcard_origins(cls, value: str) -> str:
+        """Require explicit origins; '*' would let any website call the API from a user's browser."""
+        if "*" in split_origins(value):
+            raise ValueError("BACKEND_CORS_ORIGINS must list explicit origins, not '*'")
+        return value
+
     @model_validator(mode="after")
     def validate_production(self) -> "Settings":
         """Reject development defaults when production is selected."""
+        database_url = self.database_url.get_secret_value()
         if self.environment == "production" and (
-            self.app_debug or self.database_url.startswith("sqlite") or "change-me" in self.database_url
+            self.app_debug or database_url.startswith("sqlite") or "change-me" in database_url
         ):
             raise ValueError("Production requires a configured database and debug disabled")
         return self
@@ -32,7 +47,7 @@ class Settings(BaseSettings):
     @property
     def cors_origins(self) -> list[str]:
         """Return normalized allowed origins."""
-        return [origin.strip() for origin in self.backend_cors_origins.split(",") if origin.strip()]
+        return split_origins(self.backend_cors_origins)
 
 
 @lru_cache

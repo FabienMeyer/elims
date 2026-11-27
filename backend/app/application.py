@@ -22,7 +22,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @asynccontextmanager
     async def lifespan(application: FastAPI) -> AsyncIterator[None]:
-        database = Database(settings.database_url)
+        database = Database(settings.database_url.get_secret_value())
         application.state.database = database
         try:
             yield
@@ -33,10 +33,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app = FastAPI(title=settings.project_name, version="0.1.0", debug=settings.app_debug, lifespan=lifespan)
     app.state.settings = settings
     app.middleware("http")(log_request)
+    # No route uses cookies or other browser credentials; enable allow_credentials only when one does.
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
-        allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )

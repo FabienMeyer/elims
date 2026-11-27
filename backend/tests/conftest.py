@@ -13,8 +13,17 @@ from fastapi.testclient import TestClient
 
 
 @pytest.fixture
-def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[TestClient]:
-    """Exercise the actual Alembic migration before testing the API."""
+def alembic_config() -> Config:
+    """Alembic configuration for the backend migrations, independent of the working directory."""
+    backend = Path(__file__).parents[1]
+    config = Config(str(backend / "alembic.ini"))
+    config.set_main_option("script_location", str(backend / "app/alembic"))
+    return config
+
+
+@pytest.fixture
+def migrated_database(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, alembic_config: Config) -> Iterator[str]:
+    """Migrate an isolated database to head with the actual Alembic migrations and return its URL."""
     database_url = os.environ.get(
         "TEST_DATABASE_URL",
         f"sqlite+aiosqlite:///{(tmp_path / 'test.db').as_posix()}",
@@ -22,17 +31,21 @@ def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[TestClie
     monkeypatch.setenv("ENVIRONMENT", "test")
     monkeypatch.setenv("DATABASE_URL", database_url)
     get_settings.cache_clear()
-    config = Config(str(Path(__file__).parents[1] / "alembic.ini"))
-    config.set_main_option("script_location", str(Path(__file__).parents[1] / "app/alembic"))
     # A shared integration database must start empty for every test, just like
     # the temporary SQLite database used by the default test path.
     if not database_url.startswith("sqlite"):
-        command.downgrade(config, "base")
-    command.upgrade(config, "head")
+        command.downgrade(alembic_config, "base")
+    command.upgrade(alembic_config, "head")
     try:
-        with TestClient(create_app(Settings(environment="test", database_url=database_url))) as test_client:
-            yield test_client
+        yield database_url
     finally:
         if not database_url.startswith("sqlite"):
-            command.downgrade(config, "base")
+            command.downgrade(alembic_config, "base")
         get_settings.cache_clear()
+
+
+@pytest.fixture
+def client(migrated_database: str) -> Iterator[TestClient]:
+    """HTTP client for an application backed by the migrated database."""
+    with TestClient(create_app(Settings(environment="test", database_url=migrated_database))) as test_client:
+        yield test_client
