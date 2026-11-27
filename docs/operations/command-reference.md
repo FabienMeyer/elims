@@ -88,10 +88,11 @@ Useful endpoints:
 
 ## Database migrations
 
-Run Alembic commands from `backend/`:
+Run Alembic commands from `backend/`. Alembic reads the backend settings, and `backend/` has no `.env` file, so set `ENVIRONMENT` first:
 
 ```powershell
 Set-Location backend
+$env:ENVIRONMENT = "development"
 uv run alembic current
 uv run alembic history
 uv run alembic upgrade head

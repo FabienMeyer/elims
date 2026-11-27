@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.1](https://github.com/FabienMeyer/elims/compare/elims-v1.0.0...elims-v1.0.1) (2026-11-27)
+
+
+### Bug Fixes
+
+* **backend:** close sessions on errors, require ENVIRONMENT, fix redirects ([e4d8cdb](https://github.com/FabienMeyer/elims/commit/e4d8cdb98b0555ef46b34f88b922c27f537e4ecf))
+* **backend:** release database sessions before error responses ([ff5b3d6](https://github.com/FabienMeyer/elims/commit/ff5b3d605e638d5ceeadc9fb628709fb0d5dba81))
+* **backend:** require an explicit ENVIRONMENT setting ([4ad55b1](https://github.com/FabienMeyer/elims/commit/4ad55b1f89b98becf1f520d9d76f5c0af5ca4062))
+* **infra:** keep proxy redirects on the public host and scheme ([9b51618](https://github.com/FabienMeyer/elims/commit/9b516188c1e0b3c4a68456492117e041d32d533d))
+
 ## 1.0.0 (2026-11-22)
 
 
