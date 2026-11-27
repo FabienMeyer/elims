@@ -7,6 +7,8 @@ test("shows the ELIMS home page in English", async ({ page }) => {
   await page.goto("/")
   await expect(page).toHaveTitle("ELIMS")
   await expect(page.locator("html")).toHaveAttribute("lang", "en")
+  // Form controls and scrollbars follow the dark theme.
+  await expect(page.locator("html")).toHaveCSS("color-scheme", "dark")
   await expect(
     page.getByRole("heading", { level: 1, name: "ELIMS" }),
   ).toBeVisible()
