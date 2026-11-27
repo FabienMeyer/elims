@@ -25,6 +25,11 @@ complete reader-facing documentation set.
 
 ## Workflow
 
+Apply `${CLAUDE_SKILL_DIR}/../shared/rules/context-resilience.md`. Before writer
+and reviewer handoffs, persist the verified implementation identity, Chapter 6
+anchor and verdicts, documentation scope, open findings, and next permitted
+action in the matrix or phase report.
+
 1. Derive the required audiences and deliverables from the approved artifacts,
    implementation effects, and repository documentation structure.
 2. Invoke `/technical-writer` with the final implementation and matrix.

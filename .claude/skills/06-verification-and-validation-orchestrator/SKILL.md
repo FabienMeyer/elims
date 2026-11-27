@@ -33,6 +33,11 @@ authorization and `--apply`. Never pass credentials to scripts.
 
 ## Workflow
 
+Apply `${CLAUDE_SKILL_DIR}/../shared/rules/context-resilience.md`. Before each
+fresh-context verifier or validator invocation, persist the exact artifact
+revisions, latest valid anchor and verdicts, open findings, environment, and next
+permitted action in the matrix or phase report.
+
 1. Move the issue to `Technical verification` when authorized.
 2. Invoke `/technical-verifier` in a fresh context.
 3. On `fail`, route the exact finding to Chapter 5 and repeat every invalidated

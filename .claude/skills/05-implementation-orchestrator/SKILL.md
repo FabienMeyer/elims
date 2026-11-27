@@ -73,6 +73,12 @@ approved artifacts, repository guidance, the final diff, the review anchor, and
 the matrix path with the instruction to read only its Mapping and Reverse
 mapping sections. Withhold implementation rationale and prior conclusions.
 
+Apply `${CLAUDE_SKILL_DIR}/../shared/rules/context-resilience.md`. Before each
+fresh-context invocation, persist the completed phase verdict, exact artifact
+revisions, anchors, open findings, and next permitted action in the traceability
+matrix or phase report. The new context must reload and verify those sources;
+conversation history is not phase evidence.
+
 Follow `${CLAUDE_SKILL_DIR}/../shared/rules/review-anchor.md`. Record the review
 anchor in the matrix before invoking `/code-reviewer`, and again after every
 production or test change.

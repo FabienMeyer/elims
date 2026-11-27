@@ -16,6 +16,12 @@ context-report:
   exact-context-used: unavailable
 ```
 
+This report describes measurable file inputs and generated outputs. It is not a
+measure of total runtime context, remaining context capacity, or model attention.
+Do not derive a context-pressure warning or continuation decision from these byte
+or token estimates. Apply `context-resilience.md` when continuity becomes
+uncertain.
+
 For a report embedded in an artifact, `output-bytes` excludes the context-report
 block itself to avoid a self-referential file-size calculation. For a task
 result that also writes or revises files, include one `output-file` entry for

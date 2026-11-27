@@ -33,8 +33,10 @@ documentation, and human acceptance as separate evidence.
 
 Shared delivery rules are authoritative only for the roles they name. Every
 delivery role must read and apply `.claude/skills/shared/rules/evidence-quality.md`
-and `.claude/skills/shared/rules/context-reporting.md`. A role that verifies
-human approval must also apply
+and `.claude/skills/shared/rules/context-reporting.md`. Every orchestrator and
+role whose work spans a fresh-context handoff must also apply
+`.claude/skills/shared/rules/context-resilience.md`. A role that verifies human
+approval must also apply
 `.claude/skills/shared/rules/approval-evidence.md`; an independent reviewer,
 verifier, or validator must apply
 `.claude/skills/shared/rules/independent-evaluation.md`; and a role that can

@@ -22,6 +22,11 @@ same review anchor as the final Chapter 7 anchor
 
 ## Workflow
 
+Apply `${CLAUDE_SKILL_DIR}/../shared/rules/context-resilience.md`. Before each
+fresh-context handoff and before stopping for human execution, persist the plan
+revision, candidate commit and anchor, environment, applicable criteria, current
+external state, open blockers, and exact next permitted action.
+
 Use `scripts/github_acceptance.py` to inspect the pull request and plan the
 Chapter 8 Project transition. Run it without `--apply` first. Use `--apply`
 only after explicit authorization; credentials must come from GitHub CLI or

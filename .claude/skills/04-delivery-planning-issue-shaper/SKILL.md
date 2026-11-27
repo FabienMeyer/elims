@@ -50,7 +50,9 @@ Read all canonical resources and approved input artifacts before questioning the
    Apply the canonical title and label conventions to every issue.
 9. Write the proposed plan under `docs/product/issues/proposed/` from `issue-plan-template.md` after the user confirms the decomposition is ready for a draft.
 10. Present the hierarchy, traceability matrix, dependencies, labels, and all issue bodies for review.
-11. Invoke `/issue-reviewer` in a fresh context with the proposed issue plan, approved specification, and ADR or architecture-assessment paths.
+11. Before the fresh-context handoff, apply the context-resilience rule and
+    confirm that the proposed plan and approved source paths contain the complete
+    review checkpoint. Invoke `/issue-reviewer` with those identified revisions.
 12. Resolve `revise-issue-plan` findings and repeat independent review until it passes. Route source-artifact findings to the identified shaper.
 13. Present the passing review report and proposed plan for human approval.
 14. After explicit human approval, give the user the command `/github-issue-publisher <approved-plan> <passing-review-report> <owner/repository>` to publish the approved hierarchy. Include the verified repository identity.
