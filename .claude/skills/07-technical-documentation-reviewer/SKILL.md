@@ -1,7 +1,7 @@
 ---
 name: documentation-reviewer
 description: Independently review ELIMS feature documentation for technical accuracy, completeness, usability, and correspondence with the final verified implementation.
-argument-hint: "<leaf> <PRD> <specification> <architecture result> <Chapter 6 report> [traceability matrix]"
+argument-hint: "<leaf> <PRD> <specification> <architecture result> [UI/UX definition] <Chapter 6 report> [traceability matrix]"
 disable-model-invocation: false
 context: fork
 agent: Explore

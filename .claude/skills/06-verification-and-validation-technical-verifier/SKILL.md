@@ -1,7 +1,7 @@
 ---
 name: technical-verifier
 description: Independently verify a reviewed ELIMS implementation against approved behavior, architecture, traceability, tests, and technical delivery checks before system validation.
-argument-hint: "<approved leaf issue path or identifier> <approved PRD path> <approved specification path> <approved ADR or assessment path> [traceability matrix path] <review anchor>"
+argument-hint: "<approved leaf issue path or identifier> <approved PRD path> <approved specification path> <approved ADR or assessment path> [approved UI/UX definition path] [traceability matrix path] <review anchor>"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
@@ -14,7 +14,9 @@ Verify independently that one reviewed leaf issue was built correctly. Work in a
 
 ## Entry gate
 
-Use `$ARGUMENTS` to locate the approved leaf issue, PRD, specification, ADR or no-ADR assessment, and optional persisted traceability matrix. Read the repository guidance and final diff.
+Use `$ARGUMENTS` to locate the approved leaf issue, PRD, specification, ADR or
+no-ADR assessment, applicable UI/UX definition, and optional persisted
+traceability matrix. Read the repository guidance and final diff.
 
 Require:
 

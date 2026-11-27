@@ -7,6 +7,7 @@ github_issue: null
 issue_plan: ISSUE-PLAN-000
 related_prd: PRD-000
 related_specifications: [SPEC-000]
+related_ui_ux_definitions: []
 related_decisions: []
 branch: null
 base_commit: null
@@ -38,8 +39,8 @@ cell does not apply. Never leave an applicable cell empty at a phase verdict.
 <!--
 Independent reviewers, verifiers, and validators receive this section and
 Reverse mapping only. Do not add verdicts, rationale, or conclusions here.
-Add one row for every in-scope issue completion criterion and specification
-acceptance criterion.
+Add one row for every in-scope issue completion criterion, specification
+acceptance criterion, and applicable UI/UX acceptance criterion.
 -->
 
 | Criterion | Approved behavior | Architecture constraints | Test locations | Production locations |
@@ -60,8 +61,8 @@ out of scope and must be removed.
 
 ## Criterion evidence
 
-| Criterion | Red evidence | Green evidence | Technical verification | System validation | Documentation | Human E2E scenario | Human E2E result |
-| --- | --- | --- | --- | --- | --- | --- | --- |
+| Criterion | Red evidence | Green evidence | Technical verification | UI/UX validation | System validation | Documentation | Human E2E scenario | Human E2E result |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 <!--
 Red evidence: the test node ID and the expected failure message.
@@ -103,6 +104,7 @@ verifier replays that command in the Red tree.
 | 5 | refactor-engineer | 1 | | | | | |
 | 5 | code-reviewer | 1 | | | | | |
 | 6 | technical-verifier | 1 | | | | | |
+| 6 | ui-ux-validator | 1 | | | | | |
 | 6 | system-validator | 1 | | | | | |
 | 7 | technical-writer | 1 | | | | | |
 | 7 | documentation-reviewer | 1 | | | | | |

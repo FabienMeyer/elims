@@ -31,9 +31,28 @@ pull-request conventions. Keep product requirements, behavioral
 specifications, architecture decisions, implementation, verification,
 documentation, and human acceptance as separate evidence.
 
+Shared delivery rules are authoritative only for the roles they name. Every
+delivery role must read and apply `.claude/skills/shared/rules/evidence-quality.md`
+and `.claude/skills/shared/rules/context-reporting.md`. A role that verifies
+human approval must also apply
+`.claude/skills/shared/rules/approval-evidence.md`; an independent reviewer,
+verifier, or validator must apply
+`.claude/skills/shared/rules/independent-evaluation.md`; and a role that can
+mutate external state must apply
+`.claude/skills/shared/rules/external-mutation-safety.md`. Keep each skill's
+entry gates, workflow, verdicts, and correction routing local.
+
+When creating or refactoring skills, apply
+`.claude/skills/shared/rules/skill-system-design.md`: centralize
+identity-critical standards whose independent interpretation could make stages
+disagree, and keep role behavior and contextual judgment local.
+
 ## Engineering rules
 
 - Preserve unrelated work in a dirty worktree.
+- Do not guess. Calculate deterministic claims and evaluate empirical claims
+  from evidence. State uncertainty, assumptions, and the method needed to
+  resolve incomplete evidence.
 - Make the smallest cohesive change that satisfies approved behavior.
 - Use TDD when the applicable implementation skill requires it.
 - Keep FastAPI routes thin and put use-case behavior in services or domain

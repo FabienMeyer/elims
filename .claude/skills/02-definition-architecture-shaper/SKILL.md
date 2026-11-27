@@ -1,7 +1,7 @@
 ---
 name: architecture-shaper
 description: Assess an approved ELIMS specification for significant architectural decisions, question the user about tradeoffs, and write an ADR or a no-ADR assessment. Use before independent product review.
-argument-hint: "<approved PRD path> <approved specification path> [existing ADR path]"
+argument-hint: "<approved PRD path> <approved specification path> [approved UI/UX definition path] [existing ADR path]"
 disable-model-invocation: true
 model: sonnet
 ---
@@ -12,7 +12,11 @@ Determine whether an approved specification requires an ADR. When it does, shape
 
 ## Entry gate
 
-Use `$ARGUMENTS` to locate the PRD, specification, and optional ADR. Confirm that the PRD and specification are human-approved. Stop if either artifact is not approved.
+Use `$ARGUMENTS` to locate the PRD, specification, applicable UI/UX definition,
+and optional ADR. Confirm that the PRD and specification are human-approved.
+When the specification has a human-facing interface, also require the approved
+UI/UX definition or a justified `not-applicable` result. Stop if a required
+artifact is not approved.
 
 Canonical resources:
 
@@ -21,7 +25,8 @@ Canonical resources:
 - Language guidance: `${CLAUDE_SKILL_DIR}/../shared/rules/asd-ste100-writing.md`
 - Context reporting: `${CLAUDE_SKILL_DIR}/../shared/rules/context-reporting.md`
 
-Read these files, the approved artifacts, existing relevant ADRs, and only the architecture documentation needed for the decision.
+Read these files, all applicable approved artifacts, existing relevant ADRs,
+and only the architecture documentation needed for the decision.
 
 ## ADR decision test
 
@@ -53,4 +58,8 @@ Apply `${CLAUDE_SKILL_DIR}/../shared/rules/asd-ste100-writing.md`. Keep alternat
 
 ## Handoff
 
-After human approval, invoke `/product-reviewer` with the approved PRD, specification, and ADR or architecture-assessment paths.
+After human approval, invoke `/ui-ux-reviewer` for an applicable approved UI/UX
+definition. After that review passes, invoke `/product-reviewer` with the
+approved PRD, specification, ADR or architecture-assessment, UI/UX definition,
+and UI/UX review paths. Omit the UI/UX inputs only with a justified
+`not-applicable` result.

@@ -1,7 +1,7 @@
 ---
 name: refactor-engineer
 description: Refactor a green ELIMS implementation for simplicity, cohesion, safety, and evidence-based performance without changing approved behavior.
-argument-hint: "<approved leaf issue path or identifier> <approved PRD path> <approved specification path> <approved ADR or assessment path> [traceability matrix path]"
+argument-hint: "<approved leaf issue path or identifier> <approved PRD path> <approved specification path> <approved ADR or assessment path> [approved UI/UX definition path] [traceability matrix path]"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
@@ -14,7 +14,10 @@ Improve the internal design of a completed Green implementation while preserving
 
 ## Entry gate
 
-Use `$ARGUMENTS` to locate the approved leaf issue, PRD, specification, ADR or no-ADR assessment, and optional persisted traceability matrix. Read the repository guidance, current diff, relevant code, and tests.
+Use `$ARGUMENTS` to locate the approved leaf issue, PRD, specification, ADR or
+no-ADR assessment, applicable UI/UX definition, and optional persisted
+traceability matrix. Read the repository guidance, current diff, relevant code,
+and tests.
 
 Require:
 

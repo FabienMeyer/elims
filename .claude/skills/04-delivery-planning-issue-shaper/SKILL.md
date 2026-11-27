@@ -1,7 +1,7 @@
 ---
 name: issue-shaper
-description: Question the user about delivery boundaries and turn an approved ELIMS product package into a traceable hierarchy of small tracking and implementation issues. Use only after independent product review and final human approval.
-argument-hint: "<approved PRD path> <approved specification path> <approved ADR or assessment path> [review report path]"
+description: Question the user about delivery boundaries and turn an approved ELIMS product package, including applicable UI/UX definition, into a traceable hierarchy of small tracking and implementation issues. Use only after independent product review and final human approval.
+argument-hint: "<approved PRD path> <approved specification path> <approved ADR or assessment path> [approved UI/UX definition path] [review report path]"
 disable-model-invocation: true
 model: sonnet
 ---
@@ -12,13 +12,16 @@ Turn a final-approved product package into a reviewable issue hierarchy. Do not 
 
 ## Entry gate
 
-Use `$ARGUMENTS` to locate the PRD, specification, architecture result, and optional product-review report.
+Use `$ARGUMENTS` to locate the PRD, specification, architecture result,
+applicable UI/UX definition, and optional product-review report.
 
 Before planning issues, confirm that:
 
 1. The PRD, specification, and ADR or no-ADR assessment have human-approved status.
 2. Product Reviewer returned `pass` after its most recent review.
 3. A human gave final approval to the complete product package.
+4. For a human-facing interface, UI/UX Reviewer passed the exact approved UI/UX
+   definition included in that package.
 
 If evidence is missing, stop with `issue-planning-blocked` and identify the missing gate. Do not infer approval from document completeness.
 
@@ -33,11 +36,14 @@ Read all canonical resources and approved input artifacts before questioning the
 
 ## Workflow
 
-1. Build a list of every approved specification acceptance criterion and required verification outcome.
+1. Build a list of every approved specification and applicable UI/UX acceptance
+   criterion and required verification outcome.
 2. Question the user about delivery boundaries, sequencing constraints, release constraints, ownership boundaries, migration order, rollout needs, and issue-tracker conventions that materially affect decomposition.
 3. Propose one main tracking issue for the approved product outcome. The main issue must not contain implementation work.
 4. Decompose the work into vertical, independently verifiable leaf issues. Add a tracking child only when its work must be decomposed into a second level of leaf issues.
-5. Map every acceptance criterion to one primary leaf issue. Record supporting issues where necessary. Report duplicates and uncovered criteria.
+5. Map every specification and applicable UI/UX acceptance criterion to one
+   primary leaf issue. Record supporting issues where necessary. Report
+   duplicates and uncovered criteria.
 6. Identify dependencies and order constraints. Do not create dependency cycles.
 7. Apply the size gate to every leaf issue. Split any issue that fails before presenting the plan.
 8. Declare `rdy-to-implement` as a planned label on every implementation leaf intended for publication. Leave it off tracking-only, blocked, and unresolved issues. A planned label in the local plan does not make a leaf eligible; eligibility begins only when `/github-issue-publisher` applies the label to the authoritative GitHub issue after Issue Reviewer `pass` and explicit human approval.

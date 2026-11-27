@@ -47,4 +47,8 @@ Apply `${CLAUDE_SKILL_DIR}/../shared/rules/asd-ste100-writing.md`, especially to
 
 ## Handoff
 
-After explicit human approval, the next stage is `/architecture-shaper <approved-prd-path> <approved-specification-path>`.
+After explicit human approval, invoke `/ui-ux-shaper` when the specification
+contains a human-facing interface. After the UI/UX definition is approved, or
+when UI/UX shaping returns justified `not-applicable`, the next stage is
+`/architecture-shaper <approved-prd-path> <approved-specification-path>
+[approved-ui-ux-definition-path]`.

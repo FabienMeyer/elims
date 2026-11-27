@@ -1,7 +1,7 @@
 ---
 name: technical-writer
 description: Create or update accurate reader-facing documentation for a verified and agent-validated ELIMS feature before human acceptance.
-argument-hint: "<leaf> <PRD> <specification> <architecture result> <Chapter 6 report> [traceability matrix]"
+argument-hint: "<leaf> <PRD> <specification> <architecture result> [UI/UX definition] <Chapter 6 report> [traceability matrix]"
 disable-model-invocation: false
 context: fork
 agent: general-purpose

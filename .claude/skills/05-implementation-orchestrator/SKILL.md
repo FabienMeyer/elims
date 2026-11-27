@@ -1,7 +1,7 @@
 ---
 name: implementation-orchestrator
 description: Orchestrate one approved ELIMS leaf issue through TDD, Green implementation, refactoring, independent code review, correction loops, and implementation traceability.
-argument-hint: "<approved leaf issue path or identifier> <approved PRD path> <approved specification path> <approved ADR or assessment path>"
+argument-hint: "<approved leaf issue path or identifier> <approved PRD path> <approved specification path> <approved ADR or assessment path> [approved UI/UX definition path]"
 disable-model-invocation: true
 model: sonnet
 ---
@@ -31,7 +31,7 @@ from the default branch as the review-anchor base, and record it as
 ## Entry gate
 
 Use `$ARGUMENTS` to locate the leaf issue and its approved PRD, specification,
-and ADR or no-ADR assessment. Require:
+ADR or no-ADR assessment, and applicable UI/UX definition. Require:
 
 1. Human approval of the leaf issue and source product package.
 2. Product Reviewer `pass` for that exact package.
@@ -39,6 +39,8 @@ and ADR or no-ADR assessment. Require:
 4. No unresolved product, behavioral, or architectural decision.
 5. Observable completion criteria small enough for one focused change.
 6. The exact leaf issue has the authoritative `rdy-to-implement` label.
+7. For affected interface behavior, an approved UI/UX definition and UI/UX
+   Reviewer `pass` for the exact product package.
 
 Verify the label on the authoritative GitHub issue through a read-only tracker
 query. Local issue files, plan metadata, and planned labels are not evidence.
@@ -50,7 +52,8 @@ Create one bidirectional implementation traceability matrix from
 `${CLAUDE_SKILL_DIR}/../shared/templates/traceability-matrix-template.md` at
 `docs/product/traceability/<leaf issue identifier>.md`. If the file exists,
 continue it; do not create a second matrix for the same leaf. For every
-in-scope criterion record the approved behavior, architecture constraints,
+in-scope criterion, including applicable UI/UX criteria, record the approved
+behavior, architecture constraints,
 Red evidence, production locations, Green evidence, refactor verdict,
 code-review verdict, and required documentation, configuration, migration,
 security, privacy, or operational effects.

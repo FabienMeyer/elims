@@ -1,7 +1,7 @@
 ---
 name: system-validator
 description: Independently validate a technically verified ELIMS leaf issue through black-box and exploratory system journeys before documentation and human acceptance.
-argument-hint: "<approved leaf issue path or identifier> <approved PRD path> <approved specification path> <approved ADR or assessment path> [traceability matrix path] <review anchor>"
+argument-hint: "<approved leaf issue path or identifier> <approved PRD path> <approved specification path> <approved ADR or assessment path> [approved UI/UX definition path] [UI/UX validation report path] [traceability matrix path] <review anchor>"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
@@ -14,7 +14,11 @@ Validate the completed change as a user, operator, integration consumer, or conn
 
 ## Entry gate
 
-Use `$ARGUMENTS` to locate the approved leaf issue, PRD, specification, architecture result, and optional persisted traceability matrix. Read the approved user journeys, observable acceptance criteria, test environment guidance, and latest technical-verification report.
+Use `$ARGUMENTS` to locate the approved leaf issue, PRD, specification,
+architecture result, applicable UI/UX definition, and optional persisted
+traceability matrix. Read the approved user journeys, observable acceptance
+criteria, test environment guidance, latest technical-verification report, and
+applicable UI/UX validation report.
 
 Require:
 
@@ -23,7 +27,9 @@ Require:
 3. The latest `/code-reviewer` result is `pass` for the final diff.
 4. The latest `/technical-verifier` result is `pass` for that same diff.
 5. A review anchor that equals the anchor of both passes. Recompute it as `${CLAUDE_SKILL_DIR}/../shared/rules/review-anchor.md` describes and return `blocked` when it differs. Cite it in the report.
-5. A safe validation environment and representative data, accounts, integrations, browsers, devices, or simulators required by scope.
+6. Applicable UI/UX validation passed for the same anchor, or returned justified
+   `not-applicable`.
+7. A safe validation environment and representative data, accounts, integrations, browsers, devices, or simulators required by scope.
 
 Return `blocked` when required evidence, access, environment, or external state is unavailable. Do not test against production unless the user explicitly authorizes it and supplies an approved test plan.
 

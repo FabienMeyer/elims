@@ -1,7 +1,7 @@
 ---
 name: verification-and-validation-orchestrator
-description: Coordinate independent technical verification and agent system validation for one implementation-complete ELIMS leaf issue, including correction routing and draft pull-request preparation.
-argument-hint: "<leaf> <PRD> <specification> <architecture result> <Chapter 5 report> [traceability matrix]"
+description: Coordinate independent technical verification, applicable UI/UX validation, and agent system validation for one implementation-complete ELIMS leaf issue, including correction routing and draft pull-request preparation.
+argument-hint: "<leaf> <PRD> <specification> <architecture result> [UI/UX definition] <Chapter 5 report> [traceability matrix]"
 disable-model-invocation: true
 model: sonnet
 ---
@@ -9,8 +9,9 @@ model: sonnet
 # Verification and Validation Orchestrator
 
 Run Chapter 6 for one implementation-complete leaf issue. Verification asks
-whether the feature was built correctly; system validation asks whether the
-completed system exhibits the approved observable behavior.
+whether the feature was built correctly; UI/UX validation evaluates applicable
+approved interface behavior; system validation asks whether the completed
+system exhibits the approved observable behavior.
 
 ## Entry gate
 
@@ -38,12 +39,16 @@ authorization and `--apply`. Never pass credentials to scripts.
    Chapter 5 check before starting a new verifier context. Move the issue back
    to `Implementation` when authorized.
 4. After verifier `pass`, move to `Agent system validation` when authorized.
-5. Invoke `/system-validator` in a fresh context.
-6. On `fail`, route reproducible defects to the responsible phase. Any code
+5. When an approved UI/UX definition applies to the leaf, invoke
+   `/ui-ux-validator` in a fresh context. Require `pass`, or a justified
+   `not-applicable`, before system validation.
+6. Invoke `/system-validator` in a fresh context and include the UI/UX validation
+   report when one exists.
+7. On `fail`, route reproducible defects from either validator to the responsible phase. Any code
    correction requires new refactor consideration, code review, technical
-   verification, and system validation.
-7. Record criterion-level verification and validation evidence in the matrix.
-8. After Chapter 6 passes, commit and push the work branch only with explicit
+   verification, applicable UI/UX validation, and system validation.
+8. Record criterion-level verification and validation evidence in the matrix.
+9. After Chapter 6 passes, commit and push the work branch only with explicit
    authorization. Confirm that the pushed head commit has the same review
    anchor as both passes (`review_anchor.py --head <commit>`). Then plan or open
    one draft pull request when authorized and move the issue to
@@ -56,8 +61,10 @@ validation verdict must explain every affected criterion.
 ## Completion report
 
 Return `verified-and-agent-validated` only when `/technical-verifier` returns
-`pass` and `/system-validator` returns `pass` or justified `not-applicable` for
-the same final diff and review anchor. Report the anchor, commands, scenario evidence, defects and
+`pass`, applicable `/ui-ux-validator` returns `pass` or justified
+`not-applicable`, and `/system-validator` returns `pass` or justified
+`not-applicable` for the same final diff and review anchor. Report the anchor,
+commands, scenario evidence, defects and
 resolutions, traceability, draft pull-request state, Project state, skipped
 checks, limitations, and residual risks.
 

@@ -1,7 +1,7 @@
 ---
 name: technical-documentation-orchestrator
 description: Coordinate reader-facing technical documentation and independent documentation review for one verified and agent-validated ELIMS leaf issue.
-argument-hint: "<leaf> <PRD> <specification> <architecture result> <Chapter 6 report> [traceability matrix]"
+argument-hint: "<leaf> <PRD> <specification> <architecture result> [UI/UX definition] <Chapter 6 report> [traceability matrix]"
 disable-model-invocation: true
 model: sonnet
 ---

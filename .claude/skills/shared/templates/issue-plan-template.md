@@ -9,6 +9,7 @@ approved_by: null
 approved_at: null
 related_prd: PRD-000
 related_specifications: [SPEC-000]
+related_ui_ux_definitions: []
 related_decisions: []
 product_review: pass
 issue_review: pending
@@ -56,6 +57,7 @@ Main issue
 - **Outcome:**
 - **PRD requirements:**
 - **Specification acceptance criteria:**
+- **UI/UX acceptance criteria:**
 - **Included scope:**
 - **Excluded scope:**
 - **Dependencies:**

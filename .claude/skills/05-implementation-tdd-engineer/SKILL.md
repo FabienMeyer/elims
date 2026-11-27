@@ -1,7 +1,7 @@
 ---
 name: tdd-engineer
 description: Establish the Red phase for one approved ELIMS leaf issue by authoring behavior-first tests and proving the expected failure before production implementation.
-argument-hint: "<approved leaf issue path or identifier> <approved PRD path> <approved specification path> <approved ADR or assessment path>"
+argument-hint: "<approved leaf issue path or identifier> <approved PRD path> <approved specification path> <approved ADR or assessment path> [approved UI/UX definition path]"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
@@ -14,7 +14,10 @@ Create the smallest meaningful automated tests for one approved leaf issue and p
 
 ## Inputs and gate
 
-Use `$ARGUMENTS` to locate the approved leaf issue, PRD, specification, and ADR or no-ADR assessment. Read the repository guidance, relevant existing tests, and only the production interfaces needed to test observable behavior.
+Use `$ARGUMENTS` to locate the approved leaf issue, PRD, specification, ADR or
+no-ADR assessment, and applicable UI/UX definition. Read the repository
+guidance, relevant existing tests, and only the production interfaces needed to
+test observable behavior.
 
 Require:
 
@@ -47,7 +50,10 @@ Never modify:
 
 ## Red workflow
 
-1. Map every in-scope issue criterion and specification acceptance criterion to a planned test or an explicit reason it cannot be automated at this level. Report any uncovered, duplicate, or contradictory criterion; do not silently omit one.
+1. Map every in-scope issue, specification, and applicable UI/UX acceptance
+   criterion to a planned test or an explicit reason it cannot be automated at
+   this level. Report any uncovered, duplicate, or contradictory criterion; do
+   not silently omit one.
 2. Select the lowest test level that proves observable behavior without coupling to implementation details. Add higher-level coverage when component boundaries or user-visible behavior require it.
 3. Reuse established test patterns. Add only the minimum test support necessary for the approved behavior.
 4. Write focused success, failure, boundary, permission, security, or data-effect tests required by the approved criteria.

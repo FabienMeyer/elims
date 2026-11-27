@@ -1,7 +1,7 @@
 ---
 name: issue-reviewer
 description: Independently review an ELIMS issue hierarchy before approval, checking every leaf and child against its issue definition and the main issue against the approved specification and architecture result.
-argument-hint: "<proposed issue plan path> <approved specification path> <approved ADR or assessment path>"
+argument-hint: "<proposed issue plan path> <approved specification path> <approved ADR or assessment path> [approved UI/UX definition path]"
 disable-model-invocation: false
 context: fork
 agent: Explore
@@ -15,7 +15,9 @@ Perform an independent, read-only review in a fresh context. Review every issue 
 
 ## Entry gate
 
-Use `$ARGUMENTS` to locate the proposed issue plan, approved specification, and approved ADR or no-ADR assessment. Follow their links to the approved PRD and latest passing product-review report.
+Use `$ARGUMENTS` to locate the proposed issue plan, approved specification,
+approved ADR or no-ADR assessment, and applicable approved UI/UX definition.
+Follow their links to the approved PRD and latest passing product-review report.
 
 Require:
 
@@ -45,6 +47,8 @@ For each issue, check that:
 - its title and body describe the same outcome;
 - its title, type, area, risk, impact, and workflow labels follow the canonical conventions;
 - every referenced requirement, acceptance criterion, and ADR constraint exists and is represented accurately;
+- every referenced UI/UX criterion exists and its implementation and validation
+  evidence are planned when applicable;
 - completion criteria are atomic, observable, and sufficient to prove the defined outcome;
 - verification evidence covers success, relevant failure behavior, and applicable security, privacy, migration, rollout, documentation, and compatibility effects;
 - dependencies are necessary, correctly directed, and do not create a cycle;
@@ -74,6 +78,7 @@ Check that:
 
 - the main outcome covers all and only the approved specification scope intended for this delivery;
 - every in-scope specification acceptance criterion maps to one primary leaf issue;
+- every applicable UI/UX acceptance criterion maps to one primary leaf issue;
 - the hierarchy collectively implements all applicable ADR constraints and does not introduce a conflicting architecture decision;
 - specification behavior, failure paths, permissions, data effects, migration, compatibility, security, privacy, operations, and documentation have issue coverage where required;
 - the main issue contains tracking and completion semantics but no implementation work;
@@ -111,7 +116,8 @@ Return only a review report with:
 1. Overall verdict and concise rationale.
 2. Main-issue verdict and findings against the specification and ADR or assessment.
 3. One row for every non-main issue: identifier, type, parent, verdict, issue-definition result, and finding references.
-4. Acceptance-criteria coverage matrix showing the primary leaf and any supporting issues.
+4. Acceptance-criteria coverage matrix showing specification and applicable
+   UI/UX criteria, the primary leaf, and any supporting issues.
 5. ADR-constraint coverage matrix.
 6. Dependency-cycle and ordering result.
 7. Blocking findings with artifact, section, and evidence.

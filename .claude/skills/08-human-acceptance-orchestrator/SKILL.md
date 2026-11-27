@@ -1,7 +1,7 @@
 ---
 name: human-acceptance-orchestrator
 description: Prepare and gate human E2E acceptance for one verified and documented ELIMS feature, then route an explicitly supplied human result.
-argument-hint: "<leaf> <approved artifacts> <Chapter 7 report> [traceability matrix]"
+argument-hint: "<leaf> <approved artifacts including applicable UI/UX definition> <Chapter 7 report> [traceability matrix]"
 disable-model-invocation: true
 model: sonnet
 ---

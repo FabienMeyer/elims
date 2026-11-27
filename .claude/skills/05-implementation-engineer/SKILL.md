@@ -1,7 +1,7 @@
 ---
 name: implementation-engineer
 description: Implement the smallest Green production change for one approved ELIMS leaf issue after valid Red evidence exists. Use directly or through the implementation orchestrator.
-argument-hint: "<approved leaf issue path or identifier> <approved PRD path> <approved specification path> <approved ADR or assessment path> [traceability matrix path] [correction finding]"
+argument-hint: "<approved leaf issue path or identifier> <approved PRD path> <approved specification path> <approved ADR or assessment path> [approved UI/UX definition path] [traceability matrix path] [correction finding]"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
@@ -14,7 +14,9 @@ Implement the Green phase for one approved leaf issue. Write production code and
 
 ## Entry gate
 
-Use `$ARGUMENTS` to locate the leaf issue and its approved PRD, specification, and ADR or no-ADR assessment. Read the repository guidance and the minimum affected code and documentation.
+Use `$ARGUMENTS` to locate the leaf issue and its approved PRD, specification,
+ADR or no-ADR assessment, and applicable UI/UX definition. Read the repository
+guidance and the minimum affected code and documentation.
 
 Before changing code, confirm that:
 

@@ -1,7 +1,7 @@
 ---
 name: human-e2e-test-author
 description: Create a human-executable E2E acceptance plan for a verified, documented ELIMS feature without claiming that the plan was executed.
-argument-hint: "<leaf> <PRD> <specification> <architecture result> <Chapter 7 report> [traceability matrix]"
+argument-hint: "<leaf> <PRD> <specification> <architecture result> [UI/UX definition] <Chapter 7 report> [traceability matrix]"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
@@ -23,8 +23,8 @@ human-executable plan cannot be specified.
 
 ## Plan requirements
 
-Map every human-observable acceptance criterion to one or more numbered
-scenarios. For each scenario specify:
+Map every human-observable specification and applicable UI/UX acceptance
+criterion to one or more numbered scenarios. For each scenario specify:
 
 - purpose and criterion identifiers;
 - environment, candidate commit, accounts, roles, devices, integrations, and

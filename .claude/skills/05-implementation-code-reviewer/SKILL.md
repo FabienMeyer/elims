@@ -1,7 +1,7 @@
 ---
 name: code-reviewer
 description: Independently review an implemented ELIMS leaf issue for correctness, architecture, security, maintainability, and traceability. Use after implementation and before Chapter 6 technical verification.
-argument-hint: "<approved leaf issue path or identifier> <approved PRD path> <approved specification path> <approved ADR or assessment path> <traceability matrix path> <review anchor>"
+argument-hint: "<approved leaf issue path or identifier> <approved PRD path> <approved specification path> <approved ADR or assessment path> [approved UI/UX definition path] <traceability matrix path> <review anchor>"
 disable-model-invocation: false
 context: fork
 agent: Explore
@@ -14,7 +14,10 @@ Review a completed implementation in a fresh, read-only context. Return evidence
 
 ## Inputs and gate
 
-Use `$ARGUMENTS` to locate the approved leaf issue, PRD, specification, and ADR or no-ADR assessment. Read the repository guidance, current diff, and only the surrounding code and tests needed to evaluate the change.
+Use `$ARGUMENTS` to locate the approved leaf issue, PRD, specification, ADR or
+no-ADR assessment, and applicable UI/UX definition. Read the repository
+guidance, current diff, and only the surrounding code and tests needed to
+evaluate the change.
 
 Require:
 
@@ -59,7 +62,11 @@ Apply KISS, YAGNI, and SOLID as diagnostic principles rather than reasons to add
 
 Inspect the complete diff and enough surrounding code to check:
 
-- behavioral correctness and complete bidirectional traceability: every applicable issue criterion and specification acceptance criterion maps to tests, implementation, and verification evidence, and every production change maps back to an approved criterion, accepted architecture constraint, or necessary technical support;
+- behavioral correctness and complete bidirectional traceability: every
+  applicable issue, specification, and UI/UX acceptance criterion maps to tests,
+  implementation, and verification evidence, and every production change maps
+  back to an approved criterion, accepted architecture constraint, or necessary
+  technical support;
 - conformance to accepted ADRs, component boundaries, dependency direction, interfaces, and data ownership;
 - success and failure behavior, error handling, concurrency, transactions, and resource lifecycle where applicable;
 - security, privacy, authorization, validation, and sensitive-data handling;
