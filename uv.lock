@@ -445,7 +445,7 @@ wheels = [
 
 [[package]]
 name = "elims-backend"
-version = "1.0.2"
+version = "1.0.3"
 source = { editable = "backend" }
 dependencies = [
     { name = "aiomysql" },
@@ -501,7 +501,7 @@ provides-extras = ["dev"]
 
 [[package]]
 name = "elims-cli"
-version = "1.0.2"
+version = "1.0.3"
 source = { editable = "packages/elims-cli" }
 dependencies = [
     { name = "typer" },
@@ -536,7 +536,7 @@ docs = [
 
 [[package]]
 name = "elims-com"
-version = "1.0.2"
+version = "1.0.3"
 source = { editable = "packages/elims-com" }
 dependencies = [
     { name = "elims-utils" },
@@ -575,7 +575,7 @@ docs = [
 
 [[package]]
 name = "elims-database"
-version = "1.0.2"
+version = "1.0.3"
 source = { editable = "packages/elims-database" }
 dependencies = [
     { name = "sqlalchemy", extra = ["asyncio"] },
@@ -618,7 +618,7 @@ docs = [
 
 [[package]]
 name = "elims-instruments"
-version = "1.0.2"
+version = "1.0.3"
 source = { editable = "packages/elims-instruments" }
 
 [package.dev-dependencies]
@@ -649,7 +649,7 @@ docs = [
 
 [[package]]
 name = "elims-utils"
-version = "1.0.2"
+version = "1.0.3"
 source = { editable = "packages/elims-utils" }
 
 [package.dev-dependencies]
