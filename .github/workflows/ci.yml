@@ -54,6 +54,53 @@ jobs:
       - run: uv run --locked python scripts/check_wheels.py
       - run: git ls-files -z -- '*.yml' '*.yaml' | xargs -0 uv run --locked --group quality yamllint
 
+  packages:
+    # The python job already tests the packages on Python 3.13 with the lockfile.
+    name: packages (${{ matrix.label }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { label: "Python 3.14", python: "3.14", resolution: highest }
+          - { label: "lowest declared versions", python: "3.13", resolution: lowest-direct }
+    env:
+      UV_PYTHON: ${{ matrix.python }}
+      UV_RESOLUTION: ${{ matrix.resolution }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
+        with: { version: "0.13.7" }
+      - name: Resolve the lowest declared direct dependency versions
+        if: matrix.resolution == 'lowest-direct'
+        run: uv lock
+      - run: >-
+          uv sync --locked --group dev
+          --package elims-cli --package elims-com --package elims-database
+          --package elims-instruments --package elims-utils
+      - run: uv run --no-sync pytest packages
+
+  package-api:
+    # A pull request may break a public package API only when its title declares it with `!`.
+    if: ${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.title, '!:') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with: { fetch-depth: 2 }
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
+        with: { version: "0.13.7" }
+      - name: Reject undeclared breaking changes to public package APIs
+        # HEAD is GitHub's merge commit for the pull request; HEAD^1 is the base it merges into.
+        run: |
+          status=0
+          for package in cli com database instruments utils; do
+            uv run --locked --only-group quality griffe check "elims_$package" \
+              --search "packages/elims-$package/src" --against HEAD^1 --format github || status=1
+          done
+          exit $status
+
   backend-mariadb:
     runs-on: ubuntu-latest
     timeout-minutes: 10
