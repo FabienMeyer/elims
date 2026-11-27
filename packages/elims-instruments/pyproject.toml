@@ -1,7 +1,7 @@
 [project]
 readme = "README.md"
 name = "elims-instruments"
-version = "1.0.2"
+version = "1.0.3"
 description = "Instrument domain contracts for ELIMS."
 license = "MIT"
 license-files = ["LICENSE"]

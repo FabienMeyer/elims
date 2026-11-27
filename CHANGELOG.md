@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/FabienMeyer/elims/compare/elims-v1.0.2...elims-v1.0.3) (2026-11-27)
+
+
+### Miscellaneous Chores
+
+* **release:** publish the first release artifacts ([acd41d2](https://github.com/FabienMeyer/elims/commit/acd41d2f569bff57d4933b4c3f8a266d9c614452))
+
 ## [1.0.2](https://github.com/FabienMeyer/elims/compare/elims-v1.0.1...elims-v1.0.2) (2026-11-27)
 
 
