@@ -1,7 +1,7 @@
 ---
 name: technical-verifier
 description: Independently verify a reviewed ELIMS implementation against approved behavior, architecture, traceability, tests, and technical delivery checks before system validation.
-argument-hint: "<approved leaf issue path or identifier> <approved PRD path> <approved specification path> <approved ADR or assessment path> [traceability matrix path]"
+argument-hint: "<approved leaf issue path or identifier> <approved PRD path> <approved specification path> <approved ADR or assessment path> [traceability matrix path] <review anchor>"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
@@ -19,7 +19,7 @@ Use `$ARGUMENTS` to locate the approved leaf issue, PRD, specification, ADR or n
 Require:
 
 1. Human-approved source artifacts and leaf issue.
-2. `/tdd-engineer` established Red before production implementation.
+2. A recorded Red state: the Red anchor tree, pinned ref, and focused test command in the traceability matrix Red row.
 3. Green implementation and `/refactor-engineer` completed with `pass` or `no-change`.
 4. The latest `/code-reviewer` result is `pass` for the exact final diff.
 5. A complete bidirectional implementation traceability matrix supplied in context or by path.
@@ -35,13 +35,18 @@ Remain read-only except for normal ephemeral artifacts created by tests, builds,
 ## Verification
 
 1. Inspect the final diff and audit bidirectional traceability. Every criterion must map to tests, implementation, applicable architecture constraints, and verification evidence. Every production change must map back to an approved criterion, accepted constraint, or necessary technical support.
-2. Run the focused tests and relevant broader regression tests.
-3. Run applicable static analysis, formatting or lint checks, type checks, builds, and packaging checks.
-4. Exercise technical success and negative paths needed to verify permissions, security, privacy, data effects, migrations, rollback, compatibility, and operations. Leave complete user journeys to `/system-validator`.
-5. Verify test sensitivity by inspecting assertions and, when practical, using mutation tooling or an equivalent non-destructive check.
-6. Verify performance claims using the cited calculations, measurements, benchmarks, profiles, or query evidence. Reject unsupported claims.
-7. Confirm the checked diff matches the diff that received the latest code-review `pass`.
-8. Record every command, result, skipped check, environmental limitation, uncovered criterion, and residual risk.
+2. Verify that Red came before Green. Run `uv run python ${CLAUDE_SKILL_DIR}/../shared/scripts/red_state.py verify --base <base> --red-tree <Red tree> --leaf <leaf> -- <focused test command>`. The script confirms that the Red tree exists, matches the pinned ref and base, changes test files only, and fails when the focused tests run in it.
+   - Exit code 0: inspect `replay.output_tail` and confirm that the failure comes from the missing approved behavior, not from a syntax, import, collection, or environment error.
+   - Exit code 3 or 5: return `fail`. The Red state changed non-test files, or the Red tests passed before Green.
+   - Exit code 4: return `blocked`. The Red evidence is missing or does not match the matrix.
+   - If the focused test command cannot run in a fresh copy of the tree, record the static result, report the replay as a skipped check with the reason, and do not claim that Red was replayed.
+3. Run the focused tests and relevant broader regression tests on the final state. Confirm that the Red tests now pass.
+4. Run applicable static analysis, formatting or lint checks, type checks, builds, and packaging checks.
+5. Exercise technical success and negative paths needed to verify permissions, security, privacy, data effects, migrations, rollback, compatibility, and operations. Leave complete user journeys to `/system-validator`.
+6. Verify test sensitivity by inspecting assertions and, when practical, using mutation tooling or an equivalent non-destructive check.
+7. Verify performance claims using the cited calculations, measurements, benchmarks, profiles, or query evidence. Reject unsupported claims.
+8. Recompute the review anchor as `${CLAUDE_SKILL_DIR}/../shared/rules/review-anchor.md` describes. Confirm it equals the supplied anchor and the anchor that received the latest code-review `pass`. Return `blocked` when it differs. Cite the anchor in the report.
+9. Record every command, result, skipped check, environmental limitation, uncovered criterion, and residual risk.
 
 Do not treat test counts, coverage percentage, a successful build, or another agent's verdict alone as proof of acceptance.
 

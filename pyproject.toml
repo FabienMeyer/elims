@@ -29,6 +29,7 @@ select = ["E", "F", "I", "UP", "B", "SIM", "ASYNC", "S", "RUF"]
 
 [tool.ruff.lint.per-file-ignores]
 "**/tests/**" = ["S101"]
+"**/test_*.py" = ["S101"]
 
 [tool.mypy]
 python_version = "3.13"
@@ -36,7 +37,7 @@ strict = true
 plugins = ["pydantic.mypy"]
 
 [tool.pytest.ini_options]
-testpaths = ["backend/tests", "packages", "scripts/github/tests"]
+testpaths = ["backend/tests", "packages", ".claude/skills"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 

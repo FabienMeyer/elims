@@ -12,7 +12,7 @@ background: false
 
 Publish an approved ELIMS issue hierarchy to GitHub. This skill mutates only issues and the required workflow label in the explicitly supplied repository.
 
-Read `${CLAUDE_SKILL_DIR}/../shared/context-reporting.md` before publication and append its context report to every task result. When this skill revises an approved local issue plan with publication mappings, append or update the report in that file too.
+Read `${CLAUDE_SKILL_DIR}/../shared/rules/context-reporting.md` before publication and append its context report to every task result. This skill never edits local files. Issue Shaper records the returned mapping in the issue plan.
 Read `docs/contributing/issues-and-branches.md` and reject publication when an approved title or label set does not follow its canonical convention.
 
 ## Entry gate
@@ -50,7 +50,7 @@ Before mutation, build and report the complete intended operation list. Then:
 
 - create or update only issues in the approved plan;
 - preserve approved titles, bodies, labels, and parent relationships;
-- use `gh issue create --parent` or `gh issue edit --add-sub-issue` for native hierarchy;
+- build native hierarchy through the GitHub REST sub-issues endpoint (`POST /repos/{owner}/{repo}/issues/{parent}/sub_issues` with the child's numeric `sub_issue_id`), which `scripts/github_issue.py --parent` wraps; `gh issue create` and `gh issue edit` have no parent option. Never reparent an issue that already has a different parent; return `blocked` instead;
 - ensure the `rdy-to-implement` label exists, creating only that workflow label when absent;
 - assign `rdy-to-implement` only to approved leaf implementation issues;
 - never add it to the main issue, child tracking issues, blocked leaves, or unresolved work;

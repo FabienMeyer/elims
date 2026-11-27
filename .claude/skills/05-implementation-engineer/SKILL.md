@@ -26,7 +26,7 @@ Before changing code, confirm that:
 6. The issue is small enough for one focused change and has observable completion criteria.
 7. The exact leaf issue has the verifiable label `rdy-to-implement`.
 
-For a GitHub issue, verify the current label through a read-only tracker query. For a local issue artifact, require `labels: [rdy-to-implement]` in its metadata. Do not infer it from prose, a parent, a related issue, or prior conversation. Never add or change the label.
+Verify the current label on the authoritative GitHub issue through a read-only tracker query. Local issue files, issue-plan metadata, and planned labels are never evidence of the label. Do not infer it from prose, a parent, a related issue, or prior conversation. Never add or change the label.
 
 If a gate is missing, return `blocked` and identify the missing gate. Do not infer approval from a complete-looking artifact.
 

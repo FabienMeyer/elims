@@ -29,8 +29,8 @@ If an input or gate is missing, return `review-blocked` and identify it. Do not 
 Canonical resources:
 
 - Issue-plan template: `${CLAUDE_SKILL_DIR}/../shared/templates/issue-plan-template.md`
-- Language guidance: `${CLAUDE_SKILL_DIR}/../shared/asd-ste100-writing.md`
-- Context reporting: `${CLAUDE_SKILL_DIR}/../shared/context-reporting.md`
+- Language guidance: `${CLAUDE_SKILL_DIR}/../shared/rules/asd-ste100-writing.md`
+- Context reporting: `${CLAUDE_SKILL_DIR}/../shared/rules/context-reporting.md`
 - Issue, label, and branch conventions: `docs/contributing/issues-and-branches.md`
 
 Read these resources, all supplied artifacts, and only the repository documentation needed to verify issue claims.

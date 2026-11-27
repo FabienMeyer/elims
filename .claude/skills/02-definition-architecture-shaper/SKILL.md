@@ -18,8 +18,8 @@ Canonical resources:
 
 - ADR template: `${CLAUDE_SKILL_DIR}/../shared/templates/architecture-decision-requirements-template.md`
 - No-ADR assessment template: `${CLAUDE_SKILL_DIR}/../shared/templates/product-requirements-document-assessment-template.md`
-- Language guidance: `${CLAUDE_SKILL_DIR}/../shared/asd-ste100-writing.md`
-- Context reporting: `${CLAUDE_SKILL_DIR}/../shared/context-reporting.md`
+- Language guidance: `${CLAUDE_SKILL_DIR}/../shared/rules/asd-ste100-writing.md`
+- Context reporting: `${CLAUDE_SKILL_DIR}/../shared/rules/context-reporting.md`
 
 Read these files, the approved artifacts, existing relevant ADRs, and only the architecture documentation needed for the decision.
 
@@ -49,7 +49,7 @@ Do not create an ADR for routine implementation detail or a decision already gov
 
 ## Language
 
-Apply `${CLAUDE_SKILL_DIR}/../shared/asd-ste100-writing.md`. Keep alternatives and consequences precise without removing necessary technical terms.
+Apply `${CLAUDE_SKILL_DIR}/../shared/rules/asd-ste100-writing.md`. Keep alternatives and consequences precise without removing necessary technical terms.
 
 ## Handoff
 

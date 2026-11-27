@@ -16,7 +16,7 @@ github_repository: null
 github_publication: pending
 language_standard: ASD-STE100 Issue 9
 ste_status: not-formally-verified
-labels: []
+planned_labels: []
 ---
 
 ## Delivery outcome

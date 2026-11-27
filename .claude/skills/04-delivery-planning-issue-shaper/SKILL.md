@@ -25,8 +25,8 @@ If evidence is missing, stop with `issue-planning-blocked` and identify the miss
 ## Canonical resources
 
 - Issue-plan template: `${CLAUDE_SKILL_DIR}/../shared/templates/issue-plan-template.md`
-- Language guidance: `${CLAUDE_SKILL_DIR}/../shared/asd-ste100-writing.md`
-- Context reporting: `${CLAUDE_SKILL_DIR}/../shared/context-reporting.md`
+- Language guidance: `${CLAUDE_SKILL_DIR}/../shared/rules/asd-ste100-writing.md`
+- Context reporting: `${CLAUDE_SKILL_DIR}/../shared/rules/context-reporting.md`
 - Issue, label, and branch conventions: `docs/contributing/issues-and-branches.md`
 
 Read all canonical resources and approved input artifacts before questioning the user.
@@ -111,7 +111,7 @@ Do not copy the entire PRD or specification into an issue. Use stable identifier
 
 ## Language
 
-Apply `${CLAUDE_SKILL_DIR}/../shared/asd-ste100-writing.md`. Keep issue titles concise and make completion criteria atomic and testable. Label the result STE-assisted, not certified ASD-STE100 compliance.
+Apply `${CLAUDE_SKILL_DIR}/../shared/rules/asd-ste100-writing.md`. Keep issue titles concise and make completion criteria atomic and testable. Label the result STE-assisted, not certified ASD-STE100 compliance.
 
 ## Completion
 

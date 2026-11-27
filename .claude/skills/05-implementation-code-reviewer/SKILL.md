@@ -1,7 +1,7 @@
 ---
 name: code-reviewer
 description: Independently review an implemented ELIMS leaf issue for correctness, architecture, security, maintainability, and traceability. Use after implementation and before Chapter 6 technical verification.
-argument-hint: "<approved leaf issue path or identifier> <approved PRD path> <approved specification path> <approved ADR or assessment path>"
+argument-hint: "<approved leaf issue path or identifier> <approved PRD path> <approved specification path> <approved ADR or assessment path> <traceability matrix path> <review anchor>"
 disable-model-invocation: false
 context: fork
 agent: Explore
@@ -22,8 +22,12 @@ Require:
 2. Human-approved PRD, specification, and architecture result.
 3. A reviewable implementation diff in the current workspace.
 4. No unresolved product or architecture decision that prevents evaluation.
+5. A traceability matrix path. Read only its Mapping and Reverse mapping sections. Do not read Criterion evidence, Phase verdicts, Correction log, or any other section.
+6. A review anchor. Recompute it as `${CLAUDE_SKILL_DIR}/../shared/rules/review-anchor.md` describes. Return `blocked` when it differs from the supplied anchor.
 
 If an input or required decision is missing, return `blocked` with the exact missing evidence. Do not infer approval from document completeness.
+
+Cite the reviewed anchor in the report. A `pass` applies only to that anchor.
 
 ## Independence
 

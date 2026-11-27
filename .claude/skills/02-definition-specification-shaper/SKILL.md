@@ -17,8 +17,8 @@ Use `$ARGUMENTS` to locate the PRD and optional existing specification. Confirm 
 Canonical resources:
 
 - Specification template: `${CLAUDE_SKILL_DIR}/../shared/templates/specification-template.md`
-- Language guidance: `${CLAUDE_SKILL_DIR}/../shared/asd-ste100-writing.md`
-- Context reporting: `${CLAUDE_SKILL_DIR}/../shared/context-reporting.md`
+- Language guidance: `${CLAUDE_SKILL_DIR}/../shared/rules/asd-ste100-writing.md`
+- Context reporting: `${CLAUDE_SKILL_DIR}/../shared/rules/context-reporting.md`
 
 Read all three files and the minimum repository documentation needed to understand affected behavior.
 
@@ -43,7 +43,7 @@ Read all three files and the minimum repository documentation needed to understa
 
 ## Language
 
-Apply `${CLAUDE_SKILL_DIR}/../shared/asd-ste100-writing.md`, especially to normative requirements and acceptance criteria. Use `must` for mandatory behavior, `should` for recommendations, and `may` for permission. Do not use these terms interchangeably.
+Apply `${CLAUDE_SKILL_DIR}/../shared/rules/asd-ste100-writing.md`, especially to normative requirements and acceptance criteria. Use `must` for mandatory behavior, `should` for recommendations, and `may` for permission. Do not use these terms interchangeably.
 
 ## Handoff
 
