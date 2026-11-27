@@ -61,6 +61,31 @@ uv run pytest backend/tests/test_items.py
 uv run pytest backend/tests/test_items.py::test_name
 ```
 
+## Package compatibility checks
+
+CI runs these checks for the public packages in addition to the Python tests.
+
+```powershell
+# Package tests on Python 3.14 in a temporary environment; .venv is unchanged
+uv run --locked --isolated --python 3.14 --all-packages --group dev pytest packages
+
+# Package tests at the lowest declared dependency versions. This rewrites
+# uv.lock and .venv, so commit other lockfile changes first and restore after.
+uv lock --resolution lowest-direct
+uv sync --locked --resolution lowest-direct --group dev --package elims-cli --package elims-com --package elims-database --package elims-instruments --package elims-utils
+uv run --no-sync pytest packages
+git restore uv.lock
+uv sync --locked --all-packages --all-extras --group dev --group docs --group quality
+
+# Public API compatibility of one package against main
+uv run --group quality griffe check elims_com --search packages/elims-com/src --against main
+```
+
+On pull requests, the `package-api` job runs the Griffe check for all five
+packages against the commit the pull request merges into. It fails when a
+public object is removed or changed incompatibly, unless the pull-request title
+declares a breaking change with `!`.
+
 ## Python linting, formatting, and typing
 
 ```powershell

@@ -27,6 +27,8 @@ uv run mypy packages/elims-cli/src packages/elims-utils/src packages/elims-com/s
 uv run pytest packages
 ```
 
+CI also tests the packages on Python 3.14 and at their lowest declared dependency versions. On pull requests, it rejects removed or incompatibly changed public APIs unless the title declares a breaking change with `!`. The [command reference](../operations/command-reference.md#package-compatibility-checks) lists the local equivalents.
+
 Each package also includes an independent `mkdocs.yml`. From a package directory, build or serve its documentation with:
 
 ```bash

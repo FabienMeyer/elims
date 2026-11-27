@@ -17,7 +17,7 @@ elims-instruments = { workspace = true }
 
 [dependency-groups]
 dev = ["mypy>=1.19", "pytest>=9", "pytest-cov>=7", "ruff>=0.14"]
-quality = ["pre-commit>=4", "pyyaml>=6", "yamllint>=1.35"]
+quality = ["griffe>=2.4.1", "pre-commit>=4", "pyyaml>=6", "yamllint>=1.35"]
 docs = ["mkdocs-material>=9.6", "mkdocstrings[python]>=1.0.8"]
 
 [tool.ruff]
@@ -38,6 +38,7 @@ plugins = ["pydantic.mypy"]
 
 [tool.pytest.ini_options]
 testpaths = ["backend/tests", "packages", ".claude/skills"]
+addopts = "--import-mode=importlib"
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 
