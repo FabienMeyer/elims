@@ -44,6 +44,30 @@ def find(repo: str, stable_id: str) -> list[dict[str, object]]:
     return [item for item in json.loads(output) if marker in (item.get("body") or "")]
 
 
+def parent_of(repo: str, number: int) -> int | None:
+    """Return the native parent issue number, or None when the issue has no parent."""
+    result = gh("api", f"repos/{repo}/issues/{number}/parent")
+    if result.returncode:
+        message = result.stderr.strip() or result.stdout.strip()
+        if "404" in message or "Not Found" in message:
+            return None
+        raise SystemExit(message or "GitHub CLI failed")
+    return int(json.loads(result.stdout)["number"])
+
+
+def attach_sub_issue(repo: str, parent: int, child: int) -> None:
+    """Attach `child` to `parent` through the REST sub-issues endpoint."""
+    child_id = checked("api", f"repos/{repo}/issues/{child}", "--jq", ".id").strip()
+    checked(
+        "api",
+        "--method",
+        "POST",
+        f"repos/{repo}/issues/{parent}/sub_issues",
+        "-F",
+        f"sub_issue_id={int(child_id)}",
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Find or upsert an issue by its ELIMS stable identifier.")
     parser.add_argument("--repo", required=True, help="OWNER/REPOSITORY")
@@ -71,7 +95,7 @@ def main() -> int:
         body = f"{body.rstrip()}\n\n{marker}\n"
 
     action = "update" if matches else "create"
-    plan = {"status": "planned", "action": action, "stable_id": args.stable_id}
+    plan = {"status": "planned", "action": action, "stable_id": args.stable_id, "parent": args.parent}
     if not args.apply:
         print(json.dumps(plan))
         return 2
@@ -102,8 +126,6 @@ def main() -> int:
                 "--body-file",
                 str(temporary),
             ]
-            if args.parent:
-                command.extend(["--parent", str(args.parent)])
         for label in args.label:
             command.extend(["--add-label" if matches else "--label", label])
         checked(*command)
@@ -113,7 +135,22 @@ def main() -> int:
     verified = find(args.repo, args.stable_id)
     if len(verified) != 1:
         raise SystemExit("Issue mutation completed but stable-marker verification failed")
-    print(json.dumps({"status": "applied", "action": action, "issue": verified[0]}))
+    number = int(str(verified[0]["number"]))
+    parent_action = "none"
+    if args.parent:
+        current_parent = parent_of(args.repo, number)
+        if current_parent is None:
+            attach_sub_issue(args.repo, args.parent, number)
+            parent_action = "attached"
+        elif current_parent != args.parent:
+            raise SystemExit(
+                f"Issue #{number} already has parent #{current_parent}; refusing to reparent to #{args.parent}"
+            )
+        else:
+            parent_action = "matched"
+        if parent_of(args.repo, number) != args.parent:
+            raise SystemExit("Sub-issue relationship verification failed")
+    print(json.dumps({"status": "applied", "action": action, "parent": parent_action, "issue": verified[0]}))
     return 0
 
 

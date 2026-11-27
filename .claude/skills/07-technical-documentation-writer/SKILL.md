@@ -20,7 +20,7 @@ Require approved source artifacts, Chapter 6
 `verified-and-agent-validated` for the exact implementation, the final diff,
 repository documentation guidance, and the traceability matrix. Return
 `blocked` when the behavior or intended audience cannot be established.
-Read `${CLAUDE_SKILL_DIR}/../shared/asd-ste100-writing.md` before writing.
+Read `${CLAUDE_SKILL_DIR}/../shared/rules/asd-ste100-writing.md` before writing.
 
 ## Work
 

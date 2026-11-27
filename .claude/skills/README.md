@@ -190,7 +190,7 @@ automation, and restrict its repository access policy.
 
 ## Audit the live configuration
 
-Run `uv run --group quality python scripts/github/configure.py` at the repository root.
+Run `uv run --group quality python .claude/skills/shared/scripts/configure.py` at the repository root.
 The audit checks the declared labels, repository link, statuses, view filters,
 visible fields, grouping and enabled workflow names. Exit code 2 reports drift.
 Entries for grouping or built-in workflows require the Project settings UI.

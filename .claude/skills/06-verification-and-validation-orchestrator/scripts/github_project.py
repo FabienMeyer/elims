@@ -20,6 +20,35 @@ def checked(*args: str) -> str:
     return result.stdout
 
 
+PIPELINE = (
+    "Backlog",
+    "Ready to implement",
+    "Implementation",
+    "Technical verification",
+    "Agent system validation",
+    "Technical documentation",
+    "Human acceptance",
+    "Ready to merge",
+    "Done",
+)
+REWORK = "Implementation"
+BLOCKED = "Blocked"
+
+
+def legal_transition(current: str | None, target: str) -> bool:
+    """Allow the next pipeline step, rework to Implementation, or entering and leaving Blocked."""
+    if target == BLOCKED:
+        return current in PIPELINE
+    if current == BLOCKED:
+        return target in PIPELINE and target != "Done"
+    if current not in PIPELINE or target not in PIPELINE:
+        return False
+    current_index, target_index = PIPELINE.index(current), PIPELINE.index(target)
+    if target == REWORK and target_index < current_index:
+        return current != "Done"
+    return target_index == current_index + 1
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Read or transition Project Status. Mutation requires --apply.")
     parser.add_argument("--owner", required=True)
@@ -55,10 +84,13 @@ def main() -> int:
     if current == args.to:
         print(json.dumps({"status": "matched", "current": current}))
         return 0
-    if args.apply and not args.from_status:
-        parser.error("--apply requires --from-status")
-    if args.from_status and current != args.from_status:
+    if not args.from_status:
+        parser.error("--to requires --from-status")
+    if current != args.from_status:
         print(json.dumps({"status": "rejected", "expected": args.from_status, "current": current}))
+        return 4
+    if not legal_transition(current, args.to):
+        print(json.dumps({"status": "rejected", "reason": "illegal-transition", "from": current, "to": args.to}))
         return 4
     scope = (str(args.project), "--owner", args.owner)
     project = json.loads(checked("project", "view", *scope, "--format", "json"))

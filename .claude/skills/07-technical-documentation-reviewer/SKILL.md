@@ -19,7 +19,7 @@ Require approved artifacts, the final verified implementation, the Chapter 6
 report, documentation diff, repository guidance, and traceability matrix.
 Return `blocked` when the exact implementation or documentation revision is
 unclear.
-Read `${CLAUDE_SKILL_DIR}/../shared/asd-ste100-writing.md` before review.
+Read `${CLAUDE_SKILL_DIR}/../shared/rules/asd-ste100-writing.md` before review.
 
 ## Review
 

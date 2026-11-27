@@ -17,8 +17,8 @@ Use `$ARGUMENTS` as the idea or the path to an existing draft. Read the product 
 Canonical resources:
 
 - PRD template: `${CLAUDE_SKILL_DIR}/../shared/templates/product-requirements-document-template.md`
-- Language guidance: `${CLAUDE_SKILL_DIR}/../shared/asd-ste100-writing.md`
-- Context reporting: `${CLAUDE_SKILL_DIR}/../shared/context-reporting.md`
+- Language guidance: `${CLAUDE_SKILL_DIR}/../shared/rules/asd-ste100-writing.md`
+- Context reporting: `${CLAUDE_SKILL_DIR}/../shared/rules/context-reporting.md`
 
 Read all three files before shaping or writing a PRD. Use the named PRD template as the output contract.
 
@@ -43,7 +43,7 @@ Read all three files before shaping or writing a PRD. Use the named PRD template
 
 ## Language
 
-Apply `${CLAUDE_SKILL_DIR}/../shared/asd-ste100-writing.md`. Preserve the user's meaning. Report the language as STE-assisted, not certified ASD-STE100 compliance.
+Apply `${CLAUDE_SKILL_DIR}/../shared/rules/asd-ste100-writing.md`. Preserve the user's meaning. Report the language as STE-assisted, not certified ASD-STE100 compliance.
 
 ## Handoff
 

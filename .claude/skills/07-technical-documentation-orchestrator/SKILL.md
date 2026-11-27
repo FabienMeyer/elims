@@ -34,7 +34,10 @@ complete reader-facing documentation set.
    it to the responsible earlier chapter rather than documenting the defect.
 6. Add documentation evidence to every applicable matrix row.
 7. Confirm the documentation changes belong to the existing draft pull
-   request and correspond to the verified implementation diff.
+   request and correspond to the verified implementation diff. Compute the
+   final review anchor (`${CLAUDE_SKILL_DIR}/../shared/rules/review-anchor.md`) and
+   confirm that `git diff --name-only <Chapter 6 tree> <final tree>` lists
+   only documentation files. Report both anchors.
 
 ## Completion report
 

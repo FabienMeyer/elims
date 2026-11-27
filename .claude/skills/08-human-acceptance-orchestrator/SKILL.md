@@ -15,7 +15,9 @@ record only an explicitly supplied result.
 
 Require Chapter 6 `verified-and-agent-validated`, Chapter 7
 `documentation-complete`, the exact candidate commit, the current draft pull
-request, and a complete traceability matrix. Return
+request, and a complete traceability matrix. The candidate commit must have the
+same review anchor as the final Chapter 7 anchor
+(`${CLAUDE_SKILL_DIR}/../shared/rules/review-anchor.md`). Return
 `human-acceptance-blocked` when any gate is missing.
 
 ## Workflow
@@ -36,6 +38,8 @@ the workflow environment.
    fresh context.
 6. For `human-rejected`, route each defect to the responsible chapter and
    repeat every invalidated downstream gate before requesting a new human run.
+   Plan the Project transition back to `Implementation` and apply it only with
+   explicit authorization.
 7. For `human-blocked`, preserve the blocker and stop.
 8. For `human-accepted`, plan the Project transition to `Ready to merge` and
    apply it only with explicit authorization.

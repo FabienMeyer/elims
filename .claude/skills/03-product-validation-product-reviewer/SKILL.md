@@ -29,8 +29,8 @@ Canonical resources:
 - Specification template: `${CLAUDE_SKILL_DIR}/../shared/templates/specification-template.md`
 - ADR template: `${CLAUDE_SKILL_DIR}/../shared/templates/architecture-decision-requirements-template.md`
 - No-ADR assessment template: `${CLAUDE_SKILL_DIR}/../shared/templates/product-requirements-document-assessment-template.md`
-- Language guidance: `${CLAUDE_SKILL_DIR}/../shared/asd-ste100-writing.md`
-- Context reporting: `${CLAUDE_SKILL_DIR}/../shared/context-reporting.md`
+- Language guidance: `${CLAUDE_SKILL_DIR}/../shared/rules/asd-ste100-writing.md`
+- Context reporting: `${CLAUDE_SKILL_DIR}/../shared/rules/context-reporting.md`
 
 Read the artifacts, all canonical resources, existing relevant accepted ADRs, and only the repository documentation needed to verify claims.
 
@@ -45,7 +45,7 @@ Check that:
 - Failure behavior, permissions, edge cases, security, privacy, data effects, compatibility, and verification are adequate for the stated scope.
 - Each ADR supports the approved specification, evaluates credible alternatives, and records material consequences.
 - The no-ADR rationale is credible, or all significant architectural decisions have ADR coverage.
-- Terminology is consistent and the artifacts follow `${CLAUDE_SKILL_DIR}/../shared/asd-ste100-writing.md`. Treat this as an assisted language review, not certification.
+- Terminology is consistent and the artifacts follow `${CLAUDE_SKILL_DIR}/../shared/rules/asd-ste100-writing.md`. Treat this as an assisted language review, not certification.
 
 ## Verdicts and routing
 
