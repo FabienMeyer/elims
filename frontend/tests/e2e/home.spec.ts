@@ -1,15 +1,21 @@
 import { expect, test } from "@playwright/test"
 
-test("shows the template home page", async ({ page }) => {
+test("shows the ELIMS home page in English", async ({ page }) => {
   await page.route("**/api/health", (route) =>
     route.fulfill({ json: { status: "healthy" } }),
   )
   await page.goto("/")
+  await expect(page).toHaveTitle("ELIMS")
+  await expect(page.locator("html")).toHaveAttribute("lang", "en")
+  // Form controls and scrollbars follow the dark theme.
+  await expect(page.locator("html")).toHaveCSS("color-scheme", "dark")
   await expect(
-    page.getByRole("heading", { name: "Base full-stack" }),
+    page.getByRole("heading", { level: 1, name: "ELIMS" }),
+  ).toBeVisible()
+  await expect(
+    page.getByText(
+      "A dependable foundation for laboratory information workflows.",
+    ),
   ).toBeVisible()
   await expect(page.getByText("API healthy")).toBeVisible()
-  await expect(
-    page.getByText("React, TypeScript, FastAPI, and MariaDB."),
-  ).toBeVisible()
 })

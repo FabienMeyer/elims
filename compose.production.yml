@@ -36,6 +36,12 @@ services:
     restart: unless-stopped
     depends_on:
       backend: { condition: service_healthy }
+    healthcheck:
+      # Nginx listens on IPv4 only; busybox wget may try ::1 for localhost.
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8080/"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
   traefik:
     image: traefik:v3.6
     restart: unless-stopped

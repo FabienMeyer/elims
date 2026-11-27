@@ -3,13 +3,12 @@ import type { PropsWithChildren } from "react"
 export function AppShell({ children }: PropsWithChildren) {
   return (
     <div className="shell">
-      <header>
+      <header className="shell-header">
         <a href="/" className="brand">
-          Full-stack Template
+          ELIMS
         </a>
       </header>
-      <main>{children}</main>
-      <footer>Minimal architecture, ready to extend.</footer>
+      <main className="shell-main">{children}</main>
     </div>
   )
 }

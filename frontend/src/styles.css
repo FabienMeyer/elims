@@ -1,7 +1,13 @@
+/* One dark theme. color-scheme makes form controls and scrollbars match. */
 :root {
-  font-family: Inter, system-ui, sans-serif;
-  color: #e5e7eb;
-  background: #0f172a;
+  color-scheme: dark;
+  --color-surface: #0f172a;
+  --color-surface-raised: #1e293b;
+  --color-border: #334155;
+  --color-text: #e5e7eb;
+  font-family: system-ui, sans-serif;
+  color: var(--color-text);
+  background: var(--color-surface);
 }
 * {
   box-sizing: border-box;
@@ -11,39 +17,8 @@ body {
   min-width: 320px;
   min-height: 100vh;
 }
-.shell {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-header,
-footer {
-  padding: 1rem max(1.5rem, calc((100vw - 72rem) / 2));
-  border-color: #334155;
-  border-style: solid;
-}
-header {
-  border-width: 0 0 1px;
-}
-footer {
-  border-width: 1px 0 0;
-  color: #94a3b8;
-}
-.brand {
-  color: inherit;
-  text-decoration: none;
-  font-weight: 700;
-}
-main {
-  flex: 1;
-  width: min(72rem, 100%);
-  margin: auto;
-  padding: 4rem 1.5rem;
-}
-.stack {
-  display: grid;
-  gap: 2rem;
-}
+
+/* Base typography. Layout goes on classes, never on bare elements. */
 h1 {
   font-size: clamp(2rem, 6vw, 4rem);
   margin: 0;
@@ -51,9 +26,34 @@ h1 {
 h2 {
   margin-top: 0;
 }
+
+.shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.shell-header {
+  padding: 1rem max(1.5rem, calc((100vw - 72rem) / 2));
+  border-bottom: 1px solid var(--color-border);
+}
+.shell-main {
+  flex: 1;
+  width: min(72rem, 100%);
+  margin: auto;
+  padding: 4rem 1.5rem;
+}
+.brand {
+  color: inherit;
+  text-decoration: none;
+  font-weight: 700;
+}
+.stack {
+  display: grid;
+  gap: 2rem;
+}
 .card {
   padding: 1.5rem;
-  border: 1px solid #334155;
+  border: 1px solid var(--color-border);
   border-radius: 1rem;
-  background: #1e293b;
+  background: var(--color-surface-raised);
 }
