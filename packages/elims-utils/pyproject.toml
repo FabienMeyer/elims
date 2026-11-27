@@ -4,6 +4,7 @@ name = "elims-utils"
 version = "1.0.0"
 description = "Shared utility functions for ELIMS packages."
 license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.13"
 
 [project.urls]
@@ -11,26 +12,19 @@ Documentation = "https://fabienmeyer.github.io/elims/"
 Repository = "https://github.com/FabienMeyer/elims"
 Issues = "https://github.com/FabienMeyer/elims/issues"
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = ["mypy>=1.19", "pytest>=9", "pytest-cov>=7", "ruff>=0.14"]
 docs = ["mkdocs-material>=9.6", "mkdocstrings[python]>=1.0.8"]
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/elims_utils"]
 
 [tool.ruff]
-target-version = "py313"
-line-length = 120
-
-[tool.ruff.lint]
-select = ["E", "F", "I", "UP", "B", "SIM", "ASYNC", "S", "RUF"]
-
-[tool.ruff.lint.per-file-ignores]
-"tests/**" = ["S101"]
+extend = "../../pyproject.toml"
 
 [tool.mypy]
 python_version = "3.13"

@@ -10,6 +10,6 @@ elims --help
 ## Documentation
 
 ```bash
-uv sync --extra docs
+uv sync --group docs
 uv run mkdocs serve
 ```

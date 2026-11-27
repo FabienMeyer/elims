@@ -13,6 +13,6 @@ See the repository documentation for architectural guidance and the generated AP
 ## Documentation
 
 ```bash
-uv sync --extra docs
+uv sync --group docs
 uv run mkdocs serve
 ```

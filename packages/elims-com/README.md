@@ -7,6 +7,6 @@ The package provides a validated message model, a JSON codec, and publisher/subs
 ## Documentation
 
 ```bash
-uv sync --extra docs
+uv sync --group docs
 uv run mkdocs serve
 ```

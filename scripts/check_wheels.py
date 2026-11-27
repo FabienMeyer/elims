@@ -1,4 +1,4 @@
-"""Check public typing from installed wheels in a clean external environment."""
+"""Check built wheel contents and public typing in a clean external environment."""
 
 import shutil
 import subprocess
@@ -7,15 +7,27 @@ from pathlib import Path
 from zipfile import ZipFile
 
 
+def find_wheel(dist: Path, name: str) -> Path:
+    """Return the single built wheel for a package and reject missing or stale builds."""
+    matches = sorted(dist.rglob(f"elims_{name}-*.whl"))
+    if len(matches) != 1:
+        found = ", ".join(str(match.relative_to(dist)) for match in matches) or "none"
+        raise RuntimeError(f"Expected exactly one elims_{name} wheel under {dist}, found: {found}")
+    return matches[0]
+
+
 def main() -> None:
-    """Install only built wheels and verify their public imports with Mypy."""
+    """Install only built wheels and verify their contents and public imports with Mypy."""
     root = Path(__file__).resolve().parents[1]
     packages = ("cli", "com", "database", "instruments", "utils")
-    wheels = [next((root / "dist").rglob(f"elims_{name}-*.whl")) for name in packages]
+    wheels = [find_wheel(root / "dist", name) for name in packages]
     for name, wheel in zip(packages, wheels, strict=True):
         with ZipFile(wheel) as archive:
-            if f"elims_{name}/py.typed" not in archive.namelist():
-                raise RuntimeError(f"Missing py.typed in {wheel.name}")
+            entries = archive.namelist()
+        if f"elims_{name}/py.typed" not in entries:
+            raise RuntimeError(f"Missing py.typed in {wheel.name}")
+        if not any(entry.endswith(".dist-info/licenses/LICENSE") for entry in entries):
+            raise RuntimeError(f"Missing LICENSE in {wheel.name}")
     with tempfile.TemporaryDirectory(prefix="elims-wheel-check-") as directory:
         environment = Path(directory) / "venv"
         python = environment / ("Scripts/python.exe" if __import__("os").name == "nt" else "bin/python")
