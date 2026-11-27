@@ -3,8 +3,13 @@
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import model_validator
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+def split_origins(value: str) -> list[str]:
+    """Split a comma-separated origin list, dropping blanks."""
+    return [origin.strip() for origin in value.split(",") if origin.strip()]
 
 
 class Settings(BaseSettings):
@@ -16,6 +21,14 @@ class Settings(BaseSettings):
     backend_cors_origins: str = "http://localhost:5173"
     project_name: str = "Full-stack template"
     app_debug: bool = False
+
+    @field_validator("backend_cors_origins")
+    @classmethod
+    def reject_wildcard_origins(cls, value: str) -> str:
+        """Require explicit origins; '*' would let any website call the API from a user's browser."""
+        if "*" in split_origins(value):
+            raise ValueError("BACKEND_CORS_ORIGINS must list explicit origins, not '*'")
+        return value
 
     @model_validator(mode="after")
     def validate_production(self) -> "Settings":
@@ -32,7 +45,7 @@ class Settings(BaseSettings):
     @property
     def cors_origins(self) -> list[str]:
         """Return normalized allowed origins."""
-        return [origin.strip() for origin in self.backend_cors_origins.split(",") if origin.strip()]
+        return split_origins(self.backend_cors_origins)
 
 
 @lru_cache

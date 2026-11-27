@@ -10,6 +10,10 @@ Configuration additions require validation, documentation, and a secure default.
 
 Validation errors name the invalid setting but never print the supplied values, because the database URL contains credentials.
 
+## Cross-origin requests
+
+`BACKEND_CORS_ORIGINS` is a comma-separated list of explicit origins, such as `http://localhost:5173`. The backend refuses to start if the list contains `*`. CORS responses never allow credentials, because no route uses cookies; enable credentials only together with a route that needs them. Same-origin traffic through the frontend proxy, including the Vite development proxy, needs no CORS origin.
+
 ## Proxy headers
 
 The frontend Nginx proxy forwards the client's `Host` header, including its port, and an `X-Forwarded-Proto` header. Behind Traefik, that header carries Traefik's `https`; without Traefik, Nginx sends its own scheme. Uvicorn applies `X-Forwarded-Proto` and `X-Forwarded-For` only from the addresses listed in `FORWARDED_ALLOW_IPS`, which defaults to loopback. Both Compose files set it to `*` so that URLs the backend builds, such as trailing-slash redirects, keep the public host, port, and scheme.

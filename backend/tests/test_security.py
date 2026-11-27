@@ -34,6 +34,20 @@ def test_missing_environment_is_rejected_without_echoing_secrets(monkeypatch: py
     assert "private-pw" not in str(error.value)
 
 
+@pytest.mark.parametrize("origins", ["*", "http://localhost:5173, *"])
+def test_wildcard_cors_origin_is_rejected(origins: str) -> None:
+    """An any-origin CORS policy would let every website call the API from a user's browser."""
+    with pytest.raises(ValidationError, match="BACKEND_CORS_ORIGINS"):
+        Settings(environment="test", backend_cors_origins=origins)
+
+
+def test_cors_never_grants_credentialed_access(client: TestClient) -> None:
+    """No route uses cookies, so allowed origins get CORS access without credentials."""
+    response = client.get("/health", headers={"Origin": "http://localhost:5173", "Cookie": "session=1"})
+    assert response.headers["access-control-allow-origin"] == "http://localhost:5173"
+    assert "access-control-allow-credentials" not in response.headers
+
+
 def test_logs_omit_sensitive_request_data(client: TestClient, capsys: pytest.CaptureFixture[str]) -> None:
     """Correlation is retained without logging headers, query strings or bodies."""
     capsys.readouterr()
