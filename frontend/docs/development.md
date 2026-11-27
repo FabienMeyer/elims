@@ -11,7 +11,7 @@ npm run test
 npm run build
 ```
 
-`npm run build` type-checks three TypeScript projects before bundling:
+`npm run build` type-checks three TypeScript projects before bundling. They share `tsconfig.base.json`, which enables `strict` and `noUncheckedIndexedAccess`, so indexing an array or record yields a possibly `undefined` value.
 
 - `tsconfig.app.json` checks `src` with browser types only, so Node and test globals are errors in application code.
 - `tsconfig.test.json` checks `tests` with Node and Testing Library matcher types.
