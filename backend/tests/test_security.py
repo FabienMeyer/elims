@@ -34,6 +34,14 @@ def test_missing_environment_is_rejected_without_echoing_secrets(monkeypatch: py
     assert "private-pw" not in str(error.value)
 
 
+def test_settings_text_hides_database_password() -> None:
+    """Printing or logging the settings object must not expose the database password."""
+    settings = Settings(environment="test", database_url="mysql+aiomysql://e:private-pw@db/e")
+    assert "private-pw" not in repr(settings)
+    assert "private-pw" not in str(settings)
+    assert "private-pw" not in settings.model_dump_json()
+
+
 @pytest.mark.parametrize("origins", ["*", "http://localhost:5173, *"])
 def test_wildcard_cors_origin_is_rejected(origins: str) -> None:
     """An any-origin CORS policy would let every website call the API from a user's browser."""

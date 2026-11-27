@@ -10,7 +10,7 @@ from app.api.items.models import Item  # noqa: F401
 from app.config import get_settings
 
 config = context.config
-driver, separator, address = get_settings().database_url.partition(":")
+driver, separator, address = get_settings().database_url.get_secret_value().partition(":")
 sync_driver = {"mysql+aiomysql": "mysql+pymysql", "sqlite+aiosqlite": "sqlite"}.get(driver, driver)
 config.set_main_option("sqlalchemy.url", f"{sync_driver}{separator}{address}".replace("%", "%%"))
 if config.config_file_name:

@@ -22,7 +22,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @asynccontextmanager
     async def lifespan(application: FastAPI) -> AsyncIterator[None]:
-        database = Database(settings.database_url)
+        database = Database(settings.database_url.get_secret_value())
         application.state.database = database
         try:
             yield

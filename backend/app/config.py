@@ -3,7 +3,7 @@
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import field_validator, model_validator
+from pydantic import SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -17,7 +17,8 @@ class Settings(BaseSettings):
 
     # Required: a deployment that forgets ENVIRONMENT must not start with development's open business routes.
     environment: Literal["development", "test", "production"]
-    database_url: str = "sqlite+aiosqlite:///./app.db"
+    # SecretStr keeps the password out of repr(), str() and JSON dumps; unwrap it only where a connection is made.
+    database_url: SecretStr = SecretStr("sqlite+aiosqlite:///./app.db")
     backend_cors_origins: str = "http://localhost:5173"
     project_name: str = "Full-stack template"
     app_debug: bool = False
@@ -33,8 +34,9 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def validate_production(self) -> "Settings":
         """Reject development defaults when production is selected."""
+        database_url = self.database_url.get_secret_value()
         if self.environment == "production" and (
-            self.app_debug or self.database_url.startswith("sqlite") or "change-me" in self.database_url
+            self.app_debug or database_url.startswith("sqlite") or "change-me" in database_url
         ):
             raise ValueError("Production requires a configured database and debug disabled")
         return self
