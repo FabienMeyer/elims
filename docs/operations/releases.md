@@ -19,9 +19,11 @@ For a release such as `v0.1.0`, the workflow publishes:
 
 1. Merge pull requests with titles in `type(scope): description` format.
 2. Review the release pull request maintained by Release Please.
-3. For a major version, raise the `elims-utils` upper bound in
-   `packages/elims-com/pyproject.toml` on the release pull request, for example
-   from `<2` to `<3`. Release Please does not update that bound, and the
+3. For a major version, first merge a separate pull request to `main` that
+   raises the `elims-utils` upper bound in `packages/elims-com/pyproject.toml`,
+   for example from `<2` to `<3`. Do not make this change on the release pull
+   request: Release Please rewrites that branch whenever it updates the release
+   and drops manual commits. Release Please does not update the bound, and the
    workspace lockfile does not enforce it. `scripts/check_wheels.py` installs
    the built wheels together, so it fails in CI and in the **Release** workflow,
    before PyPI publication, until the bound allows the new `elims-utils`
