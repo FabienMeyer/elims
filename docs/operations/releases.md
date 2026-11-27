@@ -19,9 +19,16 @@ For a release such as `v0.1.0`, the workflow publishes:
 
 1. Merge pull requests with titles in `type(scope): description` format.
 2. Review the release pull request maintained by Release Please.
-3. Merge the release pull request when its changelog and calculated version are
+3. For a major version, raise the `elims-utils` upper bound in
+   `packages/elims-com/pyproject.toml` on the release pull request, for example
+   from `<2` to `<3`. Release Please does not update that bound, and the
+   workspace lockfile does not enforce it. `scripts/check_wheels.py` installs
+   the built wheels together, so it fails in CI and in the **Release** workflow,
+   before PyPI publication, until the bound allows the new `elims-utils`
+   version.
+4. Merge the release pull request when its changelog and calculated version are
    correct.
-4. Confirm that the **Release** workflow publishes both container images and
+5. Confirm that the **Release** workflow publishes both container images and
    all five Python packages.
 
 Do not edit generated version sections in `CHANGELOG.md` separately. Correct

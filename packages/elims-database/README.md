@@ -11,6 +11,6 @@ database = Database("mysql+aiomysql://user:password@host/database")
 ## Documentation
 
 ```bash
-uv sync --extra docs
+uv sync --group docs
 uv run mkdocs serve
 ```

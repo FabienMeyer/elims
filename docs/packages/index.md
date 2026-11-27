@@ -30,7 +30,7 @@ uv run pytest packages
 Each package also includes an independent `mkdocs.yml`. From a package directory, build or serve its documentation with:
 
 ```bash
-uv sync --extra docs
+uv sync --group docs
 uv run mkdocs build --strict
 uv run mkdocs serve
 ```

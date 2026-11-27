@@ -168,7 +168,11 @@ uv build --package elims-database
 uv build --package elims-instruments
 ```
 
-Build artifacts are written to `dist/`.
+Build artifacts are written to `dist/`. `scripts/check_wheels.py` expects
+exactly one wheel per public package under `dist/`, so delete wheels from
+earlier builds before running it. It checks that each wheel ships `py.typed`
+and the license file, then type-checks the public imports from a clean
+environment.
 
 ## ELIMS CLI
 
