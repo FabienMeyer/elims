@@ -5,11 +5,10 @@ export function AppShell({ children }: PropsWithChildren) {
     <div className="shell">
       <header>
         <a href="/" className="brand">
-          Full-stack Template
+          ELIMS
         </a>
       </header>
       <main>{children}</main>
-      <footer>Minimal architecture, ready to extend.</footer>
     </div>
   )
 }

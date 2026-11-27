@@ -4,8 +4,9 @@ export function HomePage() {
   return (
     <div className="stack">
       <div>
-        <h1>Base full-stack</h1>
-        <p>React, TypeScript, FastAPI, and MariaDB.</p>
+        <h1>ELIMS</h1>
+        {/* From docs/product/vision.md; change it there first. */}
+        <p>A dependable foundation for laboratory information workflows.</p>
       </div>
       <HealthCard />
     </div>

@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from "vitest"
 import { App } from "@/App"
 
 describe("App", () => {
-  it("renders the template heading", () => {
+  it("renders the ELIMS shell and home page", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn(() => new Promise(() => undefined)),
@@ -18,8 +18,18 @@ describe("App", () => {
         <App />
       </QueryClientProvider>,
     )
+    expect(screen.getByRole("link", { name: "ELIMS" })).toHaveAttribute(
+      "href",
+      "/",
+    )
     expect(
-      screen.getByRole("heading", { name: "Base full-stack" }),
+      screen.getByRole("heading", { level: 1, name: "ELIMS" }),
     ).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        "A dependable foundation for laboratory information workflows.",
+      ),
+    ).toBeInTheDocument()
+    expect(screen.queryByRole("contentinfo")).not.toBeInTheDocument()
   })
 })
