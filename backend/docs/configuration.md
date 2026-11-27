@@ -8,7 +8,11 @@ Configuration additions require validation, documentation, and a secure default.
 
 `ENVIRONMENT` is required and must be `development`, `test`, or `production`. The backend and Alembic refuse to start without it, so a deployment that omits it cannot fall back to development, where business routes are open. `production` keeps business routes closed until authentication is integrated, and rejects SQLite, `change-me` credentials, and `APP_DEBUG=true`.
 
-Validation errors name the invalid setting but never print the supplied values, because the database URL contains credentials.
+Validation errors name the invalid setting but never print the supplied values, because the database URL contains credentials. `DATABASE_URL` is also held as a secret value, so printing, logging, or serializing the settings object shows `**********` in its place.
+
+## Cross-origin requests
+
+`BACKEND_CORS_ORIGINS` is a comma-separated list of explicit origins, such as `http://localhost:5173`. The backend refuses to start if the list contains `*`. CORS responses never allow credentials, because no route uses cookies; enable credentials only together with a route that needs them. Same-origin traffic through the frontend proxy, including the Vite development proxy, needs no CORS origin.
 
 ## Proxy headers
 
