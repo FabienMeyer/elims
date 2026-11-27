@@ -28,6 +28,24 @@ Do not edit generated version sections in `CHANGELOG.md` separately. Correct
 the source commit or edit the open release pull request when release notes need
 adjustment.
 
+## Lockfile on the release pull request
+
+Release Please updates the version in each `pyproject.toml` but cannot update
+`uv.lock`. Without a matching lockfile, every `uv sync --locked` step fails
+after the release pull request is merged. The **Release** workflow then creates
+the tag and GitHub Release but stops before it publishes container images or
+Python packages. After each Release Please run, the
+`release-pr-lockfile` job in the **Release** workflow regenerates `uv.lock` on
+the open release pull request. It pushes a `chore(release): regenerate uv.lock`
+commit when the lockfile changed. Before merging a release pull request, check
+that it contains that commit, or that its `uv.lock` already records the new
+versions.
+
+The job finds the release pull request by its `autorelease: pending` label.
+Release Please rewrites the pull request branch whenever it updates the
+release, which drops the lockfile commit. The job runs right after it in the
+same workflow run and adds the commit again.
+
 ## PyPI trusted publishing setup
 
 PyPI publication uses OpenID Connect and does not store an API token. Pending
@@ -60,7 +78,9 @@ release pull request and create releases. GitHub does not start new workflow
 runs for pull requests created with that token. If branch protection requires
 CI checks on the release pull request, add a `RELEASE_PLEASE_TOKEN` Actions
 secret containing a fine-grained token that can write repository contents,
-issues, and pull requests. Release Please will use it automatically.
+issues, and pull requests. Release Please will use it automatically. The
+`release-pr-lockfile` job pushes its lockfile commit with the same token, so CI
+runs on that commit only when `RELEASE_PLEASE_TOKEN` is configured.
 
 GHCR publication uses the repository `GITHUB_TOKEN`; no personal access token
 is required. Repository Actions must have permission to create packages.

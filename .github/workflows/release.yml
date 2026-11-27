@@ -20,6 +20,51 @@ jobs:
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
 
+  release-pr-lockfile:
+    # Release Please bumps the workspace versions but cannot update uv.lock, so
+    # regenerate it on the open release pull request after each update.
+    needs: release
+    if: needs.release.outputs.created != 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    concurrency:
+      group: release-pr-lockfile
+      cancel-in-progress: true
+    steps:
+      - name: Find the open release pull request
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          branch=$(gh pr list --state open --base main --label "autorelease: pending" \
+            --json headRefName --jq '.[0].headRefName // empty')
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+      - if: steps.pr.outputs.branch != ''
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          ref: ${{ steps.pr.outputs.branch }}
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
+      - if: steps.pr.outputs.branch != ''
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
+        with: { version: "0.13.7" }
+      - name: Commit the regenerated lockfile to the release pull request
+        if: steps.pr.outputs.branch != ''
+        env:
+          BRANCH: ${{ steps.pr.outputs.branch }}
+        run: |
+          uv lock
+          if git diff --quiet -- uv.lock; then
+            echo "uv.lock already matches the release versions."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --message "chore(release): regenerate uv.lock" -- uv.lock
+          git push origin "HEAD:$BRANCH"
+
   images:
     needs: release
     if: needs.release.outputs.created == 'true'
