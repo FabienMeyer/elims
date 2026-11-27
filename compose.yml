@@ -24,6 +24,7 @@ services:
       dockerfile: backend/Dockerfile
     command: ["alembic", "upgrade", "head"]
     environment:
+      ENVIRONMENT: development
       DATABASE_URL: ${DATABASE_URL:-mysql+aiomysql://app:change-me@mariadb:3306/app}
     depends_on:
       mariadb: { condition: service_healthy }
