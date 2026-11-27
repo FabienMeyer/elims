@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { act, render, screen, waitFor } from "@testing-library/react"
-import { HttpResponse, http } from "msw"
+import { delay, HttpResponse, http } from "msw"
 import { setupServer } from "msw/node"
 import { afterAll, afterEach, beforeAll, expect, it } from "vitest"
 import { HealthCard } from "@/features/health/components/health-card"
@@ -81,4 +81,23 @@ it("reports a failed refetch instead of the earlier success", async () => {
 
   await expectStatus("API unavailable")
   expect(screen.queryByText("API healthy")).not.toBeInTheDocument()
+})
+
+it("aborts the health request when the query is cancelled", async () => {
+  let aborted = false
+  server.use(
+    http.get("*/api/health", async ({ request }) => {
+      request.signal.addEventListener("abort", () => {
+        aborted = true
+      })
+      await delay("infinite")
+      return HttpResponse.json({ status: "healthy" })
+    }),
+  )
+  const client = renderHealth()
+  await waitFor(() => expect(client.isFetching()).toBe(1))
+
+  await act(() => client.cancelQueries())
+
+  await waitFor(() => expect(aborted).toBe(true))
 })

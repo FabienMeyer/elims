@@ -6,7 +6,7 @@ Configuration additions require a documented default, validation, and deployment
 
 ## Production serving
 
-Nginx serves the production build using `nginx.conf` and `nginx-main.conf`.
+Nginx serves the production build using `nginx.conf` and `nginx-main.conf`. Both Compose files mark the container healthy once `wget --spider http://127.0.0.1:8080/` succeeds inside it, so `docker compose up --wait` also waits for the frontend. Each check adds one line to the Nginx access log.
 
 - Vite fingerprints every file under `/assets/`, so Nginx serves them with `Cache-Control: public, max-age=31536000, immutable`. A missing asset returns 404 rather than the application shell.
 - Every other frontend response, including the shell returned for client-side routes, carries `Cache-Control: no-cache`. Browsers revalidate it and pick up a new deployment on the next load.

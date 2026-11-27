@@ -24,7 +24,11 @@ export default defineConfig({
     unstubGlobals: true,
     coverage: {
       reporter: ["text", "html", "lcov"],
-      include: ["src/lib/**", "src/features/**"],
+      include: ["src/**/*.{ts,tsx}"],
+      // main.tsx only mounts the app; the end-to-end tests cover it.
+      exclude: ["src/main.tsx", "src/vite-env.d.ts"],
+      // Same floor as the Python suite (fail_under in pyproject.toml).
+      thresholds: { statements: 80, branches: 80, functions: 80, lines: 80 },
     },
   },
 })
