@@ -149,7 +149,9 @@ Allowed types are `feat`, `fix`, `docs`, `refactor`, `perf`, `test`, `build`,
 `repository`, `release`, `deps`, `deps-dev`, `security`, and `docker`.
 
 Add `!` before the colon for a breaking change, for example
-`feat(backend)!: replace the sample response schema`. Link the pull request to
+`feat(backend)!: replace the sample response schema`. CI's `package-api` job
+fails a pull request that removes or incompatibly changes a public package API
+unless its title carries `!`. Link the pull request to
 its approved leaf issue in the body and do not use a tracking issue as the
 implementation target. Squash merging preserves the validated pull-request
 title as the commit Release Please reads from `main`.
