@@ -56,32 +56,32 @@
         {
           "type": "toml",
           "path": "uv.lock",
-          "jsonpath": "$.package[?(@.name == 'elims-backend')].version"
+          "jsonpath": "$.package[?(@.name.value == 'elims-backend')].version"
         },
         {
           "type": "toml",
           "path": "uv.lock",
-          "jsonpath": "$.package[?(@.name == 'elims-cli')].version"
+          "jsonpath": "$.package[?(@.name.value == 'elims-cli')].version"
         },
         {
           "type": "toml",
           "path": "uv.lock",
-          "jsonpath": "$.package[?(@.name == 'elims-com')].version"
+          "jsonpath": "$.package[?(@.name.value == 'elims-com')].version"
         },
         {
           "type": "toml",
           "path": "uv.lock",
-          "jsonpath": "$.package[?(@.name == 'elims-database')].version"
+          "jsonpath": "$.package[?(@.name.value == 'elims-database')].version"
         },
         {
           "type": "toml",
           "path": "uv.lock",
-          "jsonpath": "$.package[?(@.name == 'elims-instruments')].version"
+          "jsonpath": "$.package[?(@.name.value == 'elims-instruments')].version"
         },
         {
           "type": "toml",
           "path": "uv.lock",
-          "jsonpath": "$.package[?(@.name == 'elims-utils')].version"
+          "jsonpath": "$.package[?(@.name.value == 'elims-utils')].version"
         },
         "packages/elims-cli/src/elims_cli/__init__.py",
         "packages/elims-com/src/elims_com/__init__.py",
