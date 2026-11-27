@@ -39,6 +39,8 @@ services:
       APP_DEBUG: "false"
       DATABASE_URL: ${DATABASE_URL:-mysql+aiomysql://app:change-me@mariadb:3306/app}
       BACKEND_CORS_ORIGINS: ${BACKEND_CORS_ORIGINS:-http://localhost:8080}
+      # Trust the frontend proxy's X-Forwarded-* headers; the backend port is published on loopback only.
+      FORWARDED_ALLOW_IPS: "*"
     depends_on:
       migrate: { condition: service_completed_successfully }
     ports: ["127.0.0.1:${BACKEND_PORT:-8000}:8000"]
