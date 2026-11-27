@@ -23,8 +23,9 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"], channel: "chrome" },
     },
   ],
+  // Test the production bundle, served under the Nginx Content-Security-Policy.
   webServer: {
-    command: `npm run dev -- --host 127.0.0.1 --strictPort --port ${port}`,
+    command: `npx vite build && npx vite preview --host 127.0.0.1 --strictPort --port ${port}`,
     url: baseURL,
     reuseExistingServer: !process.env.CI,
   },

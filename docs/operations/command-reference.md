@@ -223,6 +223,8 @@ The proxy listens on <http://localhost:8088>.
 
 ## Disposable smoke test
 
+The smoke test exercises the API through the Nginx proxy and checks how Nginx serves the built frontend.
+
 ```powershell
 docker compose --env-file .env.example -p elims-smoke up --build -d --wait --wait-timeout 120
 python scripts/smoke.py
