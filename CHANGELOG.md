@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.2](https://github.com/FabienMeyer/elims/compare/elims-v1.0.1...elims-v1.0.2) (2026-11-27)
+
+
+### Bug Fixes
+
+* **backend:** harden CORS, settings secrets, readiness, and migrations ([f0edb0d](https://github.com/FabienMeyer/elims/commit/f0edb0d0d6a7301a9dbdeca350300d9251f8f6bd))
+* **frontend:** cancel and time out API requests and close review follow-ups ([506583b](https://github.com/FabienMeyer/elims/commit/506583bffa434b57c6932213eb29206db447def0))
+* **frontend:** show one accurate backend status and replace template leftovers ([1ca376e](https://github.com/FabienMeyer/elims/commit/1ca376e04df39828ee46ca9c989a92d36aa699d5))
+
 ## [1.0.1](https://github.com/FabienMeyer/elims/compare/elims-v1.0.0...elims-v1.0.1) (2026-11-27)
 
 

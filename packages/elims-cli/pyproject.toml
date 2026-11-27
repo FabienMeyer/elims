@@ -1,7 +1,7 @@
 [project]
 readme = "README.md"
 name = "elims-cli"
-version = "1.0.1"
+version = "1.0.2"
 description = "Minimal Typer application shell for ELIMS."
 license = "MIT"
 license-files = ["LICENSE"]
